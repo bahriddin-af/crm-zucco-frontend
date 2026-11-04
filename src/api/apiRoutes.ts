@@ -35,7 +35,9 @@ export const API_ROUTES = {
   COURSES: {
     LIST: '/api/courses',
     DETAIL: (id: string) => `/api/courses/${id}`,
-    CREATE_OR_UPDATE: '/api/courses/upsert',
+    CREATE_OR_UPDATE: '/api/courses',
+    SUBJECTS: '/api/courses/subjects',
+    DELETE: (id: string) => `/api/courses/${id}`,
   },
   ATTENDANCE: {
     LESSON: (lessonId: string) => `/api/attendance/lesson/${lessonId}`,
