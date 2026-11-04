@@ -1,81 +1,38 @@
 import { useState, useMemo } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Clock, BookOpen, Search, Trash2, Edit2, Layers, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { formatCurrency } from '@/utils/formatters'
-import { apiClient } from '@/api/client'
-import { API_ROUTES } from '@/api/apiRoutes'
-import { QUERY_KEYS } from '@/constants/queryKeys'
-import type { ApiResponse, PagedResult } from '@/types/api'
 import {
   COURSE_LEVEL_LABELS,
   type CourseListItem,
-  type SubjectItem,
 } from '../types/courseTypes'
 import { CourseModal } from '../components/CourseModal'
-import { toast } from 'sonner'
+import { useCoursesList, useSubjectsList, useDeleteCourse } from '../hooks/useCourses'
 
 export function CourseListPage() {
-  const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedCourse, setSelectedCourse] = useState<CourseListItem | null>(null)
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all')
 
-  // 1. Fetch live courses from Backend API
+  // Feature hooks following RULES.md
   const {
     data: coursesData,
     isLoading: isCoursesLoading,
     isError,
     error,
     refetch,
-  } = useQuery({
-    queryKey: QUERY_KEYS.COURSES.ALL,
-    queryFn: async () => {
-      const response = await apiClient.get<ApiResponse<PagedResult<CourseListItem>>>(
-        API_ROUTES.COURSES.LIST,
-        {
-          params: {
-            page: 1,
-            pageSize: 50,
-          },
-        }
-      )
-      return response.data.data
-    },
-  })
+  } = useCoursesList()
 
-  // 2. Fetch live subjects from Backend API
-  const { data: subjects = [] } = useQuery({
-    queryKey: ['courses', 'subjects'],
-    queryFn: async () => {
-      const response = await apiClient.get<ApiResponse<SubjectItem[]>>(
-        API_ROUTES.COURSES.SUBJECTS
-      )
-      return response.data.data
-    },
-  })
-
-  // 3. Delete course mutation
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      await apiClient.delete(API_ROUTES.COURSES.DELETE(id))
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COURSES.ALL })
-      toast.success('Курс муваффақиятли ўчирилди!')
-    },
-    onError: () => {
-      toast.error('Курсни ўчиришда хатолик юз берди')
-    },
-  })
+  const { data: subjects = [] } = useSubjectsList()
+  const deleteMutation = useDeleteCourse()
 
   const handleDelete = (course: CourseListItem) => {
     if (window.confirm(`"${course.name}" курсини ўчиришни тасдиқлайсизми?`)) {
-      deleteMutation.mutate(course.id)
+      deleteMutation.mutate(course)
     }
   }
 
@@ -289,7 +246,7 @@ export function CourseListPage() {
                     <button
                       type="button"
                       onClick={() => handleEdit(course)}
-                      className="p-1.5 text-[#65776C] hover:text-[#146B52] hover:bg-[#F0F4F1] rounded transition-colors"
+                      className="p-1.5 text-[#65776C] hover:text-[#146B52] hover:bg-[#F0F4F1] rounded transition-colors cursor-pointer"
                       title="Таҳрирлаш"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -297,7 +254,7 @@ export function CourseListPage() {
                     <button
                       type="button"
                       onClick={() => handleDelete(course)}
-                      className="p-1.5 text-[#65776C] hover:text-[#BE123C] hover:bg-[#FFF1F2] rounded transition-colors"
+                      className="p-1.5 text-[#65776C] hover:text-[#BE123C] hover:bg-[#FFF1F2] rounded transition-colors cursor-pointer"
                       title="Ўчириш"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
