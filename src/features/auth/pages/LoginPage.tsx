@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { ROUTES } from '@/routes/paths'
 import { useAuthStore } from '@/stores/authStore'
+import { apiClient } from '@/api/client'
+import { API_ROUTES } from '@/api/apiRoutes'
 import { toast } from 'sonner'
 
 const loginSchema = z.object({
@@ -29,38 +31,60 @@ export function LoginPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      phone: '+998 (90) 123-45-67',
-      password: 'password123',
+      phone: '+998901234567',
+      password: 'Admin123$SecurePassword',
     },
   })
 
-  const onSubmit = (data: LoginFormData) => {
-    // Zero Magic Values & Single Source of Truth
-    setAuth(
-      'mock-jwt-token-zucco-2026',
-      'mock-refresh-token',
-      {
-        id: 'user-1',
-        fullName: 'Алишер Усмонов',
-        phone: data.phone,
-        role: 'Owner',
-        permissions: ['*'],
-        branchIds: ['b1', 'b2', 'b3'],
-      }
-    )
-    toast.success('Тизимга муваффақиятли кирдингиз!')
-    navigate(ROUTES.OVERVIEW)
+  // Haqiqiy Backend API orqali kirish
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const cleanPhone = data.phone.replace(/[\s\(\)\-]/g, '')
+      const formattedPhone = cleanPhone.startsWith('+') ? cleanPhone : `+${cleanPhone}`
+
+      const loginRes = await apiClient.post(API_ROUTES.AUTH.LOGIN, {
+        phone: formattedPhone,
+        password: data.password,
+      })
+
+      const { accessToken, refreshToken } = loginRes.data.data
+
+      // Foydalanuvchi profil ma'lumotlarini (huquqlar, rollar, filiallar) yuklab olish
+      const profileRes = await apiClient.get(API_ROUTES.AUTH.ME, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      const profile = profileRes.data.data
+
+      setAuth(accessToken, refreshToken, {
+        id: profile.userId,
+        fullName: profile.fullName || 'Administrator',
+        phone: profile.phone,
+        role: profile.roles?.[0] || 'Owner',
+        permissions: profile.permissions || ['*'],
+        branchIds: profile.branchId ? [profile.branchId] : ['b1'],
+      })
+
+      toast.success('Тизимга муваффақиятли кирдингиз!')
+      navigate(ROUTES.OVERVIEW)
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { code?: string; message?: string } } }
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.code ||
+        'Телефон рақам ёки пароль нотўғри'
+      toast.error(errorMsg)
+    }
   }
 
-  // Tezkor Demo Kirish (Tez sinab ko'rish uchun)
+  // Tezkor Demo Kirish (Sinov uchun)
   const handleQuickLogin = (role: 'Owner' | 'Teacher' | 'Cashier') => {
     setLoadingRole(role)
     setTimeout(() => {
       if (role === 'Owner') {
         setAuth('jwt-owner', 'rf-owner', {
           id: 'u-owner',
-          fullName: 'Алишер Усмонов',
-          phone: '+998 (90) 123-45-67',
+          fullName: 'Super Administrator',
+          phone: '+998901234567',
           role: 'Owner',
           permissions: ['*'],
           branchIds: ['b1', 'b2', 'b3'],
@@ -114,7 +138,7 @@ export function LoginPage() {
             <div className="relative">
               <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8B9C91]" />
               <Input
-                placeholder="+998 (90) 000-00-00"
+                placeholder="+998901234567"
                 className="pl-9"
                 {...register('phone')}
                 error={errors.phone?.message}

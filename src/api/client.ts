@@ -4,8 +4,16 @@ import { API_ROUTES } from '@/api/apiRoutes'
 import { ROUTES } from '@/routes/paths'
 import { useAuthStore } from '@/stores/authStore'
 
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL
+  if (typeof window !== 'undefined' && window.location.hostname.includes('test')) {
+    return 'https://api-test.zucco.uz'
+  }
+  return 'https://api.zucco.uz'
+}
+
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '',
+  baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
