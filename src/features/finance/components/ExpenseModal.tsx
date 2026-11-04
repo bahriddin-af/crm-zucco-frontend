@@ -4,13 +4,14 @@ import { z } from 'zod'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { useCashAccounts, useRecordExpense } from '../hooks/useFinance'
+import { formatCurrency } from '@/utils/formatters'
 
 const expenseSchema = z.object({
-  accountId: z.string().min(1, 'Касса ҳисобини танланг'),
-  categoryId: z.string().min(1, 'Харажат турини танланг'),
+  cashAccountId: z.string().min(1, 'Касса ҳисобини танланг'),
   amount: z.number().min(500, 'Минимал сумма: 500 сўм'),
   recipient: z.string().optional(),
-  comment: z.string().min(3, 'Изоҳни киритинг'),
+  description: z.string().min(3, 'Харажат мақсади ёки изоҳини киритинг'),
 })
 
 type ExpenseFormData = z.infer<typeof expenseSchema>
@@ -18,10 +19,16 @@ type ExpenseFormData = z.infer<typeof expenseSchema>
 interface ExpenseModalProps {
   isOpen: boolean
   onClose: () => void
-  onSuccess: (data: ExpenseFormData) => void
 }
 
-export function ExpenseModal({ isOpen, onClose, onSuccess }: ExpenseModalProps) {
+export function ExpenseModal({ isOpen, onClose }: ExpenseModalProps) {
+  const { data: accounts = [], isLoading: isLoadingAccounts } = useCashAccounts()
+  const defaultAccount = accounts.find((a) => a.isDefault) || accounts[0]
+
+  const recordExpenseMutation = useRecordExpense(() => {
+    onClose()
+  })
+
   const {
     register,
     handleSubmit,
@@ -29,19 +36,22 @@ export function ExpenseModal({ isOpen, onClose, onSuccess }: ExpenseModalProps) 
     reset,
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
-    defaultValues: {
-      accountId: 'acc-1',
-      categoryId: 'cat-1',
+    values: {
+      cashAccountId: defaultAccount?.id || '',
       amount: 150000,
       recipient: '',
-      comment: 'Офис учун канцелярия ва маркерлар',
+      description: 'Офис учун канцелярия ва маркерлар',
     },
   })
 
   const onSubmit = (data: ExpenseFormData) => {
-    onSuccess(data)
+    recordExpenseMutation.mutate({
+      cashAccountId: data.cashAccountId,
+      amount: Number(data.amount),
+      recipient: data.recipient || null,
+      description: data.description,
+    })
     reset()
-    onClose()
   }
 
   return (
@@ -57,66 +67,69 @@ export function ExpenseModal({ isOpen, onClose, onSuccess }: ExpenseModalProps) 
             Касса ҳисоби <span className="text-[#E11D48]">*</span>
           </label>
           <select
-            {...register('accountId')}
-            className="w-full min-h-[34px] rounded-md border border-[#E3EAE5] bg-white px-3 py-1.5 text-xs text-[#1E2B24] focus:outline-none focus:ring-2 focus:ring-[#418A66]"
+            {...register('cashAccountId')}
+            disabled={isLoadingAccounts}
+            className="w-full h-10 px-3 rounded-lg border border-[#E5E9EB] text-sm text-[#1E2B24] bg-white focus:outline-hidden focus:border-[#027A48] focus:ring-1 focus:ring-[#027A48] transition-all"
           >
-            <option value="acc-1">Асосий нақд касса</option>
-            <option value="acc-2">Терминал ҳисоби</option>
+            {accounts.map((acc) => (
+              <option key={acc.id} value={acc.id}>
+                {acc.name} — Мавжуд: {formatCurrency(acc.balance)}
+              </option>
+            ))}
           </select>
+          {errors.cashAccountId && (
+            <p className="text-xs text-[#E11D48] mt-1">{errors.cashAccountId.message}</p>
+          )}
         </div>
 
         <div>
           <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Харажат тури (категория) <span className="text-[#E11D48]">*</span>
-          </label>
-          <select
-            {...register('categoryId')}
-            className="w-full min-h-[34px] rounded-md border border-[#E3EAE5] bg-white px-3 py-1.5 text-xs text-[#1E2B24] focus:outline-none focus:ring-2 focus:ring-[#418A66]"
-          >
-            <option value="cat-1">Канцелярия ва хўжалик моллари</option>
-            <option value="cat-2">Бино ижараси</option>
-            <option value="cat-3">Коммунал ва интернет тўловлари</option>
-            <option value="cat-4">Маркетинг ва реклама (Instagram, Target)</option>
-            <option value="cat-5">Кофе-брейк ва чойхона харажатлари</option>
-            <option value="cat-6">Бошқа харажатлар</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Сумма (сўмда) <span className="text-[#E11D48]">*</span>
+            Чиқим суммаси (сўм) <span className="text-[#E11D48]">*</span>
           </label>
           <Input
             type="number"
-            {...register('amount', { valueAsNumber: true })}
+            step="10000"
             error={errors.amount?.message}
+            {...register('amount', { valueAsNumber: true })}
           />
         </div>
 
         <div>
           <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Олувчи шахс ёки ташкилот (ихтиёрий)
-          </label>
-          <Input placeholder="Масалан: Korzinka маркет" {...register('recipient')} />
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Изоҳ <span className="text-[#E11D48]">*</span>
+            Олувчи шахс ёки компания (ихтиёрий)
           </label>
           <Input
-            placeholder="Нима мақсадда чиқим қилинди..."
-            {...register('comment')}
-            error={errors.comment?.message}
+            placeholder="Масалан: Ishonch Do'koni MChJ"
+            error={errors.recipient?.message}
+            {...register('recipient')}
           />
         </div>
 
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E3EAE5]">
-          <Button type="button" variant="secondary" onClick={onClose}>
+        <div>
+          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
+            Харажат мақсади ва изоҳ <span className="text-[#E11D48]">*</span>
+          </label>
+          <textarea
+            {...register('description')}
+            rows={3}
+            placeholder="Нима мақсадда харажат қилинганлигини ёзинг..."
+            className="w-full px-3 py-2 rounded-lg border border-[#E5E9EB] text-sm text-[#1E2B24] placeholder:text-[#8C9E94] focus:outline-hidden focus:border-[#027A48] focus:ring-1 focus:ring-[#027A48] transition-all resize-none"
+          />
+          {errors.description && (
+            <p className="text-xs text-[#E11D48] mt-1">{errors.description.message}</p>
+          )}
+        </div>
+
+        <div className="flex justify-end gap-3 pt-4 border-t border-[#E5E9EB]">
+          <Button type="button" variant="outline" onClick={onClose}>
             Бекор қилиш
           </Button>
-          <Button type="submit" variant="danger" isLoading={isSubmitting}>
-            Харажатни тасдиқлаш
+          <Button
+            type="submit"
+            variant="danger"
+            isLoading={isSubmitting || recordExpenseMutation.isPending}
+          >
+            Харажатни сақлаш
           </Button>
         </div>
       </form>

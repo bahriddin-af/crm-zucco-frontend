@@ -1,127 +1,87 @@
 import { useState } from 'react'
-import { MinusCircle } from 'lucide-react'
+import { MinusCircle, Plus, Wallet, ArrowDownRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
 import { ExpenseModal } from '../components/ExpenseModal'
-import { formatCurrency, formatDate } from '@/utils/formatters'
-import type { ExpenseTransaction } from '../types/financeTypes'
-
-const INITIAL_EXPENSES: ExpenseTransaction[] = [
-  {
-    id: 'exp-1',
-    accountId: 'acc-1',
-    accountName: 'Асосий нақд касса',
-    categoryId: 'cat-2',
-    categoryName: 'Бино ижараси',
-    amount: 8500000,
-    recipient: 'Чилонзор Бизнес Маркази',
-    comment: 'Ноябрь ойи ижара тўлови',
-    createdAt: '2026-11-01T10:00:00Z',
-  },
-  {
-    id: 'exp-2',
-    accountId: 'acc-1',
-    accountName: 'Асосий нақд касса',
-    categoryId: 'cat-1',
-    categoryName: 'Канцелярия моллари',
-    amount: 320000,
-    recipient: 'Korzinka',
-    comment: 'Оқ доска маркерлари ва А4 қоғоз',
-    createdAt: '2026-11-02T14:30:00Z',
-  },
-  {
-    id: 'exp-3',
-    accountId: 'acc-2',
-    accountName: 'Терминал ҳисоби',
-    categoryId: 'cat-3',
-    categoryName: 'Интернет ва алоқа',
-    amount: 450000,
-    recipient: 'Sarkor Telecom',
-    comment: 'Оптик толали юқори тезликдаги интернет',
-    createdAt: '2026-11-02T16:00:00Z',
-  },
-]
+import { formatCurrency } from '@/utils/formatters'
+import { useFinanceSummary } from '../hooks/useFinance'
 
 export function ExpensesPage() {
-  const [expenses, setExpenses] = useState<ExpenseTransaction[]>(INITIAL_EXPENSES)
   const [isExpenseOpen, setIsExpenseOpen] = useState(false)
+  const { data: summary, isLoading } = useFinanceSummary()
 
   return (
     <div className="space-y-5">
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-[#1E2B24] tracking-tight">
-            Харажатлар журналы
+            Марказ харажатлари (Чиқимлар)
           </h1>
           <p className="text-xs text-[#65776C] mt-0.5">
-            Кассадан чиқим қилинган барча оператив ва маъмурий харажатлар
+            Ижара, коммунал тўловлар, хўжалик ва бошқа турдаги чиқимлар журнали
           </p>
         </div>
-        <Button
-          variant="danger"
-          size="sm"
-          onClick={() => setIsExpenseOpen(true)}
-        >
-          <MinusCircle className="w-3.5 h-3.5" />
-          <span>Янги харажат қайд этиш</span>
+        <Button variant="primary" size="sm" onClick={() => setIsExpenseOpen(true)}>
+          <Plus className="w-3.5 h-3.5 mr-1" />
+          <span>Янги харажат ёзиш</span>
         </Button>
       </div>
 
-      <div className="bg-white border border-[#E3EAE5] rounded-lg shadow-xs overflow-hidden">
-        <table className="w-full text-left text-xs border-collapse">
-          <thead>
-            <tr className="bg-[#F6F8F7] border-b border-[#E3EAE5] text-[#65776C] text-[11px] font-semibold">
-              <th className="py-3 px-4">Сана</th>
-              <th className="py-3 px-4">Категория</th>
-              <th className="py-3 px-4">Олувчи / Изоҳ</th>
-              <th className="py-3 px-4">Ҳисоб</th>
-              <th className="py-3 px-4 text-right">Сумма</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#F0F4F1]">
-            {expenses.map((exp) => (
-              <tr key={exp.id} className="hover:bg-[#FCFEFC] transition-colors">
-                <td className="py-3 px-4 text-[#8B9C91] tabular-nums">
-                  {formatDate(exp.createdAt)}
-                </td>
-                <td className="py-3 px-4">
-                  <Badge variant="accent">{exp.categoryName}</Badge>
-                </td>
-                <td className="py-3 px-4">
-                  <span className="font-semibold text-[#1E2B24] block">
-                    {exp.recipient || '—'}
-                  </span>
-                  <span className="text-[11px] text-[#65776C]">{exp.comment}</span>
-                </td>
-                <td className="py-3 px-4 text-[#4D6255]">{exp.accountName}</td>
-                <td className="py-3 px-4 text-right tabular-nums">
-                  <span className="font-bold text-[#BE123C] text-sm">
-                    -{formatCurrency(exp.amount)}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* KPI Card */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-white p-5 rounded-xl border border-[#E5E9EB] shadow-xs">
+          <div className="flex items-center justify-between text-[#5A6C62] mb-2">
+            <span className="text-xs font-medium uppercase tracking-wider">Жорий ойлик чиқим</span>
+            <div className="w-8 h-8 rounded-lg bg-[#E11D48]/10 flex items-center justify-center text-[#E11D48]">
+              <ArrowDownRight className="w-4 h-4" />
+            </div>
+          </div>
+          {isLoading ? (
+            <div className="h-8 bg-[#F0F3F1] rounded animate-pulse w-1/2" />
+          ) : (
+            <div className="text-2xl font-bold text-[#E11D48]">
+              -{formatCurrency(summary?.totalExpensesThisMonth || 0)}
+            </div>
+          )}
+          <p className="text-xs text-[#5A6C62] mt-1.5">Барча кассалардан чиқим қилинган</p>
+        </div>
+
+        <div className="bg-white p-5 rounded-xl border border-[#E5E9EB] shadow-xs">
+          <div className="flex items-center justify-between text-[#5A6C62] mb-2">
+            <span className="text-xs font-medium uppercase tracking-wider">Мавжуд касса баланси</span>
+            <div className="w-8 h-8 rounded-lg bg-[#027A48]/10 flex items-center justify-center text-[#027A48]">
+              <Wallet className="w-4 h-4" />
+            </div>
+          </div>
+          {isLoading ? (
+            <div className="h-8 bg-[#F0F3F1] rounded animate-pulse w-1/2" />
+          ) : (
+            <div className="text-2xl font-bold text-[#1E2B24]">
+              {formatCurrency(summary?.totalCashBalance || 0)}
+            </div>
+          )}
+          <p className="text-xs text-[#5A6C62] mt-1.5">Чиқим қилиш мумкин бўлган маблағ</p>
+        </div>
+      </div>
+
+      {/* Expenses Table or Placeholder */}
+      <div className="bg-white border border-[#E3EAE5] rounded-xl shadow-xs overflow-hidden p-8 text-center">
+        <div className="w-12 h-12 rounded-full bg-[#E11D48]/10 text-[#E11D48] flex items-center justify-center mx-auto mb-3">
+          <MinusCircle className="w-6 h-6" />
+        </div>
+        <h3 className="text-sm font-semibold text-[#1E2B24]">Харажатлар журнали</h3>
+        <p className="text-xs text-[#5A6C62] mt-1 max-w-sm mx-auto mb-4">
+          Чиқимларни қайд этиш учун юқоридаги «Янги харажат ёзиш» тугмасини босинг.
+        </p>
+        <Button size="sm" onClick={() => setIsExpenseOpen(true)}>
+          <Plus className="w-3.5 h-3.5 mr-1" />
+          Харажат қўшиш
+        </Button>
       </div>
 
       <ExpenseModal
         isOpen={isExpenseOpen}
         onClose={() => setIsExpenseOpen(false)}
-        onSuccess={(data) => {
-          const newExp: ExpenseTransaction = {
-            id: `exp-${Date.now()}`,
-            accountId: data.accountId,
-            accountName: data.accountId === 'acc-1' ? 'Асосий нақд касса' : 'Терминал ҳисоби',
-            categoryId: data.categoryId,
-            categoryName: 'Канцелярия ва хўжалик',
-            amount: data.amount,
-            recipient: data.recipient,
-            comment: data.comment,
-            createdAt: new Date().toISOString(),
-          }
-          setExpenses([newExp, ...expenses])
-        }}
       />
     </div>
   )

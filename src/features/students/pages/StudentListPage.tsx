@@ -1,369 +1,321 @@
-import { useState } from 'react'
-import { Plus, Search, Coins, ChevronRight, PauseCircle } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { Plus, Search, Coins, ChevronRight, PauseCircle, RefreshCw, UserPlus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { formatCurrency, formatPhone } from '@/utils/formatters'
+import { ROUTES } from '@/routes/paths'
+import {
+  STUDENT_STATUS,
+  STUDENT_STATUS_LABELS,
+  type StudentListItem,
+} from '../types/studentTypes'
+import { useStudentsList } from '../hooks/useStudents'
+import { StudentModal } from '../components/StudentModal'
 import { StudentFreezeModal } from '../components/StudentFreezeModal'
 import { StudentEnrollModal } from '../components/StudentEnrollModal'
-import { formatCurrency, formatPhone } from '@/utils/formatters'
-import { useTranslation } from '@/i18n'
-import type { Student } from '../types/studentTypes'
-
-const INITIAL_STUDENTS: Student[] = [
-  {
-    id: 'zu-0248',
-    fullName: 'Темур Бекмирзаев',
-    phone: '998901234567',
-    code: 'ZU-0248',
-    status: 'Active',
-    balance: -450000,
-    coins: 135,
-    branchId: 'b1',
-    branchName: 'Чилонзор',
-    enrollments: [
-      {
-        id: 'e1',
-        groupId: 'g1',
-        groupName: 'IF-09',
-        courseName: 'IELTS Foundation',
-        joinedDate: '2026-09-01',
-        standardPrice: 650000,
-        status: 'Active',
-      },
-    ],
-  },
-  {
-    id: 'zu-0189',
-    fullName: 'Шаҳзода Низомова',
-    phone: '998939871122',
-    code: 'ZU-0189',
-    status: 'Active',
-    balance: 200000,
-    coins: 210,
-    branchId: 'b1',
-    branchName: 'Чилонзор',
-    enrollments: [
-      {
-        id: 'e2',
-        groupId: 'g2',
-        groupName: 'GE-04',
-        courseName: 'General English',
-        joinedDate: '2026-08-15',
-        standardPrice: 500000,
-        status: 'Active',
-      },
-      {
-        id: 'e3',
-        groupId: 'g3',
-        groupName: 'FE-02',
-        courseName: 'Frontend React',
-        joinedDate: '2026-10-01',
-        standardPrice: 800000,
-        status: 'Active',
-      },
-    ],
-  },
-  {
-    id: 'zu-0312',
-    fullName: 'Жаҳонгир Олимов',
-    phone: '998973334455',
-    code: 'ZU-0312',
-    status: 'Frozen',
-    balance: 0,
-    coins: 45,
-    branchId: 'b1',
-    branchName: 'Чилонзор',
-    enrollments: [
-      {
-        id: 'e4',
-        groupId: 'g1',
-        groupName: 'IF-09',
-        courseName: 'IELTS Foundation',
-        joinedDate: '2026-07-10',
-        standardPrice: 650000,
-        status: 'Frozen',
-      },
-    ],
-    freezeInfo: {
-      startDate: '2026-10-20',
-      endDate: '2026-11-20',
-      reason: 'Саломатлик туфайли',
-    },
-  },
-  {
-    id: 'zu-0155',
-    fullName: 'Камила Исмоилова',
-    phone: '998998887766',
-    code: 'ZU-0155',
-    status: 'Active',
-    balance: 0,
-    coins: 90,
-    branchId: 'b1',
-    branchName: 'Чилонзор',
-    enrollments: [
-      {
-        id: 'e5',
-        groupId: 'g4',
-        groupName: 'M-11',
-        courseName: 'Matematika Intensive',
-        joinedDate: '2026-09-15',
-        standardPrice: 400000,
-        status: 'Active',
-      },
-    ],
-  },
-]
 
 export function StudentListPage() {
-  const { t } = useTranslation()
-  const [students, setStudents] = useState<Student[]>(INITIAL_STUDENTS)
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Frozen' | 'Debt'>('All')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [selectedStudentForFreeze, setSelectedStudentForFreeze] = useState<StudentListItem | null>(null)
+  const [selectedStudentForEnroll, setSelectedStudentForEnroll] = useState<StudentListItem | null>(null)
 
-  const [selectedFreezeStudent, setSelectedFreezeStudent] = useState<Student | null>(null)
-  const [selectedEnrollStudent, setSelectedEnrollStudent] = useState<Student | null>(null)
+  // Live query from backend API
+  const { data: studentsData, isLoading, isError, refetch } = useStudentsList()
+  const students = studentsData?.items || []
 
-  const filteredStudents = students.filter((s) => {
-    const matchesSearch =
-      s.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      s.code.toLowerCase().includes(search.toLowerCase()) ||
-      s.phone.includes(search)
+  const filteredStudents = useMemo(() => {
+    return students.filter((s) => {
+      const query = search.toLowerCase()
+      const matchesSearch =
+        s.fullName.toLowerCase().includes(query) ||
+        s.phone.includes(query) ||
+        (s.primaryGroup && s.primaryGroup.toLowerCase().includes(query))
 
-    if (!matchesSearch) return false
+      const matchesStatus =
+        selectedStatus === 'all' || s.status.toString() === selectedStatus
 
-    if (statusFilter === 'Active') return s.status === 'Active'
-    if (statusFilter === 'Frozen') return s.status === 'Frozen'
-    if (statusFilter === 'Debt') return s.balance < 0
+      return matchesSearch && matchesStatus
+    })
+  }, [students, search, selectedStatus])
 
-    return true
-  })
+  const activeCount = students.filter((s) => s.status === STUDENT_STATUS.Active).length
+  const debtorCount = students.filter(
+    (s) => s.status === STUDENT_STATUS.Debtor || s.balance < 0
+  ).length
+  const frozenCount = students.filter((s) => s.status === STUDENT_STATUS.Frozen).length
 
   return (
     <div className="space-y-5">
-      {/* Page Header */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-[#1E2B24] tracking-tight">
-            {t.students.title}
+            Талабалар рўйхати
           </h1>
           <p className="text-xs text-[#65776C] mt-0.5">
-            {t.students.subtitle}
+            Ўқув марказининг барча фаол, қарздор ва музлатилган талабалари
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="primary" size="sm">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => refetch()}
+            title="Янгилаш"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
             <Plus className="w-3.5 h-3.5" />
-            <span>{t.students.addNew}</span>
+            <span>Янги талаба қўшиш</span>
           </Button>
         </div>
       </div>
 
-      {/* Toolbar / Search / Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-lg border border-[#E3EAE5] shadow-xs">
-        <div className="relative w-72">
+      {/* Toolbar / Search & Filter Tabs */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-lg border border-[#E3EAE5] shadow-xs">
+        <div className="relative flex-1 max-w-sm">
           <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8B9C91]" />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={t.students.searchPlaceholder}
+            placeholder="Исм, телефон ёки гуруҳ бўйича..."
             className="w-full h-8 pl-8 pr-3 text-xs bg-[#F6F8F7] border border-[#E3EAE5] rounded-md text-[#1E2B24] placeholder:text-[#8B9C91] focus:outline-none focus:ring-1 focus:ring-[#146B52]"
           />
         </div>
 
-        <div className="flex items-center gap-1.5">
-          {[
-            { key: 'All', label: t.common.all },
-            { key: 'Active', label: t.common.active },
-            { key: 'Frozen', label: t.common.frozen },
-            { key: 'Debt', label: t.common.debt },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setStatusFilter(tab.key as typeof statusFilter)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                statusFilter === tab.key
-                  ? 'bg-[#146B52] text-white'
-                  : 'bg-[#F6F8F7] text-[#4D6255] hover:bg-[#E8F3ED]'
-              }`}
-            >
-              {tab.label}
-            </button>
+        {/* Filter Tabs */}
+        <div className="flex items-center gap-1.5 overflow-x-auto text-xs">
+          <button
+            onClick={() => setSelectedStatus('all')}
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
+              selectedStatus === 'all'
+                ? 'bg-[#146B52] text-white'
+                : 'bg-[#F6F8F7] text-[#65776C] hover:bg-[#E8F3ED]'
+            }`}
+          >
+            Барчаси ({students.length})
+          </button>
+          <button
+            onClick={() => setSelectedStatus(STUDENT_STATUS.Active.toString())}
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
+              selectedStatus === STUDENT_STATUS.Active.toString()
+                ? 'bg-[#146B52] text-white'
+                : 'bg-[#F6F8F7] text-[#65776C] hover:bg-[#E8F3ED]'
+            }`}
+          >
+            Фаол ({activeCount})
+          </button>
+          <button
+            onClick={() => setSelectedStatus(STUDENT_STATUS.Debtor.toString())}
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
+              selectedStatus === STUDENT_STATUS.Debtor.toString()
+                ? 'bg-[#BE123C] text-white'
+                : 'bg-[#FFF1F2] text-[#BE123C] hover:bg-[#FFE4E6]'
+            }`}
+          >
+            Қарздорлар ({debtorCount})
+          </button>
+          <button
+            onClick={() => setSelectedStatus(STUDENT_STATUS.Frozen.toString())}
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
+              selectedStatus === STUDENT_STATUS.Frozen.toString()
+                ? 'bg-[#146B52] text-white'
+                : 'bg-[#F6F8F7] text-[#65776C] hover:bg-[#E8F3ED]'
+            }`}
+          >
+            Музлатилган ({frozenCount})
+          </button>
+        </div>
+      </div>
+
+      {/* Loading Skeletons */}
+      {isLoading && (
+        <div className="bg-white border border-[#E3EAE5] rounded-lg p-4 space-y-3">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex justify-between items-center py-2 border-b border-[#F0F4F1] last:border-none">
+              <div className="flex items-center gap-3">
+                <Skeleton className="w-8 h-8 rounded-full" />
+                <div className="space-y-1">
+                  <Skeleton className="h-4 w-36" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              </div>
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-5 w-16" />
+            </div>
           ))}
         </div>
-      </div>
+      )}
 
-      {/* Students Table */}
-      <div className="bg-white border border-[#E3EAE5] rounded-lg shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-[#F6F8F7] border-b border-[#E3EAE5] text-[#65776C] text-[11px] font-semibold">
-                <th className="py-3 px-4">{t.students.codeOrName}</th>
-                <th className="py-3 px-4">{t.common.phone}</th>
-                <th className="py-3 px-4">{t.students.enrolledGroups}</th>
-                <th className="py-3 px-4">{t.students.balance}</th>
-                <th className="py-3 px-4">{t.students.coins}</th>
-                <th className="py-3 px-4">{t.common.status}</th>
-                <th className="py-3 px-4 text-right">{t.common.actions}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#F0F4F1]">
-              {filteredStudents.map((student) => (
-                <tr
-                  key={student.id}
-                  className="hover:bg-[#FCFEFC] transition-colors"
-                >
-                  <td className="py-3.5 px-4">
-                    <Link
-                      to={`/students/${student.id}`}
-                      className="font-semibold text-[#1E2B24] hover:text-[#146B52] hover:underline block"
-                    >
-                      {student.fullName}
-                    </Link>
-                    <span className="text-[10px] text-[#8B9C91]">{student.code}</span>
-                  </td>
-
-                  <td className="py-3.5 px-4 text-[#4D6255] tabular-nums">
-                    {formatPhone(student.phone)}
-                  </td>
-
-                  <td className="py-3.5 px-4">
-                    <div className="flex flex-wrap gap-1">
-                      {student.enrollments.map((enr) => (
-                        <span
-                          key={enr.id}
-                          className="text-[10px] bg-[#EFF7F1] text-[#176446] border border-[#DDEEE3] px-1.5 py-0.5 rounded font-medium"
-                        >
-                          {enr.groupName}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-
-                  <td className="py-3.5 px-4 tabular-nums">
-                    {student.balance < 0 ? (
-                      <span className="text-[#BE123C] font-semibold bg-[#FFF1F2] px-2 py-0.5 rounded">
-                        {formatCurrency(student.balance)}
-                      </span>
-                    ) : student.balance > 0 ? (
-                      <span className="text-[#047857] font-semibold bg-[#ECFDF5] px-2 py-0.5 rounded">
-                        +{formatCurrency(student.balance)}
-                      </span>
-                    ) : (
-                      <span className="text-[#65776C]">0 {t.common.sumUnit}</span>
-                    )}
-                  </td>
-
-                  <td className="py-3.5 px-4 tabular-nums">
-                    <div className="flex items-center gap-1 text-[#92400E] font-medium">
-                      <Coins className="w-3.5 h-3.5 text-[#D97706]" />
-                      <span>{student.coins}</span>
-                    </div>
-                  </td>
-
-                  <td className="py-3.5 px-4">
-                    {student.status === 'Active' && (
-                      <Badge variant="success">{t.common.active}</Badge>
-                    )}
-                    {student.status === 'Frozen' && (
-                      <Badge variant="warning">{t.common.frozen}</Badge>
-                    )}
-                    {student.status === 'Departed' && (
-                      <Badge variant="default">Чиққан</Badge>
-                    )}
-                  </td>
-
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedEnrollStudent(student)}
-                        title={t.students.enrollGroup}
-                        className="text-[11px]"
-                      >
-                        {t.students.enrollGroup}
-                      </Button>
-                      {student.status === 'Active' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedFreezeStudent(student)}
-                          title={t.students.freeze}
-                          className="text-[11px] text-[#92400E]"
-                        >
-                          <PauseCircle className="w-3.5 h-3.5" />
-                        </Button>
-                      )}
-                      <Link to={`/students/${student.id}`}>
-                        <Button variant="secondary" size="sm" className="p-1.5">
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-
-              {filteredStudents.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="py-12 text-center text-xs text-[#8B9C91]">
-                    {t.common.noData}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      {/* Error State */}
+      {isError && !isLoading && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center space-y-3">
+          <p className="text-xs text-red-600">Талабаларни юклашда хатолик юз берди</p>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>
+            Қайта уриниш
+          </Button>
         </div>
-      </div>
+      )}
 
-      {/* Freeze Modal */}
-      <StudentFreezeModal
-        student={selectedFreezeStudent}
-        isOpen={Boolean(selectedFreezeStudent)}
-        onClose={() => setSelectedFreezeStudent(null)}
-        onSuccess={() => {
-          if (!selectedFreezeStudent) return
-          setStudents((prev) =>
-            prev.map((s) =>
-              s.id === selectedFreezeStudent.id ? { ...s, status: 'Frozen' } : s
-            )
-          )
-        }}
+      {/* Empty State */}
+      {!isLoading && !isError && filteredStudents.length === 0 && (
+        <EmptyState
+          title="Талабалар топилмади"
+          description={
+            search
+              ? `"${search}" қидируви бўйича талаба топилмади.`
+              : 'Тизимда ҳозирча талабалар мавжуд эмас. Янги талаба қўшинг ёки воронкадан лидни қабул қилинг.'
+          }
+          icon={<UserPlus className="w-5 h-5" />}
+          action={
+            <Button variant="primary" size="sm" onClick={() => setIsCreateModalOpen(true)}>
+              <Plus className="w-3.5 h-3.5" />
+              <span>Биринчи талабани қўшиш</span>
+            </Button>
+          }
+        />
+      )}
+
+      {/* Students List Table */}
+      {!isLoading && !isError && filteredStudents.length > 0 && (
+        <div className="bg-white border border-[#E3EAE5] rounded-lg shadow-xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-[#F6F8F7] border-b border-[#E3EAE5] text-[11px] font-semibold text-[#65776C] uppercase tracking-wider">
+                  <th className="py-3 px-4">Талаба</th>
+                  <th className="py-3 px-4">Асосий гуруҳ</th>
+                  <th className="py-3 px-4">Ҳисоб баланси</th>
+                  <th className="py-3 px-4">Тангалар</th>
+                  <th className="py-3 px-4">Ҳолат</th>
+                  <th className="py-3 px-4 text-right">Амаллар</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#F0F4F1] text-xs">
+                {filteredStudents.map((student) => {
+                  const isDebtor = student.balance < 0
+
+                  return (
+                    <tr
+                      key={student.id}
+                      className="hover:bg-[#F9FBFA] transition-colors group"
+                    >
+                      <td className="py-3.5 px-4">
+                        <Link
+                          to={`${ROUTES.STUDENTS.LIST}/${student.id}`}
+                          className="font-bold text-[#1E2B24] hover:text-[#146B52] transition-colors"
+                        >
+                          {student.fullName}
+                        </Link>
+                        <p className="text-[11px] text-[#65776C] mt-0.5 tabular-nums">
+                          {formatPhone(student.phone)}
+                        </p>
+                      </td>
+
+                      <td className="py-3.5 px-4 text-[#4D6255]">
+                        {student.primaryGroup ? (
+                          <span className="font-medium bg-[#E8F3ED] text-[#146B52] px-2 py-0.5 rounded text-[11px]">
+                            {student.primaryGroup}
+                          </span>
+                        ) : (
+                          <span className="text-[#8B9C91] text-[11px]">Гуруҳсиз</span>
+                        )}
+                      </td>
+
+                      <td className="py-3.5 px-4">
+                        <span
+                          className={`font-semibold tabular-nums text-xs ${
+                            isDebtor ? 'text-[#BE123C]' : 'text-[#047857]'
+                          }`}
+                        >
+                          {formatCurrency(student.balance)}
+                        </span>
+                      </td>
+
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-1 font-semibold text-[#B45309] tabular-nums">
+                          <Coins className="w-3.5 h-3.5 text-[#F59E0B]" />
+                          <span>{student.coinsBalance}</span>
+                        </div>
+                      </td>
+
+                      <td className="py-3.5 px-4">
+                        <Badge
+                          variant={
+                            student.status === STUDENT_STATUS.Active
+                              ? 'success'
+                              : isDebtor
+                              ? 'danger'
+                              : 'accent'
+                          }
+                        >
+                          {STUDENT_STATUS_LABELS[student.status] || 'Фаол'}
+                        </Badge>
+                      </td>
+
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedStudentForEnroll(student)}
+                            title="Гуруҳга бириктириш"
+                            className="p-1 rounded text-[#146B52] hover:bg-[#E8F3ED] text-[11px] font-medium"
+                          >
+                            + Гуруҳ
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedStudentForFreeze(student)}
+                            title="Музлатиш"
+                            className="p-1 text-[#65776C] hover:text-[#B45309] hover:bg-[#FEF3C7] rounded"
+                          >
+                            <PauseCircle className="w-3.5 h-3.5" />
+                          </button>
+                          <Link
+                            to={`${ROUTES.STUDENTS.LIST}/${student.id}`}
+                            className="p-1 text-[#65776C] hover:text-[#146B52] hover:bg-[#F0F4F1] rounded"
+                            title="Профилни очиш"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modals */}
+      <StudentModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
       />
 
-      {/* Enroll Modal */}
+      <StudentFreezeModal
+        isOpen={Boolean(selectedStudentForFreeze)}
+        onClose={() => setSelectedStudentForFreeze(null)}
+        student={selectedStudentForFreeze}
+      />
+
       <StudentEnrollModal
-        student={selectedEnrollStudent}
-        isOpen={Boolean(selectedEnrollStudent)}
-        onClose={() => setSelectedEnrollStudent(null)}
-        onSuccess={(data) => {
-          if (!selectedEnrollStudent) return
-          setStudents((prev) =>
-            prev.map((s) =>
-              s.id === selectedEnrollStudent.id
-                ? {
-                    ...s,
-                    enrollments: [
-                      ...s.enrollments,
-                      {
-                        id: `e-${Date.now()}`,
-                        groupId: data.groupId,
-                        groupName: data.groupId === 'g2' ? 'GE-04' : 'FE-02',
-                        courseName: data.groupId === 'g2' ? 'General English' : 'Frontend React',
-                        joinedDate: data.joinedDate,
-                        standardPrice: 600000,
-                        customPrice: data.customPrice,
-                        status: 'Active',
-                      },
-                    ],
-                  }
-                : s
-            )
-          )
-        }}
+        isOpen={Boolean(selectedStudentForEnroll)}
+        onClose={() => setSelectedStudentForEnroll(null)}
+        student={selectedStudentForEnroll}
       />
     </div>
   )

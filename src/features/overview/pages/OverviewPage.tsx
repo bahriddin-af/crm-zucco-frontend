@@ -1,7 +1,7 @@
 import {
   Users,
   TrendingUp,
-  Clock,
+  Wallet,
   AlertCircle,
   ArrowUpRight,
   ChevronRight,
@@ -13,9 +13,24 @@ import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { formatCurrency } from '@/utils/formatters'
 import { useTranslation } from '@/i18n'
+import { useFinanceSummary } from '@/features/finance/hooks/useFinance'
+import { useStudentsList } from '@/features/students/hooks/useStudents'
+import { useGroupsList } from '@/features/groups/hooks/useGroups'
+import { useKanbanBoard } from '@/features/leads/hooks/useLeads'
 
 export function OverviewPage() {
   const { t } = useTranslation()
+
+  const { data: financeSummary, isLoading: isLoadingFinance } = useFinanceSummary()
+  const { data: studentsData, isLoading: isLoadingStudents } = useStudentsList()
+  const { data: groupsData, isLoading: isLoadingGroups } = useGroupsList()
+  const { data: kanbanColumns = [], isLoading: isLoadingKanban } = useKanbanBoard()
+
+  const totalStudents = studentsData?.totalCount || 0
+  const groups = groupsData?.items || []
+
+  // Jami lidlar soni
+  const totalLeads = kanbanColumns.reduce((sum, col) => sum + (col.totalLeads || 0), 0)
 
   return (
     <div className="space-y-6">
@@ -45,7 +60,7 @@ export function OverviewPage() {
 
       {/* Top 4 KPI Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Metric 1 */}
+        {/* Metric 1: Faol Talabalar */}
         <div className="p-4 bg-white border border-[#E3EAE5] rounded-lg shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-medium text-[#65776C]">
@@ -55,16 +70,20 @@ export function OverviewPage() {
               <Users className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[#1E2B24] tabular-nums tracking-tight">
-            148 <span className="text-xs font-normal text-[#65776C]">{t.common.studentUnit}</span>
-          </div>
+          {isLoadingStudents ? (
+            <div className="h-7 w-20 bg-[#F0F3F1] rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl font-bold text-[#1E2B24] tabular-nums tracking-tight">
+              {totalStudents} <span className="text-xs font-normal text-[#65776C]">{t.common.studentUnit}</span>
+            </div>
+          )}
           <div className="flex items-center gap-1 mt-2 text-[10px] text-[#047857]">
             <ArrowUpRight className="w-3 h-3" />
-            <span>{t.overview.vsLastMonth} +8.4%</span>
+            <span>Тизимдаги жами фаол талабалар</span>
           </div>
         </div>
 
-        {/* Metric 2 */}
+        {/* Metric 2: Oylik Tushum */}
         <div className="p-4 bg-white border border-[#E3EAE5] rounded-lg shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-medium text-[#65776C]">
@@ -74,34 +93,42 @@ export function OverviewPage() {
               <TrendingUp className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[#1E2B24] tabular-nums tracking-tight">
-            {formatCurrency(42500000)}
-          </div>
+          {isLoadingFinance ? (
+            <div className="h-7 w-28 bg-[#F0F3F1] rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl font-bold text-[#1E2B24] tabular-nums tracking-tight">
+              {formatCurrency(financeSummary?.totalPaymentsThisMonth || 0)}
+            </div>
+          )}
           <div className="flex items-center gap-1 mt-2 text-[10px] text-[#047857]">
             <ArrowUpRight className="w-3 h-3" />
-            <span>{t.overview.planProgress}</span>
+            <span>Жорий ойдаги расмий тўловлар</span>
           </div>
         </div>
 
-        {/* Metric 3 */}
+        {/* Metric 3: Kassa Balansi */}
         <div className="p-4 bg-white border border-[#E3EAE5] rounded-lg shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-medium text-[#65776C]">
-              {t.overview.avgAttendance}
+              Жами касса қолдиғи
             </span>
             <div className="w-7 h-7 rounded-md bg-[#E8F3ED] text-[#146B52] flex items-center justify-center">
-              <Clock className="w-3.5 h-3.5" />
+              <Wallet className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[#1E2B24] tabular-nums tracking-tight">
-            94.2%
-          </div>
+          {isLoadingFinance ? (
+            <div className="h-7 w-28 bg-[#F0F3F1] rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl font-bold text-[#1E2B24] tabular-nums tracking-tight">
+              {formatCurrency(financeSummary?.totalCashBalance || 0)}
+            </div>
+          )}
           <div className="flex items-center gap-1 mt-2 text-[10px] text-[#65776C]">
-            <span>{t.overview.todayLessons}</span>
+            <span>{financeSummary?.cashAccounts?.length || 0} та касса ҳисобида</span>
           </div>
         </div>
 
-        {/* Metric 4 */}
+        {/* Metric 4: Qarzdorlik */}
         <div className="p-4 bg-white border border-[#E3EAE5] rounded-lg shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-medium text-[#65776C]">
@@ -111,89 +138,79 @@ export function OverviewPage() {
               <AlertCircle className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[#BE123C] tabular-nums tracking-tight">
-            {formatCurrency(5600000)}
-          </div>
+          {isLoadingFinance ? (
+            <div className="h-7 w-28 bg-[#F0F3F1] rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl font-bold text-[#BE123C] tabular-nums tracking-tight">
+              {formatCurrency(financeSummary?.totalStudentDebt || 0)}
+            </div>
+          )}
           <div className="flex items-center gap-1 mt-2 text-[10px] text-[#BE123C]">
-            <span>{t.overview.debtCount}</span>
+            <span>{financeSummary?.totalDebtorsCount || 0} та қарздор талаба</span>
           </div>
         </div>
       </div>
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Today's Schedule */}
+        {/* Left 2 Cols: Active Groups */}
         <div className="lg:col-span-2 bg-white border border-[#E3EAE5] rounded-lg shadow-xs overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#E3EAE5]">
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-[#146B52]" />
               <h2 className="text-xs font-semibold text-[#1E2B24]">
-                {t.overview.todayLessons}
+                Фаол ўқув гуруҳлари
               </h2>
             </div>
             <Link
-              to={ROUTES.SCHEDULE}
+              to={ROUTES.GROUPS.LIST}
               className="text-[11px] font-medium text-[#146B52] hover:underline flex items-center gap-1"
             >
-              {t.overview.fullSchedule}
+              Барча гуруҳлар
               <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
 
-          <div className="divide-y divide-[#F0F4F1]">
-            {[
-              {
-                group: 'IELTS Foundation · IF-09',
-                teacher: 'Азиз Каримов',
-                room: '302',
-                time: '14:00 - 15:30',
-                students: `12 / 14 ${t.common.studentUnit}`,
-                status: t.common.active,
-                statusVariant: 'success' as const,
-              },
-              {
-                group: 'General English · GE-04',
-                teacher: 'Шаҳноза Раҳимова',
-                room: '104',
-                time: '15:30 - 17:00',
-                students: `10 / 12 ${t.common.studentUnit}`,
-                status: t.common.active,
-                statusVariant: 'accent' as const,
-              },
-              {
-                group: 'Frontend React · FE-02',
-                teacher: 'Жасур Алимов',
-                room: 'Lab-1',
-                time: '17:00 - 18:30',
-                students: `14 / 16 ${t.common.studentUnit}`,
-                status: t.common.active,
-                statusVariant: 'accent' as const,
-              },
-            ].map((lesson, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between p-4 hover:bg-[#F6F8F7] transition-colors"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-[#1E2B24]">
-                      {lesson.group}
-                    </span>
-                    <Badge variant={lesson.statusVariant}>{lesson.status}</Badge>
+          {isLoadingGroups ? (
+            <div className="p-5 space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-12 bg-[#F8FAF9] rounded animate-pulse" />
+              ))}
+            </div>
+          ) : groups.length === 0 ? (
+            <div className="p-8 text-center text-xs text-[#5A6C62]">
+              Ҳозирча гуруҳлар мавжуд эмас.
+            </div>
+          ) : (
+            <div className="divide-y divide-[#F0F4F1]">
+              {groups.slice(0, 5).map((grp) => (
+                <div
+                  key={grp.id}
+                  className="flex items-center justify-between p-4 hover:bg-[#F6F8F7] transition-colors"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-[#1E2B24]">
+                        {grp.courseName} · {grp.name}
+                      </span>
+                      <Badge variant="success">Фаол</Badge>
+                    </div>
+                    <p className="text-[11px] text-[#65776C]">
+                      <strong className="text-[#344B3E] font-medium">{grp.teacherName || 'Ўқитувчи тайинланмаган'}</strong> · {grp.roomName || 'Хона тайинланмаган'}
+                    </p>
                   </div>
-                  <p className="text-[11px] text-[#65776C]">
-                    <strong className="text-[#344B3E] font-medium">{lesson.teacher}</strong> · {lesson.room}-хона
-                  </p>
+                  <div className="text-right">
+                    <p className="text-xs font-medium text-[#1E2B24] tabular-nums">
+                      {grp.startTime.slice(0, 5)} - {grp.endTime.slice(0, 5)}
+                    </p>
+                    <p className="text-[10px] text-[#65776C]">
+                      {grp.enrolledStudentsCount} / {grp.capacity} {t.common.studentUnit}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs font-medium text-[#1E2B24] tabular-nums">
-                    {lesson.time}
-                  </p>
-                  <p className="text-[10px] text-[#65776C]">{lesson.students}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right 1 Col: Quick Leads Funnel Preview */}
@@ -212,28 +229,41 @@ export function OverviewPage() {
           </div>
 
           <div className="p-4 space-y-3.5 flex-1">
-            {[
-              { label: t.leads.stages.new, count: 18, color: 'bg-[#2F8060]' },
-              { label: t.leads.stages.contacted, count: 14, color: 'bg-[#32856B]' },
-              { label: t.leads.stages.trialScheduled, count: 9, color: 'bg-[#4F9270]' },
-              { label: t.leads.stages.trialAttended, count: 7, color: 'bg-[#F59E0B]' },
-              { label: t.leads.stages.converted, count: 12, color: 'bg-[#059669]' },
-            ].map((stage, idx) => (
-              <div key={idx} className="space-y-1">
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-[#65776C]">{stage.label}</span>
-                  <span className="font-semibold text-[#1E2B24] tabular-nums">
-                    {stage.count}
-                  </span>
-                </div>
-                <div className="h-1.5 w-full bg-[#EDF2EE] rounded-full overflow-hidden">
-                  <div
-                    className={`h-full ${stage.color} rounded-full`}
-                    style={{ width: `${(stage.count / 20) * 100}%` }}
-                  />
-                </div>
+            {isLoadingKanban ? (
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="h-6 bg-[#F8FAF9] rounded animate-pulse" />
+                ))}
               </div>
-            ))}
+            ) : kanbanColumns.length === 0 ? (
+              <div className="p-6 text-center text-xs text-[#5A6C62]">
+                Лидлар босқичлари юкланмоқда...
+              </div>
+            ) : (
+              kanbanColumns.map((col) => {
+                const totalInBoard = totalLeads || 1
+                const percent = Math.min(100, Math.round((col.totalLeads / Math.max(1, totalInBoard)) * 100))
+                return (
+                  <div key={col.stageId} className="space-y-1">
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-[#65776C]">{col.stageName}</span>
+                      <span className="font-semibold text-[#1E2B24] tabular-nums">
+                        {col.totalLeads}
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full bg-[#EDF2EE] rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-300"
+                        style={{
+                          width: `${percent}%`,
+                          backgroundColor: col.colorHex || '#027A48',
+                        }}
+                      />
+                    </div>
+                  </div>
+                )
+              })
+            )}
           </div>
 
           <div className="p-4 border-t border-[#E3EAE5] bg-[#F6F8F7]">

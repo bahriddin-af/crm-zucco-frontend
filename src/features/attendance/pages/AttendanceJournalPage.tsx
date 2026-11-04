@@ -1,120 +1,121 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Save,
   Check,
   X,
   Clock,
   AlertTriangle,
-  Coins,
+  Calendar,
+  Sparkles,
+  BookOpen,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
-import { toast } from 'sonner'
-
-interface AttendanceRecord {
-  studentId: string
-  studentName: string
-  studentCode: string
-  status: 'Present' | 'Excused' | 'Unexcused' | 'Late'
-  coins: number
-  score: number // 0 - 100
-  isFrozen?: boolean
-}
-
-const INITIAL_RECORDS: AttendanceRecord[] = [
-  {
-    studentId: 'zu-0248',
-    studentName: 'Темур Бекмирзаев',
-    studentCode: 'ZU-0248',
-    status: 'Present',
-    coins: 5,
-    score: 92,
-  },
-  {
-    studentId: 'zu-0189',
-    studentName: 'Шаҳзода Низомова',
-    studentCode: 'ZU-0189',
-    status: 'Present',
-    coins: 5,
-    score: 88,
-  },
-  {
-    studentId: 'zu-0312',
-    studentName: 'Жаҳонгир Олимов',
-    studentCode: 'ZU-0312',
-    status: 'Excused',
-    coins: 0,
-    score: 0,
-    isFrozen: true,
-  },
-  {
-    studentId: 'zu-0155',
-    studentName: 'Камила Исмоилова',
-    studentCode: 'ZU-0155',
-    status: 'Late',
-    coins: 5,
-    score: 80,
-  },
-]
+import { Skeleton } from '@/components/ui/Skeleton'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { formatDate } from '@/utils/formatters'
+import { useGroupsList } from '@/features/groups/hooks/useGroups'
+import {
+  ATTENDANCE_STATUS,
+  HOMEWORK_STATUS,
+  type MarkStudentAttendanceItem,
+} from '../types/attendanceTypes'
+import {
+  useGroupLessons,
+  useLessonSheet,
+  useGenerateSchedule,
+  useMarkAttendance,
+} from '../hooks/useAttendance'
 
 export function AttendanceJournalPage() {
-  const [selectedGroup, setSelectedGroup] = useState('g1')
-  const [selectedDate, setSelectedDate] = useState('2026-11-03')
-  const [records, setRecords] = useState<AttendanceRecord[]>(INITIAL_RECORDS)
-  const [isSaving, setIsSaving] = useState(false)
+  const { data: groupsData } = useGroupsList()
+  const groups = groupsData?.items || []
 
-  // Status o'zgartirish mantig'i: Present ga o'tganda avtomatik +5 tanga, chiqsa -5 tanga
-  const handleStatusChange = (
-    studentId: string,
-    newStatus: AttendanceRecord['status']
-  ) => {
-    setRecords((prev) =>
-      prev.map((r) => {
-        if (r.studentId !== studentId || r.isFrozen) return r
+  const [selectedGroupId, setSelectedGroupId] = useState<string>('')
+  const [selectedLessonId, setSelectedLessonId] = useState<string>('')
+  const [lessonTopic, setLessonTopic] = useState<string>('')
 
-        let newCoins = r.coins
-        if (r.status !== 'Present' && newStatus === 'Present') {
-          newCoins += 5
-        } else if (r.status === 'Present' && newStatus !== 'Present') {
-          newCoins = Math.max(0, newCoins - 5)
-        }
+  // Auto-select first group
+  useEffect(() => {
+    if (!selectedGroupId && groups.length > 0) {
+      setSelectedGroupId(groups[0].id)
+    }
+  }, [groups, selectedGroupId])
 
-        return {
-          ...r,
-          status: newStatus,
-          coins: newCoins,
+  // Lessons query for selected group
+  const { data: lessons = [], isLoading: isLessonsLoading } =
+    useGroupLessons(selectedGroupId)
+
+  // Auto-select first lesson
+  useEffect(() => {
+    if (lessons.length > 0) {
+      setSelectedLessonId(lessons[0].id)
+      setLessonTopic(lessons[0].topic || '')
+    } else {
+      setSelectedLessonId('')
+      setLessonTopic('')
+    }
+  }, [lessons])
+
+  // Lesson attendance sheet
+  const { data: sheet, isLoading: isSheetLoading } = useLessonSheet(selectedLessonId)
+
+  const generateScheduleMutation = useGenerateSchedule()
+  const markAttendanceMutation = useMarkAttendance()
+
+  // Local state for interactive marking
+  const [attendanceMap, setAttendanceMap] = useState<
+    Record<string, MarkStudentAttendanceItem>
+  >({})
+
+  useEffect(() => {
+    if (sheet?.students) {
+      const initialMap: Record<string, MarkStudentAttendanceItem> = {}
+      sheet.students.forEach((s) => {
+        initialMap[s.studentId] = {
+          studentId: s.studentId,
+          status: s.status || ATTENDANCE_STATUS.Present,
+          score: s.score ?? 85,
+          homeworkStatus: s.homeworkStatus || HOMEWORK_STATUS.Completed,
+          comment: s.comment || '',
         }
       })
-    )
-  }
+      setAttendanceMap(initialMap)
+      setLessonTopic(sheet.topic || '')
+    }
+  }, [sheet])
 
-  // Qo'shimcha rag'batlantirish tangalari (+1 yoki +5)
-  const handleBonusCoins = (studentId: string, amount: number) => {
-    setRecords((prev) =>
-      prev.map((r) =>
-        r.studentId === studentId && !r.isFrozen
-          ? { ...r, coins: r.coins + amount }
-          : r
-      )
-    )
-    toast.success(`Талабага +${amount} танга рағбат қўшилди!`)
+  const handleStatusChange = (
+    studentId: string,
+    status: typeof ATTENDANCE_STATUS[keyof typeof ATTENDANCE_STATUS]
+  ) => {
+    setAttendanceMap((prev) => ({
+      ...prev,
+      [studentId]: {
+        ...prev[studentId],
+        status,
+      },
+    }))
   }
 
   const handleScoreChange = (studentId: string, score: number) => {
-    const clampedScore = Math.min(100, Math.max(0, score))
-    setRecords((prev) =>
-      prev.map((r) =>
-        r.studentId === studentId ? { ...r, score: clampedScore } : r
-      )
-    )
+    setAttendanceMap((prev) => ({
+      ...prev,
+      [studentId]: {
+        ...prev[studentId],
+        score,
+      },
+    }))
   }
 
-  const handleSave = () => {
-    setIsSaving(true)
-    setTimeout(() => {
-      setIsSaving(false)
-      toast.success('Давомат ва тангалар муваффақиятли сақланди!')
-    }, 400)
+  const handleSaveAttendance = () => {
+    if (!selectedLessonId) return
+    const items = Object.values(attendanceMap)
+    markAttendanceMutation.mutate({
+      lessonId: selectedLessonId,
+      students: items,
+      topic: lessonTopic || undefined,
+    })
   }
 
   return (
@@ -123,187 +124,260 @@ export function AttendanceJournalPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-[#1E2B24] tracking-tight">
-            Давомат ва тангалар журнали
+            Давомат журнали
           </h1>
           <p className="text-xs text-[#65776C] mt-0.5">
-            Дарс давоматини қайд этиш, автоматик тангалар ва қўшимча рағбат
+            Кунлик дарс давомати, баҳолаш, уй вазифаси ва фаоллик учун тангалар
           </p>
         </div>
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={handleSave}
-          isLoading={isSaving}
-        >
-          <Save className="w-3.5 h-3.5" />
-          <span>Давоматни сақлаш</span>
-        </Button>
+
+        {selectedLessonId && (
+          <Button
+            variant="primary"
+            size="sm"
+            isLoading={markAttendanceMutation.isPending}
+            onClick={handleSaveAttendance}
+          >
+            <Save className="w-3.5 h-3.5" />
+            <span>Давоматни сақлаш</span>
+          </Button>
+        )}
       </div>
 
-      {/* Select Group & Lesson Date Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-lg border border-[#E3EAE5] shadow-xs">
-        <div className="flex flex-wrap items-center gap-3">
-          <div>
-            <label className="text-[10px] font-semibold text-[#65776C] block uppercase mb-1">
-              Гуруҳ
-            </label>
-            <select
-              value={selectedGroup}
-              onChange={(e) => setSelectedGroup(e.target.value)}
-              className="min-h-[34px] rounded-md border border-[#E3EAE5] bg-[#F6F8F7] px-3 py-1.5 text-xs text-[#1E2B24] font-medium focus:outline-none focus:ring-2 focus:ring-[#418A66]"
-            >
-              <option value="g1">IELTS Foundation · IF-09 (14:00 - 15:30)</option>
-              <option value="g2">General English · GE-04 (15:30 - 17:00)</option>
-              <option value="g3">Frontend React · FE-02 (17:00 - 18:30)</option>
-            </select>
-          </div>
+      {/* Selectors Bar */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-white p-3.5 rounded-lg border border-[#E3EAE5] shadow-xs">
+        {/* Group Selector */}
+        <div>
+          <label className="block text-[11px] font-medium text-[#65776C] mb-1">
+            Ўқув гуруҳи:
+          </label>
+          <select
+            value={selectedGroupId}
+            onChange={(e) => setSelectedGroupId(e.target.value)}
+            className="w-full min-h-[34px] rounded-md border border-[#E3EAE5] bg-[#F6F8F7] px-3 py-1.5 text-xs text-[#1E2B24] font-semibold focus:outline-none focus:ring-1 focus:ring-[#146B52]"
+          >
+            {groups.length === 0 && <option value="">Гуруҳлар йўқ</option>}
+            {groups.map((g) => (
+              <option key={g.id} value={g.id}>
+                {g.name} — {g.courseName}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          <div>
-            <label className="text-[10px] font-semibold text-[#65776C] block uppercase mb-1">
-              Дарс санаси
-            </label>
+        {/* Lesson Selector */}
+        <div>
+          <label className="block text-[11px] font-medium text-[#65776C] mb-1">
+            Дарс санаси ва тартиби:
+          </label>
+          {lessons.length === 0 ? (
             <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="min-h-[34px] rounded-md border border-[#E3EAE5] bg-[#F6F8F7] px-3 py-1.5 text-xs text-[#1E2B24] focus:outline-none focus:ring-2 focus:ring-[#418A66]"
-              />
+              <span className="text-xs text-[#8B9C91]">Жадвал йўқ</span>
+              <Button
+                variant="outline"
+                size="sm"
+                isLoading={generateScheduleMutation.isPending}
+                onClick={() => generateScheduleMutation.mutate(selectedGroupId)}
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>Жадвал яратиш</span>
+              </Button>
             </div>
-          </div>
+          ) : (
+            <select
+              value={selectedLessonId}
+              onChange={(e) => setSelectedLessonId(e.target.value)}
+              className="w-full min-h-[34px] rounded-md border border-[#E3EAE5] bg-[#F6F8F7] px-3 py-1.5 text-xs text-[#1E2B24] font-medium focus:outline-none focus:ring-1 focus:ring-[#146B52]"
+            >
+              {lessons.map((l) => (
+                <option key={l.id} value={l.id}>
+                  #{l.lessonNumber} — {formatDate(l.lessonDate)} ({l.startTime.slice(0, 5)})
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
-        {/* Quick summary badges */}
-        <div className="flex items-center gap-2 text-xs">
-          <Badge variant="success">
-            Қатнашди: {records.filter((r) => r.status === 'Present').length}
-          </Badge>
-          <Badge variant="warning">
-            Кечикди: {records.filter((r) => r.status === 'Late').length}
-          </Badge>
-          <Badge variant="danger">
-            Келмади: {records.filter((r) => r.status === 'Unexcused').length}
-          </Badge>
+        {/* Lesson Topic */}
+        <div>
+          <label className="block text-[11px] font-medium text-[#65776C] mb-1">
+            Дарс мавзуси:
+          </label>
+          <input
+            type="text"
+            placeholder="Бугунги дарс мавзуси..."
+            value={lessonTopic}
+            onChange={(e) => setLessonTopic(e.target.value)}
+            className="w-full h-[34px] rounded-md border border-[#E3EAE5] bg-[#F6F8F7] px-3 py-1.5 text-xs text-[#1E2B24] placeholder:text-[#8B9C91] focus:outline-none focus:ring-1 focus:ring-[#146B52]"
+          />
         </div>
       </div>
+
+      {/* Skeletons */}
+      {(isLessonsLoading || isSheetLoading) && (
+        <div className="bg-white border border-[#E3EAE5] rounded-lg p-5 space-y-4">
+          <Skeleton className="h-6 w-48" />
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-12 w-full rounded-md" />
+          ))}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLessonsLoading && !isSheetLoading && (!sheet || sheet.students.length === 0) && (
+        <EmptyState
+          title="Давомат маълумотлари йўқ"
+          description={
+            lessons.length === 0
+              ? 'Ушбу гуруҳ учун ҳали дарс жадвали шакллантирилмаган. «Жадвал яратиш» тугмасини босинг.'
+              : 'Ушбу гуруҳда ҳозирча талабалар мавжуд эмас. Гуруҳга талаба қўшинг.'
+          }
+          icon={<BookOpen className="w-5 h-5" />}
+          action={
+            lessons.length === 0 ? (
+              <Button
+                variant="primary"
+                size="sm"
+                isLoading={generateScheduleMutation.isPending}
+                onClick={() => generateScheduleMutation.mutate(selectedGroupId)}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>12 та дарс жадвалини яратиш</span>
+              </Button>
+            ) : undefined
+          }
+        />
+      )}
 
       {/* Attendance Table */}
-      <div className="bg-white border border-[#E3EAE5] rounded-lg shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-[#F6F8F7] border-b border-[#E3EAE5] text-[#65776C] text-[11px] font-semibold">
-                <th className="py-3 px-4 w-[28%]">Талаба</th>
-                <th className="py-3 px-4 w-[34%]">Давомат ҳолати</th>
-                <th className="py-3 px-4 w-[14%]">Баҳо (0-100)</th>
-                <th className="py-3 px-4 w-[24%] text-right">Тангалар ва рағбат</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#F0F4F1]">
-              {records.map((r) => (
-                <tr key={r.studentId} className="hover:bg-[#FCFEFC] transition-colors">
-                  {/* Student */}
-                  <td className="py-3 px-4">
-                    <span className="font-semibold text-[#1E2B24] block">
-                      {r.studentName}
-                    </span>
-                    <span className="text-[10px] text-[#8B9C91]">
-                      {r.studentCode}
-                      {r.isFrozen && (
-                        <span className="ml-1.5 text-[#BE123C] font-semibold bg-[#FFF1F2] px-1.5 py-0.2 rounded">
-                          Музлатилган
-                        </span>
-                      )}
-                    </span>
-                  </td>
+      {!isLessonsLoading && !isSheetLoading && sheet && sheet.students.length > 0 && (
+        <div className="bg-white border border-[#E3EAE5] rounded-lg shadow-xs overflow-hidden">
+          <div className="p-4 border-b border-[#E3EAE5] flex items-center justify-between bg-[#F6F8F7]">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-[#146B52]" />
+              <span className="text-xs font-bold text-[#1E2B24]">
+                {sheet.groupName} — #{sheet.lessonNumber}-дарс ({formatDate(sheet.lessonDate)})
+              </span>
+            </div>
+            <Badge variant={sheet.isMarked ? 'success' : 'accent'}>
+              {sheet.isMarked ? 'Белгиланган' : 'Кутилмоқда'}
+            </Badge>
+          </div>
 
-                  {/* Attendance Status Buttons */}
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-1">
-                      {[
-                        { id: 'Present', label: 'Қатнашди', icon: Check, color: 'text-[#047857]' },
-                        { id: 'Late', label: 'Кечикди', icon: Clock, color: 'text-[#C2410C]' },
-                        { id: 'Excused', label: 'Узрли', icon: AlertTriangle, color: 'text-[#92400E]' },
-                        { id: 'Unexcused', label: 'Узрсиз', icon: X, color: 'text-[#BE123C]' },
-                      ].map((st) => {
-                        const Icon = st.icon
-                        const isSelected = r.status === st.id
-                        return (
-                          <button
-                            key={st.id}
-                            type="button"
-                            disabled={r.isFrozen}
-                            onClick={() =>
-                              handleStatusChange(
-                                r.studentId,
-                                st.id as AttendanceRecord['status']
-                              )
-                            }
-                            className={`flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium border transition-all ${
-                              isSelected
-                                ? 'bg-[#E8F3ED] border-[#146B52] text-[#146B52] font-semibold shadow-2xs'
-                                : 'bg-white border-[#E3EAE5] text-[#65776C] hover:bg-[#F6F8F7]'
-                            } ${r.isFrozen ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
-                          >
-                            <Icon className="w-3 h-3" />
-                            <span>{st.label}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </td>
-
-                  {/* Grade Score (0-100) */}
-                  <td className="py-3 px-4">
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      disabled={r.isFrozen || r.status === 'Unexcused'}
-                      value={r.score || ''}
-                      onChange={(e) =>
-                        handleScoreChange(r.studentId, parseInt(e.target.value) || 0)
-                      }
-                      placeholder="—"
-                      className="w-14 h-8 text-center text-xs font-semibold rounded-md border border-[#E3EAE5] bg-white tabular-nums focus:outline-none focus:ring-1 focus:ring-[#146B52] disabled:bg-[#F6F8F7] disabled:opacity-50"
-                    />
-                  </td>
-
-                  {/* Coins & Bonus Incentive */}
-                  <td className="py-3 px-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <div className="flex items-center gap-1 text-[#92400E] font-bold text-xs tabular-nums bg-[#FFFBEB] border border-[#FDE68A] px-2 py-1 rounded">
-                        <Coins className="w-3.5 h-3.5 text-[#D97706]" />
-                        <span>+{r.coins}</span>
-                      </div>
-
-                      {/* Extra bonus reward buttons */}
-                      <button
-                        type="button"
-                        disabled={r.isFrozen}
-                        onClick={() => handleBonusCoins(r.studentId, 1)}
-                        title="+1 танга рағбат"
-                        className="h-7 px-1.5 rounded border border-[#E3EAE5] text-[10px] font-semibold text-[#4D6255] hover:bg-[#E8F3ED] hover:text-[#146B52] transition-colors disabled:opacity-40"
-                      >
-                        +1
-                      </button>
-                      <button
-                        type="button"
-                        disabled={r.isFrozen}
-                        onClick={() => handleBonusCoins(r.studentId, 5)}
-                        title="+5 танга фаоллик учун"
-                        className="h-7 px-1.5 rounded border border-[#E3EAE5] text-[10px] font-semibold text-[#4D6255] hover:bg-[#E8F3ED] hover:text-[#146B52] transition-colors disabled:opacity-40"
-                      >
-                        +5
-                      </button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-[#E3EAE5] text-[11px] font-semibold text-[#65776C] uppercase">
+                  <th className="py-3 px-4">Талаба</th>
+                  <th className="py-3 px-4">Давомат ҳолати</th>
+                  <th className="py-3 px-4">Баҳо (0 - 100)</th>
+                  <th className="py-3 px-4">Уй вазифаси</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[#F0F4F1] text-xs">
+                {sheet.students.map((student) => {
+                  const currentItem = attendanceMap[student.studentId] || {
+                    status: ATTENDANCE_STATUS.Present,
+                    score: 85,
+                  }
+
+                  return (
+                    <tr key={student.studentId} className="hover:bg-[#F9FBFA]">
+                      <td className="py-3 px-4">
+                        <p className="font-bold text-[#1E2B24]">{student.studentName}</p>
+                        <p className="text-[11px] text-[#65776C]">{student.phone}</p>
+                      </td>
+
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleStatusChange(student.studentId, ATTENDANCE_STATUS.Present)
+                            }
+                            className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1 transition-colors ${
+                              currentItem.status === ATTENDANCE_STATUS.Present
+                                ? 'bg-[#047857] text-white'
+                                : 'bg-[#F0FDF4] text-[#047857] hover:bg-[#DCFCE7]'
+                            }`}
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Келди</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleStatusChange(student.studentId, ATTENDANCE_STATUS.Late)
+                            }
+                            className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1 transition-colors ${
+                              currentItem.status === ATTENDANCE_STATUS.Late
+                                ? 'bg-[#D97706] text-white'
+                                : 'bg-[#FFFBEB] text-[#D97706] hover:bg-[#FEF3C7]'
+                            }`}
+                          >
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>Кечикди</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleStatusChange(student.studentId, ATTENDANCE_STATUS.Excused)
+                            }
+                            className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1 transition-colors ${
+                              currentItem.status === ATTENDANCE_STATUS.Excused
+                                ? 'bg-[#4B5563] text-white'
+                                : 'bg-[#F3F4F6] text-[#4B5563] hover:bg-[#E5E7EB]'
+                            }`}
+                          >
+                            <AlertTriangle className="w-3.5 h-3.5" />
+                            <span>Сабабли</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleStatusChange(student.studentId, ATTENDANCE_STATUS.Unexcused)
+                            }
+                            className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1 transition-colors ${
+                              currentItem.status === ATTENDANCE_STATUS.Unexcused
+                                ? 'bg-[#BE123C] text-white'
+                                : 'bg-[#FFF1F2] text-[#BE123C] hover:bg-[#FFE4E6]'
+                            }`}
+                          >
+                            <X className="w-3.5 h-3.5" />
+                            <span>Келмади</span>
+                          </button>
+                        </div>
+                      </td>
+
+                      <td className="py-3 px-4">
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={currentItem.score ?? 85}
+                          onChange={(e) =>
+                            handleScoreChange(student.studentId, Number(e.target.value))
+                          }
+                          className="w-16 h-8 text-center rounded border border-[#E3EAE5] bg-[#F6F8F7] font-bold text-xs focus:outline-none focus:ring-1 focus:ring-[#146B52]"
+                        />
+                      </td>
+
+                      <td className="py-3 px-4">
+                        <span className="text-[11px] font-medium text-[#146B52] bg-[#E8F3ED] px-2 py-0.5 rounded">
+                          Бажарилди
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
