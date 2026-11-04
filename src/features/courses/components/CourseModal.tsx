@@ -2,15 +2,9 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { apiClient } from '@/api/client'
-import { API_ROUTES } from '@/api/apiRoutes'
-import { QUERY_KEYS } from '@/constants/queryKeys'
-import type { ApiResponse } from '@/types/api'
 import {
   COURSE_LEVEL,
   COURSE_LEVEL_LABELS,
@@ -18,6 +12,7 @@ import {
   type SubjectItem,
   type CourseListItem,
 } from '../types/courseTypes'
+import { useCreateSubject, useSaveCourse } from '../hooks/useCourses'
 
 const courseSchema = z.object({
   subjectId: z.string().min(1, 'Йўналишни танланг ёки киритинг'),
@@ -40,7 +35,6 @@ interface CourseModalProps {
 }
 
 export function CourseModal({ isOpen, onClose, subjects, courseToEdit }: CourseModalProps) {
-  const queryClient = useQueryClient()
   const [isAddingNewSubject, setIsAddingNewSubject] = useState(false)
   const [newSubjectName, setNewSubjectName] = useState('')
 
@@ -89,63 +83,36 @@ export function CourseModal({ isOpen, onClose, subjects, courseToEdit }: CourseM
     }
   }, [courseToEdit, isOpen, reset, subjects])
 
-  // Subject create mutation
-  const createSubjectMutation = useMutation({
-    mutationFn: async (name: string) => {
-      const res = await apiClient.post<ApiResponse<SubjectItem>>(API_ROUTES.COURSES.SUBJECTS, {
-        name,
-        description: '',
-      })
-      return res.data.data
-    },
-    onSuccess: (newSubj) => {
-      queryClient.invalidateQueries({ queryKey: ['courses', 'subjects'] })
-      setValue('subjectId', newSubj.id)
-      setIsAddingNewSubject(false)
-      setNewSubjectName('')
-      toast.success('Янги йўналиш яратилди!')
-    },
-    onError: () => {
-      toast.error('Йўналиш яратишда хатолик юз берди')
-    },
-  })
-
-  // Course save mutation
-  const saveCourseMutation = useMutation({
-    mutationFn: async (data: CourseFormData) => {
-      const payload = {
-        id: courseToEdit ? courseToEdit.id : undefined,
-        subjectId: data.subjectId,
-        name: data.name,
-        description: data.description || '',
-        durationMonths: data.durationMonths,
-        lessonsPerMonth: data.lessonsPerMonth,
-        lessonDurationMinutes: data.lessonDurationMinutes,
-        basePrice: data.basePrice,
-        level: data.level,
-        status: COURSE_STATUS.Active,
-      }
-      const res = await apiClient.post(API_ROUTES.COURSES.CREATE_OR_UPDATE, payload)
-      return res.data
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COURSES.ALL })
-      toast.success(courseToEdit ? 'Курс муваффақиятли янгиланди!' : 'Янги курс муваффақиятли қўшилди!')
-      onClose()
-    },
-    onError: (err: unknown) => {
-      const error = err as { response?: { data?: { message?: string } } }
-      toast.error(error.response?.data?.message || 'Курсни сақлашда хатолик юз берди')
-    },
+  // Custom Feature Hooks
+  const createSubjectMutation = useCreateSubject()
+  const saveCourseMutation = useSaveCourse(() => {
+    onClose()
   })
 
   const onSubmit = (data: CourseFormData) => {
-    saveCourseMutation.mutate(data)
+    saveCourseMutation.mutate({
+      id: courseToEdit ? courseToEdit.id : undefined,
+      subjectId: data.subjectId,
+      name: data.name,
+      description: data.description || '',
+      durationMonths: data.durationMonths,
+      lessonsPerMonth: data.lessonsPerMonth,
+      lessonDurationMinutes: data.lessonDurationMinutes,
+      basePrice: data.basePrice,
+      level: data.level as typeof COURSE_LEVEL[keyof typeof COURSE_LEVEL],
+      status: COURSE_STATUS.Active,
+    })
   }
 
   const handleCreateSubjectQuick = () => {
     if (!newSubjectName.trim()) return
-    createSubjectMutation.mutate(newSubjectName.trim())
+    createSubjectMutation.mutate(newSubjectName.trim(), {
+      onSuccess: (newSubj) => {
+        setValue('subjectId', newSubj.id)
+        setIsAddingNewSubject(false)
+        setNewSubjectName('')
+      },
+    })
   }
 
   return (
