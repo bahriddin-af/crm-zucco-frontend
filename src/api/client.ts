@@ -4,7 +4,7 @@ import { API_ROUTES } from '@/api/apiRoutes'
 import { ROUTES } from '@/routes/paths'
 import { useAuthStore } from '@/stores/authStore'
 
-const getApiBaseUrl = () => {
+export const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL
   if (typeof window !== 'undefined' && window.location.hostname.includes('test')) {
     return 'https://api-test.zucco.uz'
@@ -32,7 +32,7 @@ apiClient.interceptors.request.use(
       config.headers['X-Branch-Id'] = activeBranchId
     }
 
-    // Har bir yozish (POST, PUT, DELETE, PATCH) amali uchun X-Operation-Id (UUID v4) idempotentlik kafolati
+    // Har bir yozish (POST, PUT, DELETE, PATCH) amali uchun X-Operation-Id (UUID v4)
     if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
       if (!config.headers['X-Operation-Id']) {
         config.headers['X-Operation-Id'] = uuidv4()
@@ -44,7 +44,7 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// Response Interceptor: 401 Token Rotation & Auto Refresh Queue
+// Response Interceptor: 401 Token Rotation & Auto Refresh
 let isRefreshing = false
 let failedQueue: Array<{
   resolve: (value?: unknown) => void
@@ -68,6 +68,17 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      const { refreshToken, setAuth, logout, user } = useAuthStore.getState()
+
+      // Agar refresh token yo'q bo'lsa yoki eski mock token ('rf-...') bo'lsa, sessiyani tozalab login sahifasiga yo'naltirish
+      if (!refreshToken || refreshToken.startsWith('rf-')) {
+        logout()
+        if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth/login')) {
+          window.location.href = ROUTES.AUTH.LOGIN
+        }
+        return Promise.reject(error)
+      }
+
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
@@ -82,22 +93,16 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true
       isRefreshing = true
 
-      const { refreshToken, setAuth, logout, user } = useAuthStore.getState()
-
-      if (!refreshToken || !user) {
-        logout()
-        window.location.href = ROUTES.AUTH.LOGIN
-        return Promise.reject(error)
-      }
-
       try {
-        const response = await axios.post<{ token: string; refreshToken: string }>(
-          API_ROUTES.AUTH.REFRESH,
-          { refreshToken }
-        )
+        const response = await axios.post<{
+          success: boolean
+          data: { accessToken: string; refreshToken: string }
+        }>(`${getApiBaseUrl()}${API_ROUTES.AUTH.REFRESH}`, { refreshToken })
 
-        const { token: newToken, refreshToken: newRefreshToken } = response.data
-        setAuth(newToken, newRefreshToken, user)
+        const { accessToken: newToken, refreshToken: newRefreshToken } = response.data.data
+        if (user) {
+          setAuth(newToken, newRefreshToken, user)
+        }
 
         processQueue(null, newToken)
         originalRequest.headers.Authorization = `Bearer ${newToken}`
@@ -105,7 +110,9 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null)
         logout()
-        window.location.href = ROUTES.AUTH.LOGIN
+        if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth/login')) {
+          window.location.href = ROUTES.AUTH.LOGIN
+        }
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false
