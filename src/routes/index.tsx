@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ROUTES } from './paths'
+import { ProtectedRoute } from './ProtectedRoute'
 import { AppShell } from '@/components/layout/AppShell'
 import { LoginPage } from '@/features/auth/pages/LoginPage'
 import { OverviewPage } from '@/features/overview/pages/OverviewPage'
@@ -24,41 +25,44 @@ import { RolesPermissionsPage } from '@/features/settings/pages/RolesPermissions
 export function AppRoutes() {
   return (
     <Routes>
-      {/* Auth Route */}
+      {/* Public Auth Routes */}
       <Route path={ROUTES.AUTH.LOGIN} element={<LoginPage />} />
+      <Route path="/login" element={<Navigate to={ROUTES.AUTH.LOGIN} replace />} />
 
-      {/* Main CRM App Layout */}
-      <Route element={<AppShell />}>
-        <Route path={ROUTES.OVERVIEW} element={<OverviewPage />} />
-        
-        {/* Reception / Leads */}
-        <Route path={ROUTES.LEADS.LIST} element={<LeadsPage />} />
-        
-        {/* Students */}
-        <Route path={ROUTES.STUDENTS.LIST} element={<StudentListPage />} />
-        <Route path={ROUTES.STUDENTS.DETAIL} element={<StudentDetailPage />} />
-        
-        {/* Academic */}
-        <Route path={ROUTES.COURSES.LIST} element={<CourseListPage />} />
-        <Route path={ROUTES.GROUPS.LIST} element={<GroupListPage />} />
-        <Route path={ROUTES.SCHEDULE} element={<SchedulePage />} />
-        <Route path={ROUTES.ATTENDANCE.JOURNAL} element={<AttendanceJournalPage />} />
-        
-        {/* Finance & Team */}
-        <Route path={ROUTES.FINANCE.DESK} element={<FinanceDeskPage />} />
-        <Route path={ROUTES.FINANCE.EXPENSES} element={<ExpensesPage />} />
-        <Route path={ROUTES.FINANCE.PAYROLL} element={<PayrollPage />} />
-        <Route path={ROUTES.STAFF.LIST} element={<StaffListPage />} />
-        <Route path={ROUTES.REPORTS} element={<ReportsPage />} />
-        
-        {/* Gamification */}
-        <Route path={ROUTES.MARKET.ITEMS} element={<MarketPage />} />
-        <Route path={ROUTES.MARKET.COIN_ACTIVITY} element={<CoinActivityPage />} />
-        
-        {/* Notifications & Settings */}
-        <Route path={ROUTES.NOTIFICATIONS.SMS} element={<SmsCenterPage />} />
-        <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
-        <Route path={ROUTES.STAFF.ROLES} element={<RolesPermissionsPage />} />
+      {/* Protected CRM App Layout */}
+      <Route element={<ProtectedRoute />}>
+        <Route element={<AppShell />}>
+          <Route path={ROUTES.OVERVIEW} element={<OverviewPage />} />
+
+          {/* Reception / Leads */}
+          <Route path={ROUTES.LEADS.LIST} element={<LeadsPage />} />
+
+          {/* Students */}
+          <Route path={ROUTES.STUDENTS.LIST} element={<StudentListPage />} />
+          <Route path={ROUTES.STUDENTS.DETAIL} element={<StudentDetailPage />} />
+
+          {/* Academic */}
+          <Route path={ROUTES.COURSES.LIST} element={<CourseListPage />} />
+          <Route path={ROUTES.GROUPS.LIST} element={<GroupListPage />} />
+          <Route path={ROUTES.SCHEDULE} element={<SchedulePage />} />
+          <Route path={ROUTES.ATTENDANCE.JOURNAL} element={<AttendanceJournalPage />} />
+
+          {/* Finance & Team */}
+          <Route path={ROUTES.FINANCE.DESK} element={<FinanceDeskPage />} />
+          <Route path={ROUTES.FINANCE.EXPENSES} element={<ExpensesPage />} />
+          <Route path={ROUTES.FINANCE.PAYROLL} element={<PayrollPage />} />
+          <Route path={ROUTES.STAFF.LIST} element={<StaffListPage />} />
+          <Route path={ROUTES.REPORTS} element={<ReportsPage />} />
+
+          {/* Gamification */}
+          <Route path={ROUTES.MARKET.ITEMS} element={<MarketPage />} />
+          <Route path={ROUTES.MARKET.COIN_ACTIVITY} element={<CoinActivityPage />} />
+
+          {/* Notifications & Settings */}
+          <Route path={ROUTES.NOTIFICATIONS.SMS} element={<SmsCenterPage />} />
+          <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+          <Route path={ROUTES.STAFF.ROLES} element={<RolesPermissionsPage />} />
+        </Route>
       </Route>
 
       {/* Fallback to Overview */}

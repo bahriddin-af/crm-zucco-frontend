@@ -1,5 +1,5 @@
-import { Search, Bell, Building2, Plus, WifiOff } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Search, Bell, Building2, Plus, WifiOff, LogOut } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/routes/paths'
 import { useAppStore } from '@/stores/appStore'
 import { useAuthStore } from '@/stores/authStore'
@@ -7,10 +7,17 @@ import { Button } from '@/components/ui/Button'
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher'
 
 export function Topbar() {
+  const navigate = useNavigate()
   const isOnline = useAppStore((state) => state.isOnline)
   const user = useAuthStore((state) => state.user)
   const activeBranchId = useAuthStore((state) => state.activeBranchId)
   const setActiveBranchId = useAuthStore((state) => state.setActiveBranchId)
+  const logout = useAuthStore((state) => state.logout)
+
+  const handleLogout = () => {
+    logout()
+    navigate(ROUTES.AUTH.LOGIN)
+  }
 
   return (
     <header className="sticky top-0 z-20 h-14 bg-white border-b border-[#E3EAE5] px-6 flex items-center justify-between gap-4 select-none">
@@ -37,7 +44,7 @@ export function Topbar() {
         )}
       </div>
 
-      {/* Right: Search, Quick Action, Notifications, Profile */}
+      {/* Right: Search, Quick Action, Notifications, Profile, Logout */}
       <div className="flex items-center gap-3">
         {/* Global Search */}
         <div className="relative w-56 hidden md:block">
@@ -74,6 +81,16 @@ export function Topbar() {
         <div className="w-7 h-7 rounded-full bg-[#D7EADF] text-[#0F5943] border border-[#BBDCCB] flex items-center justify-center text-xs font-semibold">
           {user?.fullName ? user.fullName[0].toUpperCase() : 'Z'}
         </div>
+
+        {/* Logout Button */}
+        <button
+          type="button"
+          onClick={handleLogout}
+          title="Тизимдан чиқиш"
+          className="w-8 h-8 rounded-md flex items-center justify-center text-[#65776C] hover:text-[#BE123C] hover:bg-[#FFF1F2] transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
       </div>
     </header>
   )
