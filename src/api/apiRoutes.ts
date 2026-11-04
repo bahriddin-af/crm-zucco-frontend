@@ -28,9 +28,11 @@ export const API_ROUTES = {
   GROUPS: {
     LIST: '/api/groups',
     DETAIL: (id: string) => `/api/groups/${id}`,
-    CREATE_OR_UPDATE: '/api/groups/upsert',
+    CREATE_OR_UPDATE: '/api/groups',
     SCHEDULE: (id: string) => `/api/groups/${id}/schedule`,
     STUDENTS: (id: string) => `/api/groups/${id}/students`,
+    LESSONS: (id: string) => `/api/groups/${id}/lessons`,
+    DELETE: (id: string) => `/api/groups/${id}`,
   },
   COURSES: {
     LIST: '/api/courses',
@@ -68,8 +70,9 @@ export const API_ROUTES = {
   STAFF: {
     LIST: '/api/staff',
     DETAIL: (id: string) => `/api/staff/${id}`,
-    CREATE_OR_UPDATE: '/api/staff/upsert',
+    CREATE_OR_UPDATE: '/api/staff',
     ROLES: '/api/staff/roles',
+    DELETE: (id: string) => `/api/staff/${id}`,
   },
   NOTIFICATIONS: {
     SMS_SEND: '/api/notifications/sms/send',
