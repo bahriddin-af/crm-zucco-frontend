@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: #F6F8F7;
+    --foreground: #1E2B24;
+    
+    --card: #FFFFFF;
+    --card-foreground: #1E2B24;
+    
+    --popover: #FFFFFF;
+    --popover-foreground: #1E2B24;
+    
+    --primary: #146B52;
+    --primary-foreground: #FFFFFF;
+    --primary-hover: #0F5943;
+    --primary-soft: #E8F3ED;
+    
+    --secondary: #F0F4F1;
+    --secondary-foreground: #344B3E;
+    
+    --muted: #F6F8F7;
+    --muted-foreground: #65776C;
+    
+    --accent: #E8F3ED;
+    --accent-foreground: #146B52;
+    
+    --destructive: #E11D48;
+    --destructive-foreground: #FFFFFF;
+    --destructive-soft: #FFF1F2;
+    --destructive-ink: #BE123C;
+
+    --success: #059669;
+    --success-soft: #ECFDF5;
+    --success-ink: #047857;
+
+    --warning: #F59E0B;
+    --warning-soft: #FFFBEB;
+    --warning-ink: #92400E;
+    
+    --border: #E3EAE5;
+    --input: #E3EAE5;
+    --ring: #418A66;
+    
+    --radius: 0.5rem;
+  }
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular numbers for all financial, table and counter metrics */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

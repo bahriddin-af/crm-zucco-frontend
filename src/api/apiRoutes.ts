@@ -1,0 +1,76 @@
+export const API_ROUTES = {
+  AUTH: {
+    LOGIN: '/api/auth/login',
+    REFRESH: '/api/auth/refresh',
+    ME: '/api/auth/me',
+  },
+  BRANCHES: {
+    LIST: '/api/branches',
+    DETAIL: (id: string) => `/api/branches/${id}`,
+    ROOMS: (branchId: string) => `/api/branches/${branchId}/rooms`,
+  },
+  LEADS: {
+    LIST: '/api/leads',
+    CREATE_OR_UPDATE: '/api/leads/upsert',
+    CONVERT: (id: string) => `/api/leads/${id}/convert`,
+    UPDATE_STAGE: (id: string) => `/api/leads/${id}/stage`,
+    LOST: (id: string) => `/api/leads/${id}/lost`,
+  },
+  STUDENTS: {
+    LIST: '/api/students',
+    DETAIL: (id: string) => `/api/students/${id}`,
+    CREATE_OR_UPDATE: '/api/students/upsert',
+    FREEZE: (id: string) => `/api/students/${id}/freeze`,
+    RESUME: (id: string) => `/api/students/${id}/resume`,
+    ENROLL: (id: string) => `/api/students/${id}/enroll`,
+    GROUPS: (id: string) => `/api/students/${id}/groups`,
+  },
+  GROUPS: {
+    LIST: '/api/groups',
+    DETAIL: (id: string) => `/api/groups/${id}`,
+    CREATE_OR_UPDATE: '/api/groups/upsert',
+    SCHEDULE: (id: string) => `/api/groups/${id}/schedule`,
+    STUDENTS: (id: string) => `/api/groups/${id}/students`,
+  },
+  COURSES: {
+    LIST: '/api/courses',
+    DETAIL: (id: string) => `/api/courses/${id}`,
+    CREATE_OR_UPDATE: '/api/courses/upsert',
+  },
+  ATTENDANCE: {
+    LESSON: (lessonId: string) => `/api/attendance/lesson/${lessonId}`,
+    MARK: '/api/attendance/mark',
+  },
+  FINANCE: {
+    ACCOUNTS: '/api/finance/accounts',
+    TRANSACTIONS: '/api/finance/transactions',
+    PAYMENT: '/api/finance/payments',
+    EXPENSE: '/api/finance/expenses',
+    BILLING_PREVIEW: '/api/finance/billing/preview',
+    RUN_BILLING: '/api/finance/billing/run',
+  },
+  PAYROLL: {
+    LIST: '/api/payroll',
+    SCHEMES: '/api/payroll/schemes',
+    CALCULATE: '/api/payroll/calculate',
+    APPROVE: (id: string) => `/api/payroll/${id}/approve`,
+    PAY: (id: string) => `/api/payroll/${id}/pay`,
+  },
+  GAMIFICATION: {
+    BALANCE: (studentId: string) => `/api/gamification/students/${studentId}/balance`,
+    TRANSACTIONS: '/api/gamification/transactions',
+    MARKET_ITEMS: '/api/gamification/items',
+    PURCHASE: '/api/gamification/purchase',
+    ADJUST: '/api/gamification/adjust',
+  },
+  STAFF: {
+    LIST: '/api/staff',
+    DETAIL: (id: string) => `/api/staff/${id}`,
+    CREATE_OR_UPDATE: '/api/staff/upsert',
+    ROLES: '/api/staff/roles',
+  },
+  NOTIFICATIONS: {
+    SMS_SEND: '/api/notifications/sms/send',
+    SMS_HISTORY: '/api/notifications/sms/history',
+  },
+} as const
