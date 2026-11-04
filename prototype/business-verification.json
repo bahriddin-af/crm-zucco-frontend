@@ -1,0 +1,778 @@
+{
+  "version": "2026-11-02 / Cyrillic business alignment",
+  "scope": "Local design prototype, not a live backend integration test",
+  "checks": [
+    {
+      "name": "Lead conversion creates a student and optional enrollment through the form",
+      "passed": true
+    },
+    {
+      "name": "Conversion retries reuse the same student; matching phone reuses an existing profile",
+      "passed": true
+    },
+    {
+      "name": "Multiple group enrollment preserves prior groups and custom price",
+      "passed": true
+    },
+    {
+      "name": "Capacity blocks enrollment; frozen and departed enrollments can be reactivated",
+      "passed": true
+    },
+    {
+      "name": "Lost stage requires an explicit reason form and keeps the lead separate from enrollment",
+      "passed": true
+    },
+    {
+      "name": "Payment form keeps six methods, cash account, group, billing period and decimal amount",
+      "passed": true
+    },
+    {
+      "name": "Payment operation retry cannot double credit and conflicts on changed payload",
+      "passed": true
+    },
+    {
+      "name": "Expenses require account and category and debit the chosen balance",
+      "passed": true
+    },
+    {
+      "name": "All four billing modes preview correctly; trial/freeze excluded and retry creates no duplicate charges",
+      "passed": true
+    },
+    {
+      "name": "Per-lesson billing charges unexcused absence but skips excused and uncompleted lessons",
+      "passed": true
+    },
+    {
+      "name": "Salary supports group overrides, paid billing period and fixed monthly salary counted once",
+      "passed": true
+    },
+    {
+      "name": "Salary approval and full payout create one expense and prohibit a second payment",
+      "passed": true
+    },
+    {
+      "name": "Teacher and cashier roles match seeded permission defaults and guard UI actions",
+      "passed": true
+    },
+    {
+      "name": "Attendance is group/date specific; future lesson cannot be marked and coin rewards save separately",
+      "passed": true
+    },
+    {
+      "name": "SMS submits one recipient with Pending status and stable operation ID; no Accepted status",
+      "passed": true
+    },
+    {
+      "name": "Reward purchase debits coins and stock once; insufficient balance rejects purchase",
+      "passed": true
+    },
+    {
+      "name": "New staff requires hire date, role type and a 12-character initial password",
+      "passed": true
+    },
+    {
+      "name": "New lead stays visible in its branch and group room options follow the selected branch",
+      "passed": true
+    },
+    {
+      "name": "Branch switch filters group/student views and report period changes the derived totals",
+      "passed": true
+    },
+    {
+      "name": "Permission keys match backend constants; original green and white tokens retained",
+      "passed": true
+    },
+    {
+      "name": "Attendance automatically grants/reverses five coins only when Present changes; frozen students excluded",
+      "passed": true
+    },
+    {
+      "name": "Schedule generation counts existing lessons, retries without duplicates and rejects an impossible end date atomically",
+      "passed": true
+    },
+    {
+      "name": "Signed manual coin adjustment is idempotent and cannot create a negative balance",
+      "passed": true
+    },
+    {
+      "name": "Unfreezing preserves group enrollment and restores debt status from the balance",
+      "passed": true
+    },
+    {
+      "name": "All sixteen preview states open and native English month labels are replaced by ISO periods",
+      "passed": true
+    },
+    {
+      "name": "All pages render in Cyrillic with no unexpected English interface text",
+      "passed": true
+    },
+    {
+      "name": "Responsive layout keeps document inside viewport on all 22 pages",
+      "passed": true
+    }
+  ],
+  "responsive": [
+    {
+      "route": "/overview",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/leads",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/students",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/students/zu-0248",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/courses",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/courses/ielts-foundation",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/groups",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/groups/if-09",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/schedule",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/attendance",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/finance",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/expenses",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/payroll",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/staff",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/branches",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/market",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/coins",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/sms",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/reports",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/settings",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/settings/roles",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/auth/login",
+      "width": 1440,
+      "document": 1440,
+      "viewport": 1440
+    },
+    {
+      "route": "/overview",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/leads",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/students",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/students/zu-0248",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/courses",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/courses/ielts-foundation",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/groups",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/groups/if-09",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/schedule",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/attendance",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/finance",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/expenses",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/payroll",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/staff",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/branches",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/market",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/coins",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/sms",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/reports",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/settings",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/settings/roles",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/auth/login",
+      "width": 1280,
+      "document": 1280,
+      "viewport": 1280
+    },
+    {
+      "route": "/overview",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/leads",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/students",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/students/zu-0248",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/courses",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/courses/ielts-foundation",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/groups",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/groups/if-09",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/schedule",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/attendance",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/finance",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/expenses",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/payroll",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/staff",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/branches",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/market",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/coins",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/sms",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/reports",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/settings",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/settings/roles",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/auth/login",
+      "width": 1024,
+      "document": 1024,
+      "viewport": 1024
+    },
+    {
+      "route": "/overview",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/leads",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/students",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/students/zu-0248",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/courses",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/courses/ielts-foundation",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/groups",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/groups/if-09",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/schedule",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/attendance",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/finance",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/expenses",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/payroll",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/staff",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/branches",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/market",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/coins",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/sms",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/reports",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/settings",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/settings/roles",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/auth/login",
+      "width": 768,
+      "document": 768,
+      "viewport": 768
+    },
+    {
+      "route": "/overview",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/leads",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/students",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/students/zu-0248",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/courses",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/courses/ielts-foundation",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/groups",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/groups/if-09",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/schedule",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/attendance",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/finance",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/expenses",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/payroll",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/staff",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/branches",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/market",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/coins",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/sms",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/reports",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/settings",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/settings/roles",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    },
+    {
+      "route": "/auth/login",
+      "width": 390,
+      "document": 390,
+      "viewport": 390
+    }
+  ],
+  "consoleErrors": [],
+  "passed": true
+}

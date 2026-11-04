@@ -1,0 +1,101 @@
+{
+  "name": "Zucco / Green & White",
+  "color": {
+    "canvas": "#F6F8F7",
+    "surface": "#FFFFFF",
+    "primary": "#146B52",
+    "primaryHover": "#0F5943",
+    "primarySoft": "#E8F3ED",
+    "success": "#059669",
+    "successText": "#047857",
+    "successSoft": "#ECFDF5",
+    "warning": "#F59E0B",
+    "warningText": "#92400E",
+    "warningSoft": "#FFFBEB",
+    "debt": "#E11D48",
+    "debtText": "#BE123C",
+    "debtSoft": "#FFF1F2",
+    "lateText": "#C2410C",
+    "lateSoft": "#FFF7ED",
+    "heading": "#1E2B24",
+    "caption": "#65776C",
+    "border": "#E3EAE5",
+    "divider": "#F0F4F1",
+    "focusRing": "#418A66"
+  },
+  "typography": {
+    "family": "Inter",
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ],
+    "body": {
+      "size": 13,
+      "lineHeight": 1.5
+    },
+    "control": {
+      "size": 12,
+      "weight": 500
+    },
+    "tableBody": {
+      "size": 12,
+      "weight": 400
+    },
+    "pageHeading": {
+      "size": 24,
+      "lineHeight": 32,
+      "weight": 600,
+      "letterSpacing": -0.65
+    },
+    "sectionHeading": {
+      "size": 14,
+      "lineHeight": 22,
+      "weight": 600
+    },
+    "financialMetric": {
+      "size": 22,
+      "lineHeight": 30,
+      "weight": 600
+    },
+    "studentBalance": {
+      "size": 30,
+      "lineHeight": 40,
+      "weight": 600
+    }
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32
+  ],
+  "radius": {
+    "badge": 4,
+    "control": 6,
+    "card": 8,
+    "avatar": "50%"
+  },
+  "layout": {
+    "screenWidth": 1440,
+    "screenHeight": 1000,
+    "sidebarExpanded": 240,
+    "sidebarCollapsed": 72,
+    "headerHeight": 64,
+    "contentMargin": 28,
+    "kanbanColumns": 6,
+    "kanbanGap": 12,
+    "paymentDrawerWidth": 450,
+    "profileAsideWidth": 300,
+    "scheduleHourHeight": 48
+  },
+  "motion": {
+    "sidebarTransitionMs": 180,
+    "respectsReducedMotion": true
+  }
+}

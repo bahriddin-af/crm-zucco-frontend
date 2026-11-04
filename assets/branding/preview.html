@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zucco — Brand & Logo Showcase</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    :root {
+      --zucco-emerald: #146B52;
+      --zucco-emerald-dark: #0F5943;
+      --zucco-mint: #10B981;
+      --zucco-mint-soft: #E8F3ED;
+      --zucco-dark: #1E2B24;
+      --zucco-slate: #65776C;
+      --zucco-border: #E3EAE5;
+      --zucco-bg: #F6F8F7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+      background: var(--zucco-bg);
+      color: var(--zucco-dark);
+      padding: 40px 24px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--zucco-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--zucco-mint-soft);
+      color: var(--zucco-emerald);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      color: var(--zucco-dark);
+    }
+
+    p.subtitle {
+      color: var(--zucco-slate);
+      font-size: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: #FFFFFF;
+      border: 1px solid var(--zucco-border);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card.dark-theme {
+      background: #111815;
+      border-color: #26382E;
+      color: #FFFFFF;
+    }
+
+    .preview-box {
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      background: #FAFCFB;
+      border: 1px dashed var(--zucco-border);
+    }
+
+    .dark-theme .preview-box {
+      background: #16201B;
+      border-color: #2D3F35;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--zucco-slate);
+      margin-bottom: 16px;
+      flex-grow: 1;
+    }
+
+    .dark-theme .card-desc {
+      color: #94A3B8;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 14px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--zucco-emerald);
+      color: #FFFFFF;
+    }
+    .btn-primary:hover {
+      background: var(--zucco-emerald-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--zucco-emerald);
+      border: 1px solid var(--zucco-border);
+    }
+    .dark-theme .btn-outline {
+      color: #34D399;
+      border-color: #374151;
+    }
+    .btn-outline:hover {
+      background: var(--zucco-mint-soft);
+    }
+
+    /* Colors Section */
+    .colors-section {
+      background: #FFFFFF;
+      border: 1px solid var(--zucco-border);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 40px;
+    }
+
+    .color-chips {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      border: 1px solid var(--zucco-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .chip-swatch {
+      height: 60px;
+    }
+
+    .chip-info {
+      padding: 12px;
+      background: #FFFFFF;
+    }
+
+    .chip-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .chip-hex {
+      font-size: 12px;
+      color: var(--zucco-slate);
+      font-family: monospace;
+    }
+
+    .scales {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 20px;
+      background: #F8FAF9;
+      border-radius: 10px;
+      margin-top: 16px;
+    }
+
+    img.responsive {
+      max-width: 100%;
+      height: auto;
+      max-height: 120px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <span class="badge">Official Brand Assets</span>
+        <h1>Zucco Platform — Logo To'plami</h1>
+        <p class="subtitle">O'quv markazlari va akademiyalar uchun ERP / CRM platformasi brend ramzlari</p>
+      </div>
+      <div>
+        <a href="zucco-logo-v3.png" download class="btn btn-primary">Yuklab olish (.PNG)</a>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid">
+      <!-- 1. Primary Vector Logo -->
+      <div class="card">
+        <div class="preview-box">
+          <img src="zucco-logo-primary.svg" alt="Zucco Primary Logo" style="width: 260px; height: auto;">
+        </div>
+        <h3 class="card-title">Zucco Primary Logo (SVG)</h3>
+        <p class="card-desc">Asosiy rasmiy gorizontal vektor logotip. Web sayt sarlavhasi (navbar), hujjatlar va taqdimotlar uchun mo'ljallangan.</p>
+        <div class="actions">
+          <a href="zucco-logo-primary.svg" download class="btn btn-primary">SVG yuklash</a>
+          <a href="zucco-logo-primary.svg" target="_blank" class="btn btn-outline">Ko'rish</a>
+        </div>
+      </div>
+
+      <!-- 2. Dark Mode Vector Logo -->
+      <div class="card dark-theme">
+        <div class="preview-box">
+          <img src="zucco-logo-white.svg" alt="Zucco Dark Mode Logo" style="width: 260px; height: auto;">
+        </div>
+        <h3 class="card-title">Zucco Dark Mode Logo (SVG)</h3>
+        <p class="card-desc">Qorong'i fonlar, to'q yashil yoki qora mavzular (Dark Mode) uchun oq va yorqin yalpiz rangdagi vektor logotip.</p>
+        <div class="actions">
+          <a href="zucco-logo-white.svg" download class="btn btn-primary">SVG yuklash</a>
+          <a href="zucco-logo-white.svg" target="_blank" class="btn btn-outline">Ko'rish</a>
+        </div>
+      </div>
+
+      <!-- 3. App Icon & Symbol -->
+      <div class="card">
+        <div class="preview-box">
+          <div style="display: flex; gap: 24px; align-items: center;">
+            <img src="zucco-app-icon.svg" alt="Zucco App Icon" style="width: 80px; height: 80px;">
+            <img src="zucco-symbol.svg" alt="Zucco Symbol" style="width: 70px; height: 70px;">
+            <img src="favicon.svg" alt="Favicon" style="width: 32px; height: 32px;">
+          </div>
+        </div>
+        <h3 class="card-title">App Icon & Favicon (SVG)</h3>
+        <p class="card-desc">Mobil ilovalar (iOS / Android), PWA, brauzer yorliqlari (favicon) va ijtimoiy tarmoq avatarlari uchun ramz.</p>
+        <div class="actions">
+          <a href="zucco-app-icon.svg" download class="btn btn-primary">App Icon</a>
+          <a href="favicon.svg" download class="btn btn-outline">Favicon</a>
+        </div>
+      </div>
+
+      <!-- 4. High-Res Concept v3 (Isometric Ribbon) -->
+      <div class="card">
+        <div class="preview-box">
+          <img src="zucco-logo-v3.png" alt="Zucco Concept v3" class="responsive">
+        </div>
+        <h3 class="card-title">Zucco Master Brand (v3 — Tavsiya etilgan)</h3>
+        <p class="card-desc">Yuqori sifatli SaaS dizayni: 'Z' shaklidagi izometrik uzluksiz lenta va zamonaviy neogroteks shrift.</p>
+        <div class="actions">
+          <a href="zucco-logo-v3.png" download class="btn btn-primary">PNG yuklash</a>
+        </div>
+      </div>
+
+      <!-- 5. Concept v4 (Growth & Dynamic) -->
+      <div class="card">
+        <div class="preview-box">
+          <img src="zucco-logo-v4-growth.png" alt="Zucco Concept v4" class="responsive">
+        </div>
+        <h3 class="card-title">Zucco Dynamic Growth (v4 — Muqobil)</h3>
+        <p class="card-desc">Yuqoriga yo'naltirilgan o'sish va tezlik (Growth / Progress) motiviga ega muqobil dinamik ramz.</p>
+        <div class="actions">
+          <a href="zucco-logo-v4-growth.png" download class="btn btn-outline">PNG yuklash</a>
+        </div>
+      </div>
+
+      <!-- 6. React Component -->
+      <div class="card">
+        <div class="preview-box" style="flex-direction: column; align-items: flex-start; background: #0F172A; color: #38BDF8; font-family: monospace; font-size: 12px; overflow-x: auto;">
+          <span style="color: #94A3B8;">// Frontendda ishlatish:</span>
+          <span>import { ZuccoLogo } from './branding/ZuccoLogo';</span>
+          <br>
+          <span style="color: #E2E8F0;">&lt;ZuccoLogo variant="primary" size={40} /&gt;</span>
+          <span style="color: #E2E8F0;">&lt;ZuccoLogo variant="white" size={36} /&gt;</span>
+          <span style="color: #E2E8F0;">&lt;ZuccoLogo variant="symbol" size={32} /&gt;</span>
+        </div>
+        <h3 class="card-title">React / Next.js Komponenti</h3>
+        <p class="card-desc">Loyiha frontend qismiga to'g'ridan-to'g'ri integratsiya qilinadigan tayyor TypeScript/JSX komponenti.</p>
+        <div class="actions">
+          <a href="ZuccoLogo.tsx" download class="btn btn-primary">ZuccoLogo.tsx</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color Tokens Section -->
+    <div class="colors-section">
+      <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Brend Ranglar Palitrasi (Design Tokens)</h2>
+      <p style="color: var(--zucco-slate); font-size: 14px;">Zucco tizimi qoidalariga mos belgilangan asosiy va ikkilamchi ranglar:</p>
+
+      <div class="color-chips">
+        <div class="chip">
+          <div class="chip-swatch" style="background: #146B52;"></div>
+          <div class="chip-info">
+            <div class="chip-name">Emerald Primary</div>
+            <div class="chip-hex">#146B52</div>
+          </div>
+        </div>
+        <div class="chip">
+          <div class="chip-swatch" style="background: #10B981;"></div>
+          <div class="chip-info">
+            <div class="chip-name">Mint Accent</div>
+            <div class="chip-hex">#10B981</div>
+          </div>
+        </div>
+        <div class="chip">
+          <div class="chip-swatch" style="background: #E8F3ED;"></div>
+          <div class="chip-info">
+            <div class="chip-name">Primary Soft</div>
+            <div class="chip-hex">#E8F3ED</div>
+          </div>
+        </div>
+        <div class="chip">
+          <div class="chip-swatch" style="background: #1E2B24;"></div>
+          <div class="chip-info">
+            <div class="chip-name">Dark Slate Text</div>
+            <div class="chip-hex">#1E2B24</div>
+          </div>
+        </div>
+        <div class="chip">
+          <div class="chip-swatch" style="background: #F6F8F7; border-bottom: 1px solid #E3EAE5;"></div>
+          <div class="chip-info">
+            <div class="chip-name">Canvas Light</div>
+            <div class="chip-hex">#F6F8F7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

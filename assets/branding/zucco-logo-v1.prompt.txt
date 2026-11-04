@@ -1,0 +1,5 @@
+Use case: logo-brand.
+Asset type: primary logo for Zucco, a modern CRM and learning-management platform for education centers.
+Create one polished, distinctive, minimalist brand logo: a compact geometric Z symbol subtly suggesting an open book and upward progress, paired with the exact lowercase wordmark "zucco" (z u c c o). Friendly but confident custom rounded sans-serif lettering, excellent optical spacing, clever clean negative space, strong silhouette, professional software brand, readable at small sizes.
+Composition: one horizontal symbol-and-wordmark lockup, centered, balanced, generous clear space, symbol approximately the height of the wordmark. Flat solid near-black artwork, clean vector-like edges, single-color design. Genuinely transparent background.
+Do not add slogans, annotations, mockups, gradients, shadows, 3D effects, decorative background, presentation board, multiple variants, graduation caps, or watermarks. Make the actual production logo the entire deliverable.
