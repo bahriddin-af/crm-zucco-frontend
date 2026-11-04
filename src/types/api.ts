@@ -1,0 +1,17 @@
+export interface ApiResponse<T = unknown> {
+  success: boolean
+  code: string
+  message?: string
+  data: T
+  correlationId?: string
+}
+
+export interface PagedResult<T> {
+  items: T[]
+  totalCount: number
+  page: number
+  pageSize: number
+  totalPages: number
+  hasPreviousPage: boolean
+  hasNextPage: boolean
+}

@@ -77,19 +77,34 @@ export function LoginPage() {
   }
 
   // Tezkor Demo Kirish (Sinov uchun)
-  const handleQuickLogin = (role: 'Owner' | 'Teacher' | 'Cashier') => {
+  const handleQuickLogin = async (role: 'Owner' | 'Teacher' | 'Cashier') => {
     setLoadingRole(role)
-    setTimeout(() => {
+    try {
       if (role === 'Owner') {
-        setAuth('jwt-owner', 'rf-owner', {
-          id: 'u-owner',
-          fullName: 'Super Administrator',
+        const loginRes = await apiClient.post(API_ROUTES.AUTH.LOGIN, {
           phone: '+998901234567',
-          role: 'Owner',
-          permissions: ['*'],
-          branchIds: ['b1', 'b2', 'b3'],
+          password: 'Admin123$SecurePassword',
         })
-      } else if (role === 'Teacher') {
+        const { accessToken, refreshToken } = loginRes.data.data
+        const profileRes = await apiClient.get(API_ROUTES.AUTH.ME, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+        const profile = profileRes.data.data
+
+        setAuth(accessToken, refreshToken, {
+          id: profile.userId,
+          fullName: profile.fullName || 'Super Administrator',
+          phone: profile.phone,
+          role: profile.roles?.[0] || 'Owner',
+          permissions: profile.permissions || ['*'],
+          branchIds: profile.branchId ? [profile.branchId] : ['adc72a29-310f-4a2a-8ede-29aa81214f87'],
+        })
+        toast.success('Раҳбар (Owner) роли билан тизимга кирилди!')
+        navigate(ROUTES.OVERVIEW)
+        return
+      }
+
+      if (role === 'Teacher') {
         setAuth('jwt-teacher', 'rf-teacher', {
           id: 'u-teacher',
           fullName: 'Азиз Каримов (Ўқитувчи)',
@@ -110,7 +125,11 @@ export function LoginPage() {
       }
       toast.success(`${role} роли билан кирилди!`)
       navigate(ROUTES.OVERVIEW)
-    }, 300)
+    } catch {
+      toast.error('Тизимга киришда хатолик юз берди')
+    } finally {
+      setLoadingRole(null)
+    }
   }
 
   return (
