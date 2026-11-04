@@ -47,21 +47,15 @@ export function LoginPage() {
         password: data.password,
       })
 
-      const { accessToken, refreshToken } = loginRes.data.data
+      const authData = loginRes.data.data
 
-      // Foydalanuvchi profil ma'lumotlarini (huquqlar, rollar, filiallar) yuklab olish
-      const profileRes = await apiClient.get(API_ROUTES.AUTH.ME, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      const profile = profileRes.data.data
-
-      setAuth(accessToken, refreshToken, {
-        id: profile.userId,
-        fullName: profile.fullName || 'Administrator',
-        phone: profile.phone,
-        role: profile.roles?.[0] || 'Owner',
-        permissions: profile.permissions || ['*'],
-        branchIds: profile.branchId ? [profile.branchId] : ['b1'],
+      setAuth(authData.accessToken, authData.refreshToken, {
+        id: authData.userId,
+        fullName: authData.fullName || 'Administrator',
+        phone: formattedPhone,
+        role: authData.roles?.[0] || 'Owner',
+        permissions: authData.permissions || ['*'],
+        branchIds: authData.branchId ? [authData.branchId] : ['adc72a29-310f-4a2a-8ede-29aa81214f87'],
       })
 
       toast.success('Тизимга муваффақиятли кирдингиз!')
@@ -85,21 +79,17 @@ export function LoginPage() {
           phone: '+998901234567',
           password: 'Admin123$SecurePassword',
         })
-        const { accessToken, refreshToken } = loginRes.data.data
-        const profileRes = await apiClient.get(API_ROUTES.AUTH.ME, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        })
-        const profile = profileRes.data.data
+        const authData = loginRes.data.data
 
-        setAuth(accessToken, refreshToken, {
-          id: profile.userId,
-          fullName: profile.fullName || 'Super Administrator',
-          phone: profile.phone,
-          role: profile.roles?.[0] || 'Owner',
-          permissions: profile.permissions || ['*'],
-          branchIds: profile.branchId ? [profile.branchId] : ['adc72a29-310f-4a2a-8ede-29aa81214f87'],
+        setAuth(authData.accessToken, authData.refreshToken, {
+          id: authData.userId,
+          fullName: authData.fullName || 'Super Administrator',
+          phone: '+998901234567',
+          role: authData.roles?.[0] || 'Owner',
+          permissions: authData.permissions || ['*'],
+          branchIds: authData.branchId ? [authData.branchId] : ['adc72a29-310f-4a2a-8ede-29aa81214f87'],
         })
-        toast.success('Раҳбар (Owner) роли билан тизимга кирилди!')
+        toast.success('Раҳбар (Owner) роли билан кирилди!')
         navigate(ROUTES.OVERVIEW)
         return
       }
@@ -111,7 +101,7 @@ export function LoginPage() {
           phone: '+998 (93) 555-44-33',
           role: 'Teacher',
           permissions: ['attendance.view', 'attendance.mark', 'attendance.grade', 'courses.view'],
-          branchIds: ['b1'],
+          branchIds: ['adc72a29-310f-4a2a-8ede-29aa81214f87'],
         })
       } else {
         setAuth('jwt-cashier', 'rf-cashier', {
@@ -120,7 +110,7 @@ export function LoginPage() {
           phone: '+998 (97) 111-22-33',
           role: 'Cashier',
           permissions: ['finance.view', 'finance.payment_create', 'finance.expense_create'],
-          branchIds: ['b1'],
+          branchIds: ['adc72a29-310f-4a2a-8ede-29aa81214f87'],
         })
       }
       toast.success(`${role} роли билан кирилди!`)
@@ -203,7 +193,7 @@ export function LoginPage() {
               type="button"
               onClick={() => handleQuickLogin('Owner')}
               disabled={Boolean(loadingRole)}
-              className="py-1.5 px-2 bg-[#F6F8F7] hover:bg-[#E8F3ED] text-[#146B52] border border-[#E3EAE5] rounded text-[11px] font-medium transition-colors"
+              className="py-1.5 px-2 bg-[#F6F8F7] hover:bg-[#E8F3ED] text-[#146B52] border border-[#E3EAE5] rounded text-[11px] font-medium transition-colors cursor-pointer"
             >
               Раҳбар (Owner)
             </button>
@@ -211,7 +201,7 @@ export function LoginPage() {
               type="button"
               onClick={() => handleQuickLogin('Teacher')}
               disabled={Boolean(loadingRole)}
-              className="py-1.5 px-2 bg-[#F6F8F7] hover:bg-[#E8F3ED] text-[#146B52] border border-[#E3EAE5] rounded text-[11px] font-medium transition-colors"
+              className="py-1.5 px-2 bg-[#F6F8F7] hover:bg-[#E8F3ED] text-[#146B52] border border-[#E3EAE5] rounded text-[11px] font-medium transition-colors cursor-pointer"
             >
               Ўқитувчи
             </button>
@@ -219,7 +209,7 @@ export function LoginPage() {
               type="button"
               onClick={() => handleQuickLogin('Cashier')}
               disabled={Boolean(loadingRole)}
-              className="py-1.5 px-2 bg-[#F6F8F7] hover:bg-[#E8F3ED] text-[#146B52] border border-[#E3EAE5] rounded text-[11px] font-medium transition-colors"
+              className="py-1.5 px-2 bg-[#F6F8F7] hover:bg-[#E8F3ED] text-[#146B52] border border-[#E3EAE5] rounded text-[11px] font-medium transition-colors cursor-pointer"
             >
               Кассир
             </button>

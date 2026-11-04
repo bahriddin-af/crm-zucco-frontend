@@ -24,11 +24,11 @@ apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const { token, activeBranchId } = useAuthStore.getState()
 
-    if (token) {
+    if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`
     }
 
-    if (activeBranchId) {
+    if (activeBranchId && !config.headers['X-Branch-Id']) {
       config.headers['X-Branch-Id'] = activeBranchId
     }
 
