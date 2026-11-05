@@ -39,7 +39,7 @@ export function GenerateScheduleForm({ groupId }: GenerateScheduleFormProps) {
     <form onSubmit={onSubmit} noValidate className="rounded-lg border border-border bg-canvas p-3 space-y-2">
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-xs font-semibold text-heading">{t.groups.generateTitle}</h3>
-        <p className="text-[11px] text-caption">{t.groups.generateHint}</p>
+        <p className="text-2xs text-caption">{t.groups.generateHint}</p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-2 items-start">
         <FormField label={t.groups.totalLessons} htmlFor="generate-total">

@@ -35,7 +35,7 @@ export function Modal({
       />
       <div
         className={cn(
-          'relative w-full bg-white rounded-lg border border-border shadow-xl overflow-hidden z-10 flex flex-col max-h-[90vh]',
+          'relative w-full bg-surface rounded-lg border border-border shadow-xl overflow-hidden z-10 flex flex-col max-h-[90vh]',
           maxWidth === 'sm' && 'max-w-sm',
           maxWidth === 'md' && 'max-w-md',
           maxWidth === 'lg' && 'max-w-lg',
@@ -46,7 +46,7 @@ export function Modal({
           <div>
             <h2 className="text-sm font-semibold text-heading">{title}</h2>
             {description && (
-              <p className="text-[11px] text-caption mt-0.5">{description}</p>
+              <p className="text-2xs text-caption mt-0.5">{description}</p>
             )}
           </div>
           <button

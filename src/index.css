@@ -14,7 +14,14 @@
   --color-primary-ring: #D7EADF;
   --color-focus: #418A66;
 
+  /* Typography: kichik o'lchamlar ham rem'da, shunda butun UI bitta asosiy shriftdan masshtablanadi */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-3xs: 0.625rem;
+  --text-3xs--line-height: 0.875rem;
+
   /* Surfaces */
+  --color-surface: #FFFFFF;
   --color-canvas: #F6F8F7;
   --color-surface-muted: #F8FAF9;
   --color-surface-tint: #FCFEFC;
@@ -107,12 +114,76 @@
   }
 }
 
+/*
+ * Tungi rejim: komponentlar faqat token klasslarini ishlatgani uchun mavzu
+ * token qiymatlarini almashtirish orqali o'zgaradi (themeStore → <html data-theme>).
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-primary: #2F9A76;
+  --color-primary-hover: #278463;
+  --color-primary-soft: #16302A;
+  --color-primary-line: #285443;
+  --color-primary-ring: #1F3D33;
+  --color-focus: #4FB38C;
+
+  --color-surface: #161F1B;
+  --color-canvas: #0E1412;
+  --color-surface-muted: #1A2420;
+  --color-surface-tint: #18221D;
+  --color-skeleton: #222D28;
+  --color-divider: #23302A;
+  --color-divider-strong: #29362F;
+  --color-border: #2E3B34;
+
+  --color-heading: #E6EEE9;
+  --color-secondary-ink: #CAD6CF;
+  --color-copy-strong: #B5C4BB;
+  --color-copy: #A4B4AA;
+  --color-caption: #8E9F95;
+  --color-subtle: #708178;
+
+  --color-neutral-ink: #C3CAD0;
+  --color-neutral-line: #2F3A40;
+  --color-neutral-soft: #1E262B;
+
+  --color-success: #34D399;
+  --color-success-ink: #6EE7B7;
+  --color-positive: #4ADE80;
+  --color-success-soft: #12291F;
+  --color-success-line: #173A2B;
+  --color-success-border: #1F5A40;
+
+  --color-warning: #FBBF24;
+  --color-warning-strong: #F59E0B;
+  --color-warning-deep: #FCD34D;
+  --color-warning-ink: #FDE68A;
+  --color-warning-soft: #2A220F;
+  --color-warning-tint: #3A2E10;
+  --color-warning-border: #5C4813;
+
+  --color-debt: #FB7185;
+  --color-debt-ink: #FDA4AF;
+  --color-debt-soft: #2E1519;
+  --color-debt-line: #3F1D23;
+  --color-debt-border: #5F2731;
+}
+
+/*
+ * Asosiy masshtab: barcha Tailwind o'lchamlari (matn, ikonka, oraliq) rem'da.
+ * 112.5% = brauzer standarti 16px bo'lsa 18px; foydalanuvchi brauzer sozlamasi ham hisobga olinadi.
+ */
+html {
+  font-size: 112.5%;
+}
+
 body {
   margin: 0;
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-canvas);
+  color: var(--color-heading);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }

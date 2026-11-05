@@ -32,7 +32,7 @@ export function GroupsToolbar({ value, onChange }: GroupsToolbarProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 bg-white p-3 rounded-lg border border-border shadow-xs">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 bg-surface p-3 rounded-lg border border-border shadow-xs">
       <SearchInput
         value={value.search}
         onChange={(search) => onChange({ ...value, search })}

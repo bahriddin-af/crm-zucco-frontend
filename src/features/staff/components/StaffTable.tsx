@@ -22,10 +22,10 @@ export function StaffTable({ staff, onEdit, onDelete }: StaffTableProps) {
   const { t } = useTranslation()
 
   return (
-    <div className="bg-white border border-border rounded-xl shadow-xs overflow-x-auto">
+    <div className="bg-surface border border-border rounded-xl shadow-xs overflow-x-auto">
       <table className="w-full text-left text-xs border-collapse">
         <thead>
-          <tr className="bg-canvas border-b border-border text-caption text-[11px] font-semibold">
+          <tr className="bg-canvas border-b border-border text-caption text-2xs font-semibold">
             <th className="py-3 px-4">{t.staff.table.fullName}</th>
             <th className="py-3 px-4">{t.staff.table.phone}</th>
             <th className="py-3 px-4">{t.staff.table.roleType}</th>
@@ -40,7 +40,7 @@ export function StaffTable({ staff, onEdit, onDelete }: StaffTableProps) {
             <tr key={member.id} className="hover:bg-surface-tint transition-colors">
               <td className="py-3.5 px-4">
                 <div className="font-semibold text-heading">{member.fullName}</div>
-                <div className="text-[11px] text-subtle flex items-center gap-1 mt-0.5">
+                <div className="text-2xs text-subtle flex items-center gap-1 mt-0.5">
                   <Shield className="w-3 h-3" />
                   {member.roles.join(', ') || t.staff.noSystemRoles}
                 </div>

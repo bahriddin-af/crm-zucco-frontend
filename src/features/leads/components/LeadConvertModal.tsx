@@ -75,7 +75,7 @@ export function LeadConvertModal({ lead, onClose }: LeadConvertModalProps) {
               {interpolate(t.leads.convert.interestedCourse, { course: lead.courseName })}
             </p>
           )}
-          <p className="text-[11px] text-caption">{t.leads.convert.existingNote}</p>
+          <p className="text-2xs text-caption">{t.leads.convert.existingNote}</p>
         </div>
 
         <FormField label={t.leads.convert.group} htmlFor="convert-group">

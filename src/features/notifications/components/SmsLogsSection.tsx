@@ -59,10 +59,10 @@ export function SmsLogsSection() {
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-heading tabular-nums">
                     {formatPhone(log.recipientPhone)}
-                    <span className="ml-2 text-[11px] font-normal text-caption">{t.sms.triggers[log.trigger]}</span>
+                    <span className="ml-2 text-2xs font-normal text-caption">{t.sms.triggers[log.trigger]}</span>
                   </p>
-                  <p className="text-[11px] text-copy mt-0.5 line-clamp-2">{log.message}</p>
-                  <p className="text-[10px] text-subtle mt-0.5 tabular-nums">
+                  <p className="text-2xs text-copy mt-0.5 line-clamp-2">{log.message}</p>
+                  <p className="text-3xs text-subtle mt-0.5 tabular-nums">
                     {formatDate(log.sentAt)} {formatTime(log.sentAt)}
                   </p>
                 </div>

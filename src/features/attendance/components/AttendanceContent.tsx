@@ -32,7 +32,7 @@ export function AttendanceContent({ hasGroups, groupId, lessonsQuery, lesson, to
   }
   if (lessonsQuery.isLoading) {
     return (
-      <ListSkeleton rows={SKELETON_ROWS} rowClassName="h-12 w-full" className="bg-white border border-border rounded-lg p-5 space-y-3" />
+      <ListSkeleton rows={SKELETON_ROWS} rowClassName="h-12 w-full" className="bg-surface border border-border rounded-lg p-5 space-y-3" />
     )
   }
   if (lessonsQuery.isError) {

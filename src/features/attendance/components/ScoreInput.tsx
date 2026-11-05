@@ -62,7 +62,7 @@ export function ScoreInput({ value, disabled, label, onCommit }: ScoreInputProps
           error ? 'border-debt' : 'border-border'
         )}
       />
-      {error && <p className="mt-1 text-[10px] text-debt-ink max-w-[140px]">{error}</p>}
+      {error && <p className="mt-1 text-3xs text-debt-ink max-w-[140px]">{error}</p>}
     </div>
   )
 }

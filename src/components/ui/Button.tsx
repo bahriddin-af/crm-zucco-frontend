@@ -31,7 +31,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant === 'primary' &&
             'bg-primary hover:bg-primary-hover text-white shadow-xs border border-transparent',
           variant === 'secondary' &&
-            'bg-white hover:bg-canvas text-secondary-ink border border-border shadow-xs',
+            'bg-surface hover:bg-canvas text-secondary-ink border border-border shadow-xs',
           variant === 'outline' &&
             'bg-transparent hover:bg-primary-soft text-primary border border-primary',
           variant === 'ghost' &&
@@ -39,7 +39,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant === 'danger' &&
             'bg-debt-soft hover:bg-debt-line text-debt-ink border border-debt-border',
           // Sizes
-          size === 'sm' && 'min-h-[28px] px-2.5 py-1 text-[11px] rounded-[5px] gap-1.5',
+          size === 'sm' && 'min-h-[28px] px-2.5 py-1 text-2xs rounded-[5px] gap-1.5',
           size === 'md' && 'min-h-[34px] px-3.5 py-1.5 text-xs rounded-md gap-2',
           size === 'lg' && 'min-h-[40px] px-4 py-2 text-sm rounded-md gap-2.5',
           size === 'icon' && 'h-[32px] w-[32px] p-0 rounded-md',

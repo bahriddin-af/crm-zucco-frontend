@@ -26,10 +26,10 @@ export function WeekdayPicker({ value, onChange }: WeekdayPickerProps) {
             aria-pressed={isSelected}
             onClick={() => toggle(day)}
             className={cn(
-              'min-w-[44px] px-2.5 py-1.5 rounded-md border text-[11px] font-medium transition-colors cursor-pointer',
+              'min-w-[44px] px-2.5 py-1.5 rounded-md border text-2xs font-medium transition-colors cursor-pointer',
               isSelected
                 ? 'bg-primary border-primary text-white'
-                : 'bg-white border-border text-caption hover:bg-primary-soft'
+                : 'bg-surface border-border text-caption hover:bg-primary-soft'
             )}
           >
             {t.groups.weekdaysShort[day]}

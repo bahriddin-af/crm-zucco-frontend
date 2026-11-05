@@ -48,7 +48,7 @@ export function SmsTemplatesSection() {
                     {template.isActive ? t.sms.triggers[template.trigger] : t.sms.inactive}
                   </Badge>
                 </div>
-                <p className="text-[11px] text-caption mt-1 line-clamp-2">{template.templateText}</p>
+                <p className="text-2xs text-caption mt-1 line-clamp-2">{template.templateText}</p>
               </div>
               <PermissionGuard permission={PERMISSIONS.NOTIFICATIONS.TEMPLATE_MANAGE}>
                 <Button variant="ghost" size="icon" aria-label={t.sms.editTemplate} onClick={() => setEditing(template)}>

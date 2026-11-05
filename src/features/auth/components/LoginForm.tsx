@@ -50,7 +50,7 @@ export function LoginForm() {
       {login.isError && (
         <div
           role="alert"
-          className="flex items-start gap-2 p-3 rounded-md border border-debt-border bg-debt-soft text-[11px] text-debt-ink"
+          className="flex items-start gap-2 p-3 rounded-md border border-debt-border bg-debt-soft text-2xs text-debt-ink"
         >
           <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
           <span>{getApiErrorMessage(login.error)}</span>
@@ -108,7 +108,7 @@ export function LoginForm() {
               {...register('tenantId')}
             />
           </div>
-          <p className="text-[11px] text-caption">{t.auth.tenantIdHint}</p>
+          <p className="text-2xs text-caption">{t.auth.tenantIdHint}</p>
         </div>
       )}
 

@@ -47,13 +47,13 @@ export function LeadKanbanColumn({ column, leads, nextStage, canCreate, onCreate
     >
       <div
         className={cn(
-          'p-3 border-b border-border border-t-[3px] bg-white rounded-t-lg flex items-center justify-between',
+          'p-3 border-b border-border border-t-[3px] bg-surface rounded-t-lg flex items-center justify-between',
           getStageStyle(column.stageType).border
         )}
       >
         <div className="flex items-center gap-2 min-w-0">
           <h3 className="text-xs font-bold text-heading truncate">{column.stageName}</h3>
-          <span className="text-[10px] font-bold text-copy-strong bg-primary-soft px-1.5 rounded-full tabular-nums">
+          <span className="text-3xs font-bold text-copy-strong bg-primary-soft px-1.5 rounded-full tabular-nums">
             {column.totalLeads}
           </span>
         </div>

@@ -7,7 +7,7 @@ import { heightClass } from '../utils/reportMath'
 
 function LegendDot({ className, label }: { className: string; label: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] text-caption">
+    <span className="inline-flex items-center gap-1.5 text-2xs text-caption">
       <span className={cn('w-2.5 h-2.5 rounded-sm', className)} />
       {label}
     </span>
@@ -44,7 +44,7 @@ export function TrendChart({ points }: { points: ReportTrendPoint[] }) {
                 className={cn('w-3 sm:w-4 rounded-t bg-debt', heightClass(point.expenses, max))}
               />
             </div>
-            <span className="text-[10px] text-caption tabular-nums">{point.period}</span>
+            <span className="text-3xs text-caption tabular-nums">{point.period}</span>
           </div>
         ))}
       </div>

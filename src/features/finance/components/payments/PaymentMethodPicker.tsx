@@ -23,7 +23,7 @@ export function PaymentMethodPicker({ value, onChange, error }: PaymentMethodPic
 
   return (
     <fieldset>
-      <legend className="block text-[11px] font-medium text-heading mb-1">
+      <legend className="block text-2xs font-medium text-heading mb-1">
         {t.finance.drawer.paymentMethod}
         <span className="text-debt-ink ml-0.5">*</span>
       </legend>
@@ -50,7 +50,7 @@ export function PaymentMethodPicker({ value, onChange, error }: PaymentMethodPic
           )
         })}
       </div>
-      {error && <p className="mt-1 text-[11px] text-debt-ink">{error}</p>}
+      {error && <p className="mt-1 text-2xs text-debt-ink">{error}</p>}
     </fieldset>
   )
 }

@@ -31,7 +31,7 @@ export function GroupStudentRow({ student, onChangeStatus }: GroupStudentRowProp
     <li className="flex items-center justify-between gap-3 py-2.5">
       <div className="min-w-0">
         <p className="text-xs font-semibold text-heading truncate">{student.fullName}</p>
-        <p className="text-[11px] text-caption tabular-nums">{formatPhone(student.phone)}</p>
+        <p className="text-2xs text-caption tabular-nums">{formatPhone(student.phone)}</p>
       </div>
       <PermissionGuard permission={PERMISSIONS.GROUPS.UPDATE}>
         <SelectInput

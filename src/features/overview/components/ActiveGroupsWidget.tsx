@@ -45,7 +45,7 @@ export function ActiveGroupsWidget() {
                   </span>
                   <Badge variant="success">{t.common.active}</Badge>
                 </div>
-                <p className="text-[11px] text-caption truncate">
+                <p className="text-2xs text-caption truncate">
                   <strong className="text-secondary-ink font-medium">
                     {group.teacherName || t.overview.teacherNotAssigned}
                   </strong>{' '}
@@ -56,7 +56,7 @@ export function ActiveGroupsWidget() {
                 <p className="text-xs font-medium text-heading tabular-nums">
                   {group.startTime.slice(0, TIME_PREFIX_LENGTH)} - {group.endTime.slice(0, TIME_PREFIX_LENGTH)}
                 </p>
-                <p className="text-[10px] text-caption">
+                <p className="text-3xs text-caption">
                   {interpolate(t.overview.groupCapacity, {
                     enrolled: group.enrolledStudentsCount,
                     capacity: group.capacity,

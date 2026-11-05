@@ -33,7 +33,7 @@ export function StaffRolesField({ control, roles }: StaffRolesFieldProps) {
             />
             <span>
               <span className="block font-medium text-heading">{role.name}</span>
-              {role.description && <span className="block text-[10px] text-caption">{role.description}</span>}
+              {role.description && <span className="block text-3xs text-caption">{role.description}</span>}
             </span>
           </label>
         ))}

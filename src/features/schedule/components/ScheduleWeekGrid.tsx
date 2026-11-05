@@ -49,11 +49,11 @@ export function ScheduleWeekGrid({ days, today, lessons, isLoading, error, onRet
           <section
             key={day}
             aria-label={t.groups.weekdaysLong[getWeekday(date)]}
-            className="bg-white border border-border rounded-lg overflow-hidden flex flex-col min-h-[120px]"
+            className="bg-surface border border-border rounded-lg overflow-hidden flex flex-col min-h-[120px]"
           >
             <header
               className={cn(
-                'px-2.5 py-2 border-b border-border text-[11px] font-semibold flex items-center justify-between gap-1',
+                'px-2.5 py-2 border-b border-border text-2xs font-semibold flex items-center justify-between gap-1',
                 isToday ? 'bg-primary-soft text-primary' : 'bg-canvas text-caption'
               )}
             >
@@ -65,7 +65,7 @@ export function ScheduleWeekGrid({ days, today, lessons, isLoading, error, onRet
                 ? Array.from({ length: SKELETON_CARDS_PER_DAY }, (_, index) => <Skeleton key={index} className="h-20 w-full" />)
                 : dayLessons.map((lesson) => <ScheduleLessonCard key={lesson.id} lesson={lesson} />)}
               {!isLoading && dayLessons.length === 0 && (
-                <p className="text-[10px] text-subtle text-center py-3">{t.schedule.noLessons}</p>
+                <p className="text-3xs text-subtle text-center py-3">{t.schedule.noLessons}</p>
               )}
             </div>
           </section>

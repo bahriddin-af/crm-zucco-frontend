@@ -49,7 +49,7 @@ export function CashAccountsList() {
                       <span className="font-semibold text-xs text-heading truncate">{account.name}</span>
                       {account.isDefault && <Badge variant="success">{t.finance.defaultAccount}</Badge>}
                     </div>
-                    <span className="text-[11px] text-caption">{t.finance.cashAccountTypes[account.type]}</span>
+                    <span className="text-2xs text-caption">{t.finance.cashAccountTypes[account.type]}</span>
                   </div>
                 </div>
                 <span className="text-sm font-bold text-heading tabular-nums">

@@ -24,7 +24,7 @@ export function ErrorState({ error, onRetry, className }: ErrorStateProps) {
     >
       <AlertTriangle className="w-5 h-5 text-debt-ink mb-2" />
       <h3 className="text-xs font-semibold text-heading mb-1">{t.ui.errorTitle}</h3>
-      <p className="text-[11px] text-copy max-w-sm mb-4">{getApiErrorMessage(error)}</p>
+      <p className="text-2xs text-copy max-w-sm mb-4">{getApiErrorMessage(error)}</p>
       {onRetry && (
         <Button variant="secondary" size="sm" onClick={onRetry}>
           <RefreshCw className="w-3.5 h-3.5" />

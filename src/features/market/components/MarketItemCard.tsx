@@ -18,7 +18,7 @@ export function MarketItemCard({ item, onEdit, onPurchase }: MarketItemCardProps
   const canPurchase = item.isActive && !isOutOfStock
 
   return (
-    <article className="bg-white border border-border rounded-lg p-4 shadow-xs flex flex-col justify-between gap-4 hover:border-primary-line transition-colors">
+    <article className="bg-surface border border-border rounded-lg p-4 shadow-xs flex flex-col justify-between gap-4 hover:border-primary-line transition-colors">
       <div className="space-y-3">
         <div className="w-full h-32 bg-canvas rounded-md border border-border flex items-center justify-center text-primary overflow-hidden">
           {item.imageUrl ? (
@@ -50,7 +50,7 @@ export function MarketItemCard({ item, onEdit, onPurchase }: MarketItemCardProps
           {isOutOfStock ? (
             <Badge variant="danger">{t.market.outOfStock}</Badge>
           ) : (
-            <span className="text-[10px] text-subtle">{interpolate(t.market.inStock, { count: item.stockQuantity })}</span>
+            <span className="text-3xs text-subtle">{interpolate(t.market.inStock, { count: item.stockQuantity })}</span>
           )}
         </div>
         <PermissionGuard permission={PERMISSIONS.GAMIFICATION.PURCHASE}>

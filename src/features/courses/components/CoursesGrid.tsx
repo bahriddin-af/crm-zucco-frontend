@@ -34,7 +34,7 @@ export function CoursesGrid(props: CoursesGridProps) {
     return (
       <div className={GRID_CLASS}>
         {Array.from({ length: SKELETON_CARDS }, (_, index) => (
-          <div key={index} className="bg-white border border-border rounded-lg p-5 space-y-3">
+          <div key={index} className="bg-surface border border-border rounded-lg p-5 space-y-3">
             <Skeleton className="h-5 w-24" />
             <Skeleton className="h-6 w-3/4" />
             <Skeleton className="h-4 w-full" />

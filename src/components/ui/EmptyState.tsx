@@ -23,7 +23,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center py-12 px-4 text-center rounded-lg border border-border bg-white',
+        'flex flex-col items-center justify-center py-12 px-4 text-center rounded-lg border border-border bg-surface',
         className
       )}
     >
@@ -31,7 +31,7 @@ export function EmptyState({
         {icon || <Inbox className="w-5 h-5" />}
       </div>
       <h3 className="text-xs font-semibold text-heading mb-1">{title ?? t.ui.emptyTitle}</h3>
-      <p className="text-[11px] text-caption max-w-sm mb-4">{description ?? t.ui.emptyDescription}</p>
+      <p className="text-2xs text-caption max-w-sm mb-4">{description ?? t.ui.emptyDescription}</p>
       {action && <div>{action}</div>}
     </div>
   )

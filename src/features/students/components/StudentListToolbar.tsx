@@ -12,7 +12,7 @@ interface StudentListToolbarProps {
 
 const tabClass = (isActive: boolean) =>
   cn(
-    'px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors whitespace-nowrap',
+    'px-2.5 py-1 rounded-md text-2xs font-medium transition-colors whitespace-nowrap',
     isActive ? 'bg-primary text-white' : 'bg-canvas text-caption hover:bg-primary-soft'
   )
 
@@ -20,7 +20,7 @@ export function StudentListToolbar({ search, onSearchChange, status, onStatusCha
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-white p-3 rounded-lg border border-border shadow-xs">
+    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-surface p-3 rounded-lg border border-border shadow-xs">
       <SearchInput value={search} onChange={onSearchChange} placeholder={t.students.searchPlaceholder} className="sm:w-80" />
 
       <div role="tablist" aria-label={t.students.statusFilter} className="flex items-center gap-1.5 overflow-x-auto">

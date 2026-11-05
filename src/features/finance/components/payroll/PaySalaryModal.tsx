@@ -82,7 +82,7 @@ export function PaySalaryModal({ calculation, onClose }: PaySalaryModalProps) {
           <div className="rounded-md bg-canvas border border-border p-3 flex items-center justify-between gap-3">
             <div>
               <div className="text-xs font-semibold text-heading">{calculation.teacherName}</div>
-              <div className="text-[11px] text-caption">{messages.payAmount}</div>
+              <div className="text-2xs text-caption">{messages.payAmount}</div>
             </div>
             <span className="text-base font-bold text-heading tabular-nums">{amount}</span>
           </div>

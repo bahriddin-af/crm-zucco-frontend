@@ -45,7 +45,7 @@ export function SmsSendResult({ outcome, onStartNew }: SmsSendResultProps) {
         <Icon className="w-4 h-4 shrink-0 mt-0.5" />
         <div>
           <p className="text-xs font-semibold">{view.title}</p>
-          <p className="text-[11px] text-copy mt-0.5">{view.description}</p>
+          <p className="text-2xs text-copy mt-0.5">{view.description}</p>
         </div>
       </div>
       <Button variant="secondary" size="sm" onClick={onStartNew}>

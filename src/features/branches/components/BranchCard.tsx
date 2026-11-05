@@ -22,7 +22,7 @@ export function BranchCard({ branch, isSelected, onSelect, onEdit, onDelete }: B
   return (
     <article
       className={cn(
-        'bg-white border rounded-lg p-4 shadow-xs space-y-3 transition-colors',
+        'bg-surface border rounded-lg p-4 shadow-xs space-y-3 transition-colors',
         isSelected ? 'border-primary ring-2 ring-primary-ring' : 'border-border hover:border-primary-line'
       )}
     >
@@ -30,7 +30,7 @@ export function BranchCard({ branch, isSelected, onSelect, onEdit, onDelete }: B
         <button type="button" className="text-left cursor-pointer" onClick={() => onSelect(branch)}>
           <h3 className="text-sm font-bold text-heading">{branch.name}</h3>
           {branch.address && <p className="text-xs text-caption mt-0.5">{branch.address}</p>}
-          {branch.phone && <p className="text-[11px] text-subtle mt-0.5 tabular-nums">{formatPhone(branch.phone)}</p>}
+          {branch.phone && <p className="text-2xs text-subtle mt-0.5 tabular-nums">{formatPhone(branch.phone)}</p>}
         </button>
         <div className="flex flex-col items-end gap-1">
           {branch.isMain && <Badge variant="accent">{t.branches.mainBadge}</Badge>}

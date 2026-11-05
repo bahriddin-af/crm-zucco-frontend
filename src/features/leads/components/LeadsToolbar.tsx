@@ -16,7 +16,7 @@ export function LeadsToolbar({ search, onSearchChange, courseId, onCourseChange,
   const { data: coursesData } = useCoursesList()
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-lg border border-border shadow-xs">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface p-3 rounded-lg border border-border shadow-xs">
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
         <SearchInput value={search} onChange={onSearchChange} placeholder={t.leads.searchPlaceholder} className="sm:w-72" />
         <SelectInput

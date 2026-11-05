@@ -29,13 +29,13 @@ export function StudentTableRow({ student, onEnroll, onFreeze, onUnfreeze, onDel
         <Link to={profilePath} className="font-bold text-heading hover:text-primary transition-colors">
           {student.fullName}
         </Link>
-        <p className="text-[11px] text-caption mt-0.5 tabular-nums">{formatPhone(student.phone)}</p>
+        <p className="text-2xs text-caption mt-0.5 tabular-nums">{formatPhone(student.phone)}</p>
       </td>
       <td className="py-3.5 px-4">
         {student.primaryGroup ? (
-          <span className="font-medium bg-primary-soft text-primary px-2 py-0.5 rounded text-[11px]">{student.primaryGroup}</span>
+          <span className="font-medium bg-primary-soft text-primary px-2 py-0.5 rounded text-2xs">{student.primaryGroup}</span>
         ) : (
-          <span className="text-subtle text-[11px]">{t.students.noGroup}</span>
+          <span className="text-subtle text-2xs">{t.students.noGroup}</span>
         )}
       </td>
       <td className="py-3.5 px-4">

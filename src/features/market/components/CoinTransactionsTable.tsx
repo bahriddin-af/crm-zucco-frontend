@@ -15,7 +15,7 @@ export function CoinTransactionsTable({ transactions }: CoinTransactionsTablePro
     <div className="overflow-x-auto">
       <table className="w-full text-left text-xs border-collapse">
         <thead>
-          <tr className="bg-canvas border-b border-border text-caption text-[11px] font-semibold">
+          <tr className="bg-canvas border-b border-border text-caption text-2xs font-semibold">
             <th className="py-3 px-4">{t.coins.student}</th>
             <th className="py-3 px-4">{t.coins.reason}</th>
             <th className="py-3 px-4">{t.coins.description}</th>

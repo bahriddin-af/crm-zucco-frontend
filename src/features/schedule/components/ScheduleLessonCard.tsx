@@ -18,7 +18,7 @@ export function ScheduleLessonCard({ lesson }: ScheduleLessonCardProps) {
   return (
     <article
       className={cn(
-        'p-2 rounded-md border border-l-4 text-[11px] space-y-1 shadow-2xs',
+        'p-2 rounded-md border border-l-4 text-2xs space-y-1 shadow-2xs',
         isCancelled
           ? 'bg-debt-soft border-debt-line border-l-debt text-copy'
           : 'bg-primary-soft border-primary-line border-l-primary text-copy-strong'

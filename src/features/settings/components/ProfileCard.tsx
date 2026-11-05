@@ -31,7 +31,7 @@ export function ProfileCard() {
               value={profile.roleType ? t.settings.roleTypes[profile.roleType] : t.settings.notSet}
             />
             <div className="sm:col-span-2">
-              <dt className="text-[11px] text-caption">{t.settings.roles}</dt>
+              <dt className="text-2xs text-caption">{t.settings.roles}</dt>
               <dd className="mt-1 flex flex-wrap gap-1.5">
                 {profile.roles.map((role) => (
                   <Badge key={role} variant="accent">
@@ -50,7 +50,7 @@ export function ProfileCard() {
 function ProfileRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[11px] text-caption">{label}</dt>
+      <dt className="text-2xs text-caption">{label}</dt>
       <dd className="font-semibold text-heading mt-0.5">{value}</dd>
     </div>
   )

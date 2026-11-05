@@ -27,7 +27,7 @@ export function LeadActivityList({ activities }: { activities: LeadActivityItem[
               <Icon className="w-3 h-3" />
             </div>
             <div className="min-w-0 flex-1 space-y-0.5">
-              <div className="flex justify-between gap-2 text-[10px] text-caption">
+              <div className="flex justify-between gap-2 text-3xs text-caption">
                 <span className="font-semibold text-copy-strong">{t.leads.activityTypes[activity.activityType]}</span>
                 <span className="tabular-nums">
                   {formatDate(activity.createdAt)} {formatTime(activity.createdAt)}

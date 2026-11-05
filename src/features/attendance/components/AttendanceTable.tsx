@@ -16,7 +16,7 @@ export function AttendanceTable({ students, canGrade, disabled, onMark }: Attend
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-border text-[11px] font-semibold text-caption uppercase">
+          <tr className="border-b border-border text-2xs font-semibold text-caption uppercase">
             <th scope="col" className="py-3 px-4">
               {t.attendance.student}
             </th>

@@ -15,10 +15,10 @@ export function RolesMatrix({ roles }: RolesMatrixProps) {
   const { t } = useTranslation()
 
   return (
-    <div className="overflow-x-auto bg-white border border-border rounded-lg shadow-xs">
+    <div className="overflow-x-auto bg-surface border border-border rounded-lg shadow-xs">
       <table className="w-full text-left text-xs border-collapse">
         <thead>
-          <tr className="bg-canvas border-b border-border text-caption text-[11px] font-semibold">
+          <tr className="bg-canvas border-b border-border text-caption text-2xs font-semibold">
             <th className="py-3 px-4 sticky left-0 bg-canvas">{t.roles.permission}</th>
             {roles.map((role) => (
               <th key={role.id} className="py-3 px-3 text-center whitespace-nowrap" title={role.description ?? undefined}>
@@ -31,13 +31,13 @@ export function RolesMatrix({ roles }: RolesMatrixProps) {
           {PERMISSION_GROUPS.map((group) => (
             <Fragment key={group.module}>
               <tr className="bg-surface-muted border-b border-border">
-                <th colSpan={roles.length + 1} className="py-2 px-4 text-[11px] font-semibold text-heading sticky left-0">
+                <th colSpan={roles.length + 1} className="py-2 px-4 text-2xs font-semibold text-heading sticky left-0">
                   {t.roles.modules[group.module]}
                 </th>
               </tr>
               {group.permissions.map((permission) => (
                 <tr key={permission} className="border-b border-divider hover:bg-surface-tint">
-                  <td className="py-2 px-4 text-copy-strong sticky left-0 bg-white">{t.roles.permissions[permission]}</td>
+                  <td className="py-2 px-4 text-copy-strong sticky left-0 bg-surface">{t.roles.permissions[permission]}</td>
                   {roles.map((role) => {
                     const granted = isPermissionGranted(role, permission)
                     const Icon = granted ? Check : Minus

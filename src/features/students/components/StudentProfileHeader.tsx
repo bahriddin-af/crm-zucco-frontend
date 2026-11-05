@@ -25,7 +25,7 @@ export function StudentProfileHeader({ student, isUnfreezing, onEdit, onEnroll, 
   const isFrozen = student.status === STUDENT_STATUS.Frozen
 
   return (
-    <div className="bg-white border border-border rounded-xl p-6 shadow-xs flex flex-col md:flex-row justify-between gap-6">
+    <div className="bg-surface border border-border rounded-xl p-6 shadow-xs flex flex-col md:flex-row justify-between gap-6">
       <div className="flex items-start gap-4">
         <div className="w-16 h-16 shrink-0 rounded-full bg-primary-soft text-primary border border-primary-line flex items-center justify-center text-xl font-bold">
           {student.fullName.slice(0, INITIALS_LENGTH).toUpperCase()}
@@ -48,13 +48,13 @@ export function StudentProfileHeader({ student, isUnfreezing, onEdit, onEnroll, 
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="p-3 bg-canvas border border-border rounded-lg min-w-[140px]">
-          <span className="block text-[10px] text-caption font-medium">{t.students.detail.balance}</span>
+          <span className="block text-3xs text-caption font-medium">{t.students.detail.balance}</span>
           <span className={cn('text-base font-bold tabular-nums', student.balance < 0 ? 'text-debt-ink' : 'text-success-ink')}>
             {formatCurrency(student.balance)}
           </span>
         </div>
         <div className="p-3 bg-canvas border border-border rounded-lg min-w-[120px]">
-          <span className="block text-[10px] text-caption font-medium">{t.students.detail.coins}</span>
+          <span className="block text-3xs text-caption font-medium">{t.students.detail.coins}</span>
           <div className="flex items-center gap-1 text-base font-bold text-warning-deep tabular-nums">
             <Coins className="w-4 h-4 text-warning" />
             <span>{student.coinsBalance}</span>
