@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ROUTES } from '@/routes/paths'
+import { BrandLogo, BrandMark } from '@/components/ui/BrandLogo'
 import { useAppStore } from '@/stores/appStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useTranslation } from '@/i18n'
@@ -24,17 +25,14 @@ export function Sidebar() {
         isCollapsed ? 'w-18 px-2.5 py-4' : 'w-64 px-3.5 py-4'
       )}
     >
-      <div className="flex items-center gap-2.5 px-2 mb-5">
-        <div className="w-[30px] h-[30px] rounded-lg bg-primary text-white flex items-center justify-center font-bold text-lg leading-none shrink-0">
-          {t.layout.brandInitial}
-        </div>
-        {!isCollapsed && (
-          <div className="flex items-center justify-between w-full">
-            <span className="font-bold text-lg text-heading tracking-tight">{t.layout.brandName}</span>
-            <span className="text-3xs font-medium text-primary bg-primary-soft px-1.5 py-0.5 rounded">
-              {t.layout.brandBadge}
-            </span>
-          </div>
+      <div className={cn('flex items-center mb-5 min-h-10', isCollapsed ? 'justify-center' : 'px-2.5')}>
+        {isCollapsed ? (
+          // Yig'ilgan menyuda to'liq nom sig'maydi: faqat belgi.
+          <span title={t.layout.brandName}>
+            <BrandMark className="h-6 w-auto" />
+          </span>
+        ) : (
+          <BrandLogo showVersion />
         )}
       </div>
 
@@ -76,7 +74,7 @@ export function Sidebar() {
           onClick={toggleSidebar}
           aria-label={isCollapsed ? t.layout.expandSidebar : t.layout.collapseSidebar}
           className={cn(
-            'w-7 h-7 inline-flex items-center justify-center rounded-md text-caption hover:bg-divider transition-colors shrink-0',
+            'w-8 h-8 inline-flex items-center justify-center rounded-md text-caption hover:bg-divider transition-colors shrink-0',
             isCollapsed && 'mx-auto'
           )}
         >

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
 import { PermissionGuard } from '@/components/common/PermissionGuard'
 import { useTranslation } from '@/i18n'
+import { useAuthStore } from '@/stores/authStore'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { ActiveStudentsKpi } from '../components/ActiveStudentsKpi'
 import { FinanceKpis } from '../components/FinanceKpis'
@@ -14,6 +15,7 @@ import { LeadsFunnelWidget } from '../components/LeadsFunnelWidget'
 /** Har bir vidjet o'z ruxsati bilan ko'rsatiladi va alohida `ErrorBoundary` ga o'ralgan. */
 export function OverviewPage() {
   const { t } = useTranslation()
+  const canViewLeads = useAuthStore((state) => state.hasPermission(PERMISSIONS.LEADS.VIEW))
 
   return (
     <div className="space-y-6">
@@ -40,7 +42,8 @@ export function OverviewPage() {
         }
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* auto-fit: ruxsat bo'lmagani uchun yashirilgan kartalar o'rnida bo'sh joy qolmaydi */}
+      <div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-4">
         <PermissionGuard permission={PERMISSIONS.STUDENTS.VIEW}>
           <ErrorBoundary>
             <ActiveStudentsKpi />
@@ -56,7 +59,7 @@ export function OverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <PermissionGuard permission={PERMISSIONS.GROUPS.VIEW}>
           <ErrorBoundary>
-            <ActiveGroupsWidget />
+            <ActiveGroupsWidget className={canViewLeads ? 'lg:col-span-2' : 'lg:col-span-3'} />
           </ErrorBoundary>
         </PermissionGuard>
         <PermissionGuard permission={PERMISSIONS.LEADS.VIEW}>

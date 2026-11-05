@@ -39,10 +39,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant === 'danger' &&
             'bg-debt-soft hover:bg-debt-line text-debt-ink border border-debt-border',
           // Sizes
-          size === 'sm' && 'min-h-[28px] px-2.5 py-1 text-2xs rounded-[5px] gap-1.5',
-          size === 'md' && 'min-h-[34px] px-3.5 py-1.5 text-xs rounded-md gap-2',
-          size === 'lg' && 'min-h-[40px] px-4 py-2 text-sm rounded-md gap-2.5',
-          size === 'icon' && 'h-[32px] w-[32px] p-0 rounded-md',
+          size === 'sm' && 'min-h-8 px-3 py-1 text-xs rounded-md gap-1.5',
+          size === 'md' && 'min-h-9 px-4 py-1.5 text-sm rounded-md gap-2',
+          size === 'lg' && 'min-h-11 px-5 py-2 text-sm rounded-md gap-2.5',
+          size === 'icon' && 'h-8 w-8 p-0 rounded-md',
           className
         )}
         {...props}

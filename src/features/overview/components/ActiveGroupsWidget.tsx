@@ -14,7 +14,12 @@ const SKELETON_ROWS = 3
 /** Backend `TimeOnly` ("HH:mm:ss") dan "HH:mm" qismi. */
 const TIME_PREFIX_LENGTH = 5
 
-export function ActiveGroupsWidget() {
+interface ActiveGroupsWidgetProps {
+  /** Grid'dagi kengligi sahifa tomonidan beriladi (yonida boshqa vidjet bo'lmasa — to'liq kenglik). */
+  className?: string
+}
+
+export function ActiveGroupsWidget({ className }: ActiveGroupsWidgetProps) {
   const { t } = useTranslation()
   const { data, isLoading, error, refetch } = useGroupsList({ status: GROUP_STATUS.Active })
   const groups = (data?.items ?? []).slice(0, VISIBLE_GROUPS)
@@ -25,7 +30,7 @@ export function ActiveGroupsWidget() {
       icon={<BookOpen className="w-4 h-4 text-primary" />}
       linkTo={ROUTES.GROUPS.LIST}
       linkLabel={t.overview.allGroups}
-      className="lg:col-span-2"
+      className={className}
     >
       {isLoading && (
         <ListSkeleton rows={SKELETON_ROWS} rowClassName="h-12 w-full" className="p-5 space-y-3" />

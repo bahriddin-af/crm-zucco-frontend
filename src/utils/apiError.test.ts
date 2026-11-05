@@ -33,6 +33,17 @@ describe('getApiErrorMessage', () => {
     expect(getApiErrorMessage(offline)).toBe(errorsMessages.en.network)
   })
 
+  it.each([502, 503, 504])('treats a %s from the proxy as an unreachable server', (status) => {
+    const gatewayError = httpError(status, '')
+
+    expect(isNetworkError(gatewayError)).toBe(true)
+    expect(getApiErrorMessage(gatewayError)).toBe(errorsMessages.en.network)
+  })
+
+  it('does not treat a backend 500 as a network failure', () => {
+    expect(isNetworkError(httpError(500, { code: 'internal_server_error' }))).toBe(false)
+  })
+
   it('follows the selected language', () => {
     useLanguageStore.getState().setLanguage('ru')
     expect(getApiErrorMessage(httpError(404, { code: 'student_not_found' }))).toBe(errorsMessages.ru.student_not_found)

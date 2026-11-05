@@ -1,7 +1,7 @@
 import { isAxiosError } from 'axios'
 import { getTranslations } from '@/i18n'
 import type { ErrorMessages } from '@/i18n/messages/errors'
-import { HTTP_STATUS } from '@/constants/http'
+import { HTTP_STATUS, SERVER_UNREACHABLE_STATUSES } from '@/constants/http'
 
 /** Backend idempotentlik kaliti boshqa payload bilan qayta ishlatilganda qaytaradigan kod. */
 export const OPERATION_CONFLICT_CODE = 'operation_key_reused_with_different_payload'
@@ -24,7 +24,7 @@ const isKnownCode = (code: string, messages: ErrorMessages): code is keyof Error
 export function getApiErrorMessage(error: unknown): string {
   const { errors } = getTranslations()
 
-  if (isAxiosError(error) && !error.response) return errors.network
+  if (isNetworkError(error)) return errors.network
 
   const code = getApiErrorCode(error)
   if (code && isKnownCode(code, errors)) return errors[code]
@@ -43,7 +43,12 @@ export function getApiErrorMessage(error: unknown): string {
   }
 }
 
-/** Javob umuman kelmagan (tarmoq) xatolar: faqat shularni xavfsiz qayta yuborish mumkin. */
+/**
+ * Server bilan aloqa yo'q: javob umuman kelmagan yoki proxy/gateway backendga yetolmagan (502/503/504).
+ * Bunday so'rov backendda bajarilmagan, shuning uchun (bir xil operationId bilan) qayta yuborish xavfsiz.
+ */
 export function isNetworkError(error: unknown): boolean {
-  return isAxiosError(error) && !error.response
+  if (!isAxiosError(error)) return false
+  const status = error.response?.status
+  return status === undefined || SERVER_UNREACHABLE_STATUSES.includes(status)
 }

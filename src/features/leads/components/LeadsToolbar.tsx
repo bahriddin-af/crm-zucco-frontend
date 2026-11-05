@@ -23,7 +23,7 @@ export function LeadsToolbar({ search, onSearchChange, courseId, onCourseChange,
           value={courseId}
           onChange={(e) => onCourseChange(e.target.value)}
           aria-label={t.leads.courseFilter}
-          className="sm:w-56 min-h-[32px]"
+          className="sm:w-56 min-h-9"
         >
           <option value="">{t.leads.allCourses}</option>
           {(coursesData?.items ?? []).map((course) => (
