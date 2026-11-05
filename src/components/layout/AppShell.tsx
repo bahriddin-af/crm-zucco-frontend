@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
+import { OfflineBanner } from '@/components/common/OfflineBanner'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Topbar } from '@/components/layout/Topbar'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
@@ -9,6 +10,7 @@ import { cn } from '@/utils/cn'
 export function AppShell() {
   const isCollapsed = useAppStore((state) => state.isSidebarCollapsed)
   const setIsOnline = useAppStore((state) => state.setIsOnline)
+  const location = useLocation()
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true)
@@ -24,7 +26,7 @@ export function AppShell() {
   }, [setIsOnline])
 
   return (
-    <div className="min-h-screen bg-[#F6F8F7] flex flex-col">
+    <div className="min-h-screen bg-canvas flex flex-col">
       <Sidebar />
       <div
         className={cn(
@@ -32,9 +34,10 @@ export function AppShell() {
           isCollapsed ? 'pl-[72px]' : 'pl-[240px]'
         )}
       >
+        <OfflineBanner />
         <Topbar />
         <main className="flex-1 p-6 max-w-[1600px] w-full mx-auto">
-          <ErrorBoundary>
+          <ErrorBoundary key={location.pathname}>
             <Outlet />
           </ErrorBoundary>
         </main>

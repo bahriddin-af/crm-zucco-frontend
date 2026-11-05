@@ -1,54 +1,56 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/constants/queryKeys'
 import { attendanceApi } from '../api/attendanceApi'
-import type { MarkLessonAttendanceRequest } from '../types/attendanceTypes'
+import type { LessonAttendanceSheetResponse, MarkLessonAttendanceRequest } from '../types/attendanceTypes'
+import { applyAttendanceMarks } from '../utils/attendanceMarks'
 
-export function useGroupLessons(groupId: string) {
-  return useQuery({
-    queryKey: ['groups', groupId, 'lessons'],
-    queryFn: () => attendanceApi.getGroupLessons(groupId),
-    enabled: Boolean(groupId),
-  })
-}
+export { useGroupLessons, useGenerateSchedule } from '@/features/groups/hooks/useGroupLessons'
 
 export function useLessonSheet(lessonId: string) {
   return useQuery({
-    queryKey: ['attendance', 'lesson', lessonId],
+    queryKey: QUERY_KEYS.ATTENDANCE.LESSON(lessonId),
     queryFn: () => attendanceApi.getLessonSheet(lessonId),
     enabled: Boolean(lessonId),
   })
 }
 
-export function useGenerateSchedule() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (groupId: string) => attendanceApi.generateGroupSchedule(groupId),
-    onSuccess: (_data, groupId) => {
-      queryClient.invalidateQueries({ queryKey: ['groups', groupId, 'lessons'] })
-      toast.success('12 та дарс жадвали муваффақиятли генерация қилинди!')
-    },
-    onError: () => {
-      toast.error('Дарс жадвалини яратишда хатолик юз берди')
-    },
-  })
+interface MarkAttendanceContext {
+  previous?: LessonAttendanceSheetResponse
 }
 
+/**
+ * Optimistik davomat (RULES §3.3): belgi keshga darhol yoziladi, xatoda snapshot qaytariladi,
+ * yakunda varaq serverdan qayta olinadi. Xato toast'i global `MutationCache` orqali chiqadi.
+ */
 export function useMarkAttendance() {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: (payload: MarkLessonAttendanceRequest) =>
-      attendanceApi.markAttendance(payload),
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ['attendance', 'lesson', variables.lessonId],
-      })
-      queryClient.invalidateQueries({ queryKey: ['gamification'] })
-      toast.success('Давомат ва баҳолар муваффақиятли сақланди!')
+  return useMutation<LessonAttendanceSheetResponse, unknown, MarkLessonAttendanceRequest, MarkAttendanceContext>({
+    mutationKey: QUERY_KEYS.ATTENDANCE.ALL,
+    mutationFn: (payload) => attendanceApi.markAttendance(payload),
+    meta: {
+      invalidates: [QUERY_KEYS.GROUPS.ALL, QUERY_KEYS.SCHEDULE.ALL, QUERY_KEYS.STUDENTS.ALL, QUERY_KEYS.GAMIFICATION.ALL],
     },
-    onError: () => {
-      toast.error('Давоматни сақлашда хатолик юз берди')
+    onMutate: async (payload) => {
+      const queryKey = QUERY_KEYS.ATTENDANCE.LESSON(payload.lessonId)
+      await queryClient.cancelQueries({ queryKey })
+      const previous = queryClient.getQueryData<LessonAttendanceSheetResponse>(queryKey)
+      if (previous) {
+        queryClient.setQueryData(queryKey, applyAttendanceMarks(previous, payload))
+      }
+      return { previous }
+    },
+    onError: (_error, payload, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(QUERY_KEYS.ATTENDANCE.LESSON(payload.lessonId), context.previous)
+      }
+    },
+    onSettled: (_data, _error, payload) => {
+      // Ketma-ket bosilgan belgilarda oraliq refetch optimistik holatni ustidan yozmasligi uchun
+      // varaq faqat oxirgi davomat mutatsiyasi tugaganda qayta olinadi.
+      if (queryClient.isMutating({ mutationKey: QUERY_KEYS.ATTENDANCE.ALL }) <= 1) {
+        void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ATTENDANCE.LESSON(payload.lessonId) })
+      }
     },
   })
 }

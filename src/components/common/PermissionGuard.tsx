@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
+import type { Permission } from '@/constants/permissions'
 import { useAuthStore } from '@/stores/authStore'
 
 interface PermissionGuardProps {
-  permission: string
+  permission: Permission
   fallback?: ReactNode
   children: ReactNode
 }

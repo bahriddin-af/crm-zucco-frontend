@@ -1,68 +1,84 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { QUERY_KEYS } from '@/constants/queryKeys'
+import { useTranslation } from '@/i18n'
 import { courseApi } from '../api/courseApi'
-import type { CreateCourseRequest, CourseListItem } from '../types/courseTypes'
+import type {
+  CourseListFilters,
+  CreateOrUpdateCourseRequest,
+  CreateOrUpdateSubjectRequest,
+} from '../types/courseTypes'
 
-export function useCoursesList(filters?: { subjectId?: string }) {
+export function useCoursesList(filters?: CourseListFilters) {
   return useQuery({
-    queryKey: QUERY_KEYS.COURSES.LIST(filters),
+    queryKey: QUERY_KEYS.COURSES.LIST({ ...filters }),
     queryFn: () => courseApi.getCourses(filters),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useCourseDetail(id?: string | null) {
+  return useQuery({
+    queryKey: QUERY_KEYS.COURSES.DETAIL(id ?? ''),
+    queryFn: () => courseApi.getCourseById(id ?? ''),
+    enabled: Boolean(id),
   })
 }
 
 export function useSubjectsList() {
   return useQuery({
-    queryKey: ['courses', 'subjects'],
+    queryKey: QUERY_KEYS.COURSES.SUBJECTS,
     queryFn: () => courseApi.getSubjects(),
   })
 }
 
-export function useCreateSubject() {
-  const queryClient = useQueryClient()
+export function useSaveSubject(onSuccessCallback?: () => void) {
+  const { t } = useTranslation()
 
   return useMutation({
-    mutationFn: (name: string) => courseApi.createOrUpdateSubject(name),
+    mutationFn: (payload: CreateOrUpdateSubjectRequest) => courseApi.createOrUpdateSubject(payload),
+    meta: { invalidates: [QUERY_KEYS.COURSES.ALL] },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['courses', 'subjects'] })
-      toast.success('Янги таълим йўналиши яратилди!')
+      toast.success(t.courses.subjectSaved)
+      onSuccessCallback?.()
     },
-    onError: () => {
-      toast.error('Йўналиш яратишда хатолик юз берди')
+  })
+}
+
+/** `cannot_delete_subject_with_courses` xatosi global toast orqali ko'rsatiladi. */
+export function useDeleteSubject() {
+  const { t } = useTranslation()
+
+  return useMutation({
+    mutationFn: (subjectId: string) => courseApi.deleteSubject(subjectId),
+    meta: { invalidates: [QUERY_KEYS.COURSES.ALL] },
+    onSuccess: () => {
+      toast.success(t.courses.subjectDeleted)
     },
   })
 }
 
 export function useSaveCourse(onSuccessCallback?: () => void) {
-  const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   return useMutation({
-    mutationFn: (payload: CreateCourseRequest) => courseApi.createOrUpdateCourse(payload),
+    mutationFn: (payload: CreateOrUpdateCourseRequest) => courseApi.createOrUpdateCourse(payload),
+    meta: { invalidates: [QUERY_KEYS.COURSES.ALL] },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COURSES.ALL })
-      toast.success(
-        variables.id ? 'Курс муваффақиятли янгиланди!' : 'Янги курс муваффақиятли қўшилди!'
-      )
+      toast.success(variables.id ? t.courses.updated : t.courses.created)
       onSuccessCallback?.()
-    },
-    onError: (err: unknown) => {
-      const error = err as { response?: { data?: { message?: string } } }
-      toast.error(error.response?.data?.message || 'Курсни сақлашда хатолик юз берди')
     },
   })
 }
 
 export function useDeleteCourse() {
-  const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   return useMutation({
-    mutationFn: (course: CourseListItem) => courseApi.deleteCourse(course.id),
+    mutationFn: (courseId: string) => courseApi.deleteCourse(courseId),
+    meta: { invalidates: [QUERY_KEYS.COURSES.ALL] },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COURSES.ALL })
-      toast.success('Курс муваффақиятли ўчирилди!')
-    },
-    onError: () => {
-      toast.error('Курсни ўчиришда хатолик юз берди')
+      toast.success(t.courses.deleted)
     },
   })
 }

@@ -1,13 +1,21 @@
+/**
+ * Backend endpointlari (crm-zucco-backend/backend/src/Zucco.Api/Controllers) bilan 1:1 mos.
+ * Komponent yoki API servislarida URL faqat shu obyekt orqali olinadi.
+ */
 export const API_ROUTES = {
   AUTH: {
     LOGIN: '/api/auth/login',
     REFRESH: '/api/auth/refresh',
+    LOGOUT: '/api/auth/logout',
     ME: '/api/auth/me',
+    CHANGE_PASSWORD: '/api/auth/change-password',
   },
   BRANCHES: {
     LIST: '/api/branches',
+    CREATE_OR_UPDATE: '/api/branches',
     DETAIL: (id: string) => `/api/branches/${id}`,
     ROOMS: (branchId: string) => `/api/branches/${branchId}/rooms`,
+    ROOM_DETAIL: (branchId: string, roomId: string) => `/api/branches/${branchId}/rooms/${roomId}`,
   },
   LEADS: {
     LIST: '/api/leads',
@@ -17,6 +25,7 @@ export const API_ROUTES = {
     UPDATE_STAGE: (id: string) => `/api/leads/${id}/stage`,
     CONVERT: (id: string) => `/api/leads/${id}/convert`,
     LOST: (id: string) => `/api/leads/${id}/status/lost`,
+    ACTIVITIES: (id: string) => `/api/leads/${id}/activities`,
     STAGES: '/api/leads/stages',
     SOURCES: '/api/leads/sources',
   },
@@ -25,17 +34,18 @@ export const API_ROUTES = {
     DETAIL: (id: string) => `/api/students/${id}`,
     CREATE_OR_UPDATE: '/api/students',
     FREEZE: (id: string) => `/api/students/${id}/freeze`,
-    RESUME: (id: string) => `/api/students/${id}/resume`,
-    ENROLL: (id: string) => `/api/students/${id}/enroll`,
-    GROUPS: (id: string) => `/api/students/${id}/groups`,
+    UNFREEZE: (id: string) => `/api/students/${id}/unfreeze`,
   },
   GROUPS: {
     LIST: '/api/groups',
     DETAIL: (id: string) => `/api/groups/${id}`,
     CREATE_OR_UPDATE: '/api/groups',
-    SCHEDULE: (id: string) => `/api/groups/${id}/schedule`,
     STUDENTS: (id: string) => `/api/groups/${id}/students`,
+    STUDENT_STATUS: (id: string, studentId: string) => `/api/groups/${id}/students/${studentId}`,
+    GENERATE_SCHEDULE: (id: string) => `/api/groups/${id}/schedule`,
     LESSONS: (id: string) => `/api/groups/${id}/lessons`,
+    SCHEDULE: '/api/groups/lessons',
+    CANCEL_LESSON: (lessonId: string) => `/api/groups/lessons/${lessonId}/cancel`,
     DELETE: (id: string) => `/api/groups/${id}`,
   },
   COURSES: {
@@ -43,32 +53,33 @@ export const API_ROUTES = {
     DETAIL: (id: string) => `/api/courses/${id}`,
     CREATE_OR_UPDATE: '/api/courses',
     SUBJECTS: '/api/courses/subjects',
+    SUBJECT_DETAIL: (id: string) => `/api/courses/subjects/${id}`,
     DELETE: (id: string) => `/api/courses/${id}`,
   },
   ATTENDANCE: {
-    LESSON: (lessonId: string) => `/api/attendance/lesson/${lessonId}`,
-    MARK: '/api/attendance/mark',
+    MARK: '/api/attendance',
+    LESSON: (lessonId: string) => `/api/attendance/lessons/${lessonId}`,
+    STUDENT: (studentId: string) => `/api/attendance/students/${studentId}`,
   },
   FINANCE: {
     ACCOUNTS: '/api/finance/cash-accounts',
     PAYMENTS: '/api/finance/payments',
     EXPENSES: '/api/finance/expenses',
+    EXPENSE_CATEGORIES: '/api/finance/expense-categories',
     SUMMARY: '/api/finance/summary',
     BILLING_JOBS: '/api/finance/billing-jobs',
   },
   PAYROLL: {
-    LIST: '/api/payroll',
     SCHEMES: '/api/payroll/schemes',
-    CALCULATE: '/api/payroll/calculate',
-    APPROVE: (id: string) => `/api/payroll/${id}/approve`,
-    PAY: (id: string) => `/api/payroll/${id}/pay`,
+    CALCULATIONS: '/api/payroll/calculations',
+    APPROVE: (id: string) => `/api/payroll/calculations/${id}/approve`,
+    PAY: (id: string) => `/api/payroll/calculations/${id}/pay`,
   },
   GAMIFICATION: {
-    BALANCE: (studentId: string) => `/api/gamification/students/${studentId}/balance`,
-    TRANSACTIONS: '/api/gamification/transactions',
-    MARKET_ITEMS: '/api/gamification/items',
-    PURCHASE: '/api/gamification/purchase',
-    ADJUST: '/api/gamification/adjust',
+    COIN_TRANSACTIONS: '/api/gamification/coin-transactions',
+    ITEMS: '/api/gamification/items',
+    ORDERS: '/api/gamification/orders',
+    DELIVER_ORDER: (id: string) => `/api/gamification/orders/${id}/deliver`,
   },
   STAFF: {
     LIST: '/api/staff',
@@ -78,7 +89,11 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/api/staff/${id}`,
   },
   NOTIFICATIONS: {
+    TEMPLATES: '/api/notifications/templates',
     SMS_SEND: '/api/notifications/sms/send',
-    SMS_HISTORY: '/api/notifications/sms/history',
+    SMS_LOGS: '/api/notifications/sms/logs',
+  },
+  REPORTS: {
+    MONTHLY: '/api/reports/monthly',
   },
 } as const

@@ -1,3 +1,4 @@
+/** Backend `Zucco.Domain.Students.Enums` bilan 1:1 (JSON'da raqam sifatida keladi). */
 export const STUDENT_STATUS = {
   Active: 1,
   Trial: 2,
@@ -8,15 +9,7 @@ export const STUDENT_STATUS = {
 } as const
 
 export type StudentStatus = (typeof STUDENT_STATUS)[keyof typeof STUDENT_STATUS]
-
-export const STUDENT_STATUS_LABELS: Record<StudentStatus, string> = {
-  [STUDENT_STATUS.Active]: 'Фаол',
-  [STUDENT_STATUS.Trial]: 'Синов муддатида',
-  [STUDENT_STATUS.Frozen]: 'Музлатилган',
-  [STUDENT_STATUS.Debtor]: 'Қарздор',
-  [STUDENT_STATUS.Completed]: 'Битирган',
-  [STUDENT_STATUS.Dropped]: 'Тарк этган',
-}
+export const STUDENT_STATUS_VALUES: readonly StudentStatus[] = Object.values(STUDENT_STATUS)
 
 export const GENDER = {
   Male: 1,
@@ -24,6 +17,7 @@ export const GENDER = {
 } as const
 
 export type Gender = (typeof GENDER)[keyof typeof GENDER]
+export const GENDER_VALUES: readonly Gender[] = Object.values(GENDER)
 
 export const PARENT_RELATIONSHIP = {
   Father: 1,
@@ -32,8 +26,7 @@ export const PARENT_RELATIONSHIP = {
   Other: 4,
 } as const
 
-export type ParentRelationship =
-  (typeof PARENT_RELATIONSHIP)[keyof typeof PARENT_RELATIONSHIP]
+export type ParentRelationship = (typeof PARENT_RELATIONSHIP)[keyof typeof PARENT_RELATIONSHIP]
 
 export interface StudentListItem {
   id: string
@@ -62,6 +55,7 @@ export interface EnrolledGroupInfo {
   customPrice?: number | null
 }
 
+/** Backend `StudentResponse`. */
 export interface StudentDetail {
   id: string
   fullName: string
@@ -79,8 +73,17 @@ export interface StudentDetail {
   createdAt: string
 }
 
+/** `type` (interface emas): query key `Record<string, unknown>` sifatida qabul qilishi uchun. */
+export type StudentListFilters = {
+  page?: number
+  pageSize?: number
+  status?: StudentStatus
+  groupId?: string
+  search?: string
+}
+
 export interface CreateOrUpdateStudentRequest {
-  id?: string
+  id?: string | null
   fullName: string
   phone: string
   birthDate?: string | null
@@ -88,7 +91,8 @@ export interface CreateOrUpdateStudentRequest {
   address?: string | null
   note?: string | null
   status?: StudentStatus
-  parents?: StudentParentDto[]
+  /** `null`/yo'q bo'lsa backend ota-onalarni o'zgartirmaydi. */
+  parents?: StudentParentDto[] | null
 }
 
 export interface FreezeStudentRequest {
@@ -98,9 +102,10 @@ export interface FreezeStudentRequest {
   reason?: string | null
 }
 
+/** Backend `AddStudentToGroupRequest` (`POST /api/groups/{id}/students`). */
 export interface EnrollStudentRequest {
   groupId: string
   studentId: string
   joinedDate: string
-  customPrice?: number
+  customPrice?: number | null
 }

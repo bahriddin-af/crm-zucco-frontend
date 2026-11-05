@@ -1,3 +1,4 @@
+/** Backend `Zucco.Domain.Finance.Enums.CashAccountType` (JSON: raqam). */
 export const CASH_ACCOUNT_TYPE = {
   Cash: 1,
   BankAccount: 2,
@@ -5,16 +6,9 @@ export const CASH_ACCOUNT_TYPE = {
   OnlineAggregator: 4,
 } as const
 
-export type CashAccountType =
-  (typeof CASH_ACCOUNT_TYPE)[keyof typeof CASH_ACCOUNT_TYPE]
+export type CashAccountType = (typeof CASH_ACCOUNT_TYPE)[keyof typeof CASH_ACCOUNT_TYPE]
 
-export const CASH_ACCOUNT_TYPE_LABELS: Record<CashAccountType, string> = {
-  [CASH_ACCOUNT_TYPE.Cash]: 'Нақд пул кассаси',
-  [CASH_ACCOUNT_TYPE.BankAccount]: 'Банк ҳисоб рақами',
-  [CASH_ACCOUNT_TYPE.Terminal]: 'Тўлов терминали (Uzcard/Humo)',
-  [CASH_ACCOUNT_TYPE.OnlineAggregator]: 'Онлайн тўлов (Click/Payme)',
-}
-
+/** Backend `Zucco.Domain.Finance.Enums.PaymentMethod` (JSON: raqam). */
 export const PAYMENT_METHOD = {
   Cash: 1,
   Card: 2,
@@ -26,14 +20,17 @@ export const PAYMENT_METHOD = {
 
 export type PaymentMethod = (typeof PAYMENT_METHOD)[keyof typeof PAYMENT_METHOD]
 
-export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
-  [PAYMENT_METHOD.Cash]: 'Нақд пул',
-  [PAYMENT_METHOD.Card]: 'Пластик карта (Терминал)',
-  [PAYMENT_METHOD.BankTransfer]: 'Банк ўтказмаси',
-  [PAYMENT_METHOD.Click]: 'Click',
-  [PAYMENT_METHOD.Payme]: 'Payme',
-  [PAYMENT_METHOD.Uzum]: 'Uzum Bank',
-}
+export const PAYMENT_METHODS: readonly PaymentMethod[] = Object.values(PAYMENT_METHOD)
+
+/** EF konfiguratsiyasidagi `HasMaxLength` qiymatlari. */
+export const FINANCE_TEXT_LIMITS = {
+  PAYMENT_COMMENT: 500,
+  PAYMENT_BILLING_PERIOD: 20,
+  EXPENSE_DESCRIPTION: 500,
+  EXPENSE_RECIPIENT: 150,
+} as const
+
+export const FINANCE_PAGE_SIZE = 20
 
 export interface CashAccount {
   id: string
@@ -54,6 +51,7 @@ export interface FinancialSummary {
   cashAccounts: CashAccount[]
 }
 
+/** Backend `RecordPaymentRequest`. */
 export interface RecordPaymentRequest {
   studentId: string
   cashAccountId: string
@@ -62,7 +60,7 @@ export interface RecordPaymentRequest {
   groupId?: string | null
   comment?: string | null
   billingPeriod?: string | null
-  operationId?: string
+  operationId: string
 }
 
 export interface PaymentResponse {
@@ -81,14 +79,15 @@ export interface PaymentResponse {
   studentBalanceAfter: number
 }
 
+/** Backend `RecordExpenseRequest`. */
 export interface RecordExpenseRequest {
   cashAccountId: string
-  expenseCategoryId?: string
+  expenseCategoryId: string
   amount: number
   description: string
   branchId?: string | null
   recipient?: string | null
-  operationId?: string
+  operationId: string
 }
 
 export interface ExpenseResponse {
@@ -101,4 +100,27 @@ export interface ExpenseResponse {
   description: string
   recipient?: string | null
   expenseDate: string
+}
+
+export interface ExpenseCategory {
+  id: string
+  name: string
+}
+
+type PagedFilters = {
+  page: number
+  pageSize: number
+  search?: string
+}
+
+/** To'lovlar ro'yxati query parametrlari (`PagedRequest` + `FilterRequest` + filtrlar). */
+export type PaymentsFilters = PagedFilters & {
+  studentId?: string
+  cashAccountId?: string
+}
+
+/** Xarajatlar ro'yxati query parametrlari (`PagedRequest` + `FilterRequest` + filtrlar). */
+export type ExpensesFilters = PagedFilters & {
+  expenseCategoryId?: string
+  cashAccountId?: string
 }

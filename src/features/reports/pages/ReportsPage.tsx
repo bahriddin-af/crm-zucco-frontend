@@ -1,50 +1,52 @@
-import { Download } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
-import { formatCurrency } from '@/utils/formatters'
+import { useState } from 'react'
+import { Lock } from 'lucide-react'
+import { PermissionGuard } from '@/components/common/PermissionGuard'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Input } from '@/components/ui/Input'
+import { PERMISSIONS } from '@/constants/permissions'
+import { useTranslation } from '@/i18n'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { MONTH_PERIOD_PATTERN, toMonthPeriod } from '@/utils/dateUtils'
+import { ReportContent } from '../components/ReportContent'
 
 export function ReportsPage() {
+  const { t } = useTranslation()
+  const [period, setPeriod] = useState(() => toMonthPeriod())
+
+  const handlePeriodChange = (value: string) => {
+    // Brauzer oy maydonini tozalaganda yoki noto'g'ri qiymatda oldingi davr saqlanadi.
+    if (MONTH_PERIOD_PATTERN.test(value)) setPeriod(value)
+  }
+
+  const periodPicker = (
+    <label className="flex items-center gap-2 text-[11px] text-caption">
+      <span>{t.reports.period}</span>
+      <Input
+        type="month"
+        value={period}
+        max={toMonthPeriod()}
+        onChange={(event) => handlePeriodChange(event.target.value)}
+        aria-label={t.reports.period}
+        className="w-40"
+      />
+    </label>
+  )
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-[#1E2B24] tracking-tight">
-            Таҳлилий ҳисоботлар
-          </h1>
-          <p className="text-xs text-[#65776C] mt-0.5">
-            Молиявий динамика, ўқувчилар ўсиши ва конверсия ҳисоботлари
-          </p>
-        </div>
-        <Button variant="secondary" size="sm">
-          <Download className="w-3.5 h-3.5" />
-          <span>Excel экспорт</span>
-        </Button>
+    <PermissionGuard
+      permission={PERMISSIONS.FINANCE.VIEW}
+      fallback={
+        <EmptyState
+          icon={<Lock className="w-5 h-5" />}
+          title={t.reports.noAccessTitle}
+          description={t.reports.noAccessDescription}
+        />
+      }
+    >
+      <div className="space-y-6">
+        <PageHeader title={t.reports.title} subtitle={t.reports.subtitle} actions={periodPicker} />
+        <ReportContent period={period} />
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white border border-[#E3EAE5] rounded-lg p-5 shadow-xs space-y-2">
-          <span className="text-xs text-[#65776C]">Жорий ой соф фойдаси</span>
-          <p className="text-2xl font-bold text-[#047857] tabular-nums">
-            {formatCurrency(26400000)}
-          </p>
-          <span className="text-[10px] text-[#047857]">Ўтган ойга нисбаtan +14%</span>
-        </div>
-
-        <div className="bg-white border border-[#E3EAE5] rounded-lg p-5 shadow-xs space-y-2">
-          <span className="text-xs text-[#65776C]">Жами янги талабалар</span>
-          <p className="text-2xl font-bold text-[#1E2B24] tabular-nums">
-            34 нафар
-          </p>
-          <span className="text-[10px] text-[#65776C]">Конверсия: 68%</span>
-        </div>
-
-        <div className="bg-white border border-[#E3EAE5] rounded-lg p-5 shadow-xs space-y-2">
-          <span className="text-xs text-[#65776C]">Умумий қарздорлик</span>
-          <p className="text-2xl font-bold text-[#BE123C] tabular-nums">
-            {formatCurrency(5600000)}
-          </p>
-          <span className="text-[10px] text-[#BE123C]">14 нафар талаба</span>
-        </div>
-      </div>
-    </div>
+    </PermissionGuard>
   )
 }

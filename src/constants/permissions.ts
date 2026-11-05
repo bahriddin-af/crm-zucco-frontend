@@ -72,10 +72,28 @@ export const PERMISSIONS = {
     PURCHASE: 'gamification.purchase',
   },
   NOTIFICATIONS: {
-    SMS_SEND: 'notifications.sms_send',
-    TEMPLATES_MANAGE: 'notifications.templates_manage',
+    VIEW: 'notifications.view',
+    SEND_SMS: 'notifications.send_sms',
+    TEMPLATE_MANAGE: 'notifications.template_manage',
   },
 } as const
 
-export type Permission =
-  | (typeof PERMISSIONS)[keyof typeof PERMISSIONS][keyof (typeof PERMISSIONS)[keyof typeof PERMISSIONS]]
+type PermissionCatalog = typeof PERMISSIONS
+
+export type PermissionModule = keyof PermissionCatalog
+
+/** Barcha ruxsatnoma satrlari birlashmasi (`'students.view' | 'finance.payment_create' | ...`). */
+export type Permission = {
+  [Module in PermissionModule]: PermissionCatalog[Module][keyof PermissionCatalog[Module]]
+}[PermissionModule]
+
+/** Backend `Constants.Roles` bilan mos. Bu rollar barcha ruxsatnomalarga ega (CurrentUser.HasPermission). */
+export const ROLES = {
+  OWNER: 'Owner',
+  SUPER_ADMIN: 'SuperAdmin',
+  ADMINISTRATOR: 'Administrator',
+  TEACHER: 'Teacher',
+  CASHIER: 'Cashier',
+} as const
+
+export const FULL_ACCESS_ROLES: readonly string[] = [ROLES.OWNER, ROLES.SUPER_ADMIN]

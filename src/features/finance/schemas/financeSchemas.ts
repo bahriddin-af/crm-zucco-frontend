@@ -1,0 +1,100 @@
+import { z } from 'zod'
+import { interpolate, type Translations } from '@/i18n'
+import { hasMoneyPrecision } from '@/utils/money'
+import { MONTH_PERIOD_PATTERN } from '@/utils/dateUtils'
+import { ACCOUNTING } from '@/constants/accounting'
+import {
+  FINANCE_TEXT_LIMITS,
+  PAYMENT_METHODS,
+  type RecordExpenseRequest,
+  type RecordPaymentRequest,
+} from '../types/financeTypes'
+
+/** Backend `Guard.Positive(Guard.Money(...))` qoidasi: musbat, ko'pi bilan 2 kasr, maksimal summa. */
+export function createPositiveMoneySchema(t: Translations) {
+  const messages = t.finance.validation
+  return z
+    .number({ error: messages.amountRequired })
+    .positive(messages.amountPositive)
+    .max(ACCOUNTING.MAXIMUM_AMOUNT, messages.amountTooLarge)
+    .refine((value) => hasMoneyPrecision(value, ACCOUNTING.DECIMAL_PLACES), messages.amountPrecision)
+}
+
+function maxText(t: Translations, max: number) {
+  return z.string().max(max, interpolate(t.finance.validation.textTooLong, { max }))
+}
+
+const optionalText = (value: string) => {
+  const trimmed = value.trim()
+  return trimmed.length > 0 ? trimmed : null
+}
+
+/** Backend `RecordPaymentRequest` ga mos forma sxemasi (`operationId` formadan tashqarida). */
+export function createPaymentSchema(t: Translations) {
+  const messages = t.finance.validation
+  return z.object({
+    studentId: z.string().min(1, messages.studentRequired),
+    cashAccountId: z.string().min(1, messages.cashAccountRequired),
+    amount: createPositiveMoneySchema(t),
+    paymentMethod: z.literal(PAYMENT_METHODS, { error: messages.methodRequired }),
+    groupId: z.string(),
+    billingPeriod: z
+      .string()
+      .max(FINANCE_TEXT_LIMITS.PAYMENT_BILLING_PERIOD)
+      .refine((value) => value === '' || MONTH_PERIOD_PATTERN.test(value), messages.periodFormat),
+    comment: maxText(t, FINANCE_TEXT_LIMITS.PAYMENT_COMMENT),
+  })
+}
+
+export type PaymentFormValues = z.infer<ReturnType<typeof createPaymentSchema>>
+
+/**
+ * Forma qiymatlarini backend so'roviga aylantiradi. Matnlar trim qilinadi va bo'sh qiymatlar `null`
+ * bo'ladi — backend idempotentlik tekshiruvi aynan shu ko'rinishdagi payloadni solishtiradi.
+ */
+export function toRecordPaymentRequest(
+  values: PaymentFormValues,
+  operationId: string
+): RecordPaymentRequest {
+  return {
+    studentId: values.studentId,
+    cashAccountId: values.cashAccountId,
+    amount: values.amount,
+    paymentMethod: values.paymentMethod,
+    groupId: values.groupId || null,
+    billingPeriod: optionalText(values.billingPeriod),
+    comment: optionalText(values.comment),
+    operationId,
+  }
+}
+
+/** Backend `RecordExpenseRequest` ga mos forma sxemasi. */
+export function createExpenseSchema(t: Translations) {
+  const messages = t.finance.validation
+  return z.object({
+    expenseCategoryId: z.string().min(1, t.expenses.validation.categoryRequired),
+    cashAccountId: z.string().min(1, messages.cashAccountRequired),
+    amount: createPositiveMoneySchema(t),
+    description: maxText(t, FINANCE_TEXT_LIMITS.EXPENSE_DESCRIPTION).refine(
+      (value) => value.trim().length > 0,
+      t.expenses.validation.descriptionRequired
+    ),
+    recipient: maxText(t, FINANCE_TEXT_LIMITS.EXPENSE_RECIPIENT),
+  })
+}
+
+export type ExpenseFormValues = z.infer<ReturnType<typeof createExpenseSchema>>
+
+export function toRecordExpenseRequest(
+  values: ExpenseFormValues,
+  operationId: string
+): RecordExpenseRequest {
+  return {
+    expenseCategoryId: values.expenseCategoryId,
+    cashAccountId: values.cashAccountId,
+    amount: values.amount,
+    description: values.description.trim(),
+    recipient: optionalText(values.recipient),
+    operationId,
+  }
+}

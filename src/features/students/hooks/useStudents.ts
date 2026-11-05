@@ -1,22 +1,20 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { QUERY_KEYS } from '@/constants/queryKeys'
+import { useTranslation } from '@/i18n'
 import { studentApi } from '../api/studentApi'
 import type {
   CreateOrUpdateStudentRequest,
-  FreezeStudentRequest,
   EnrollStudentRequest,
-  StudentStatus,
+  FreezeStudentRequest,
+  StudentListFilters,
 } from '../types/studentTypes'
 
-export function useStudentsList(filters?: {
-  status?: StudentStatus
-  groupId?: string
-  search?: string
-}) {
+export function useStudentsList(filters?: StudentListFilters) {
   return useQuery({
-    queryKey: QUERY_KEYS.STUDENTS.LIST(filters as Record<string, unknown>),
+    queryKey: QUERY_KEYS.STUDENTS.LIST(filters),
     queryFn: () => studentApi.getStudents(filters),
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -28,74 +26,62 @@ export function useStudentDetail(id: string) {
   })
 }
 
-export function useSaveStudent(onSuccessCallback?: () => void) {
-  const queryClient = useQueryClient()
+export function useSaveStudent() {
+  const { t } = useTranslation()
 
   return useMutation({
-    mutationFn: (payload: CreateOrUpdateStudentRequest) =>
-      studentApi.createOrUpdateStudent(payload),
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL })
-      toast.success(
-        variables.id
-          ? 'Талаба маълумотлари янгиланди!'
-          : 'Янги талаба муваффақиятли рўйхатга олинди!'
-      )
-      onSuccessCallback?.()
-    },
-    onError: () => {
-      toast.error('Талаба маълумотларини сақлашда хатолик юз берди')
+    mutationFn: (payload: CreateOrUpdateStudentRequest) => studentApi.createOrUpdateStudent(payload),
+    meta: { invalidates: [QUERY_KEYS.STUDENTS.ALL] },
+    onSuccess: (_data, payload) => {
+      toast.success(payload.id ? t.students.toasts.updated : t.students.toasts.created)
     },
   })
 }
 
-export function useFreezeStudent(onSuccessCallback?: () => void) {
-  const queryClient = useQueryClient()
+export function useFreezeStudent() {
+  const { t } = useTranslation()
 
   return useMutation({
-    mutationFn: (payload: FreezeStudentRequest) =>
-      studentApi.freezeStudent(payload),
+    mutationFn: (payload: FreezeStudentRequest) => studentApi.freezeStudent(payload),
+    meta: { invalidates: [QUERY_KEYS.STUDENTS.ALL] },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL })
-      toast.success('Талаба ўқиши музлатилди')
-      onSuccessCallback?.()
-    },
-    onError: () => {
-      toast.error('Музлатишда хатолик юз берди')
+      toast.success(t.students.toasts.frozen)
     },
   })
 }
 
-export function useUnfreezeStudent(onSuccessCallback?: () => void) {
-  const queryClient = useQueryClient()
+export function useUnfreezeStudent() {
+  const { t } = useTranslation()
 
   return useMutation({
     mutationFn: (studentId: string) => studentApi.unfreezeStudent(studentId),
+    meta: { invalidates: [QUERY_KEYS.STUDENTS.ALL] },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL })
-      toast.success('Талаба ўқиши қайта фаоллаштирилди')
-      onSuccessCallback?.()
-    },
-    onError: () => {
-      toast.error('Фаоллаштиришда хатолик юз берди')
+      toast.success(t.students.toasts.unfrozen)
     },
   })
 }
 
-export function useEnrollStudent(onSuccessCallback?: () => void) {
-  const queryClient = useQueryClient()
+export function useEnrollStudent() {
+  const { t } = useTranslation()
 
   return useMutation({
-    mutationFn: (payload: EnrollStudentRequest) =>
-      studentApi.enrollStudentToGroup(payload),
+    mutationFn: (payload: EnrollStudentRequest) => studentApi.enrollStudentToGroup(payload),
+    meta: { invalidates: [QUERY_KEYS.STUDENTS.ALL, QUERY_KEYS.GROUPS.ALL] },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL })
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.GROUPS.ALL })
-      toast.success('Талаба гуруҳга муваффақиятли қўшилди!')
-      onSuccessCallback?.()
+      toast.success(t.students.toasts.enrolled)
     },
-    onError: () => {
-      toast.error('Гуруҳга қўшишда хатолик юз берди')
+  })
+}
+
+export function useDeleteStudent() {
+  const { t } = useTranslation()
+
+  return useMutation({
+    mutationFn: (id: string) => studentApi.deleteStudent(id),
+    meta: { invalidates: [QUERY_KEYS.STUDENTS.ALL, QUERY_KEYS.GROUPS.ALL] },
+    onSuccess: () => {
+      toast.success(t.students.toasts.deleted)
     },
   })
 }

@@ -1,6 +1,7 @@
-import { useEffect, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/utils/cn'
+import { useModalEscape } from './useModalEscape'
 
 interface ModalProps {
   isOpen: boolean
@@ -21,15 +22,7 @@ export function Modal({
   footer,
   maxWidth = 'md',
 }: ModalProps) {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  useModalEscape(isOpen, onClose)
 
   if (!isOpen) return null
 
@@ -42,24 +35,24 @@ export function Modal({
       />
       <div
         className={cn(
-          'relative w-full bg-white rounded-lg border border-[#E3EAE5] shadow-xl overflow-hidden z-10 flex flex-col max-h-[90vh]',
+          'relative w-full bg-white rounded-lg border border-border shadow-xl overflow-hidden z-10 flex flex-col max-h-[90vh]',
           maxWidth === 'sm' && 'max-w-sm',
           maxWidth === 'md' && 'max-w-md',
           maxWidth === 'lg' && 'max-w-lg',
           maxWidth === 'xl' && 'max-w-xl'
         )}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E3EAE5]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <div>
-            <h2 className="text-sm font-semibold text-[#1E2B24]">{title}</h2>
+            <h2 className="text-sm font-semibold text-heading">{title}</h2>
             {description && (
-              <p className="text-[11px] text-[#65776C] mt-0.5">{description}</p>
+              <p className="text-[11px] text-caption mt-0.5">{description}</p>
             )}
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-7 h-7 inline-flex items-center justify-center rounded-md text-[#65776C] hover:bg-[#F0F4F1] transition-colors"
+            className="w-7 h-7 inline-flex items-center justify-center rounded-md text-caption hover:bg-divider transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -68,7 +61,7 @@ export function Modal({
         <div className="p-5 overflow-y-auto">{children}</div>
 
         {footer && (
-          <div className="flex items-center justify-end gap-2 px-5 py-3.5 border-t border-[#E3EAE5] bg-[#F6F8F7]">
+          <div className="flex items-center justify-end gap-2 px-5 py-3.5 border-t border-border bg-canvas">
             {footer}
           </div>
         )}
