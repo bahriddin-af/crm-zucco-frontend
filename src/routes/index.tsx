@@ -21,6 +21,7 @@ import { SmsCenterPage } from '@/features/notifications/pages/SmsCenterPage'
 import { ReportsPage } from '@/features/reports/pages/ReportsPage'
 import { SettingsPage } from '@/features/settings/pages/SettingsPage'
 import { RolesPermissionsPage } from '@/features/settings/pages/RolesPermissionsPage'
+import { BranchesPage } from '@/features/branches/pages/BranchesPage'
 
 export function AppRoutes() {
   return (
@@ -62,6 +63,7 @@ export function AppRoutes() {
           <Route path={ROUTES.NOTIFICATIONS.SMS} element={<SmsCenterPage />} />
           <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
           <Route path={ROUTES.STAFF.ROLES} element={<RolesPermissionsPage />} />
+          <Route path={ROUTES.BRANCHES} element={<BranchesPage />} />
         </Route>
       </Route>
 

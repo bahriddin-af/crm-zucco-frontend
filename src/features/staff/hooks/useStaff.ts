@@ -1,52 +1,67 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { QUERY_KEYS } from '@/constants/queryKeys'
+import { OPTIONS_PAGE_SIZE } from '@/constants/pagination'
+import { interpolate, useTranslation } from '@/i18n'
 import { staffApi } from '../api/staffApi'
-import type { CreateOrUpdateStaffRequest, StaffRoleType } from '../types/staffTypes'
+import { STAFF_ROLE_TYPE, type CreateOrUpdateStaffRequest, type StaffRoleType } from '../types/staffTypes'
 
+/** Imzo boshqa modullar (o'qituvchi tanlagichlari) uchun barqaror saqlanadi. */
 export function useStaffList(page = 1, pageSize = 50, search = '', role?: StaffRoleType) {
   return useQuery({
-    queryKey: [...QUERY_KEYS.STAFF.ALL, 'list', page, pageSize, search, role],
-    queryFn: () => staffApi.getList(page, pageSize, search, role),
+    queryKey: QUERY_KEYS.STAFF.LIST({ page, pageSize, search, role }),
+    queryFn: () => staffApi.getList({ page, pageSize, search, role }),
+    placeholderData: keepPreviousData,
+  })
+}
+
+const TEACHER_OPTIONS_PARAMS = { page: 1, pageSize: OPTIONS_PAGE_SIZE, search: '', role: STAFF_ROLE_TYPE.Teacher }
+
+/** O'qituvchi tanlagichlari (guruh formasi, jadval/oylik filtrlari) uchun barcha o'qituvchilar. */
+export function useTeacherOptions() {
+  return useQuery({
+    queryKey: QUERY_KEYS.STAFF.LIST(TEACHER_OPTIONS_PARAMS),
+    queryFn: () => staffApi.getList(TEACHER_OPTIONS_PARAMS),
+    select: (result) => result.items,
   })
 }
 
 export function useStaffDetail(id?: string) {
   return useQuery({
-    queryKey: QUERY_KEYS.STAFF.DETAIL(id || ''),
-    queryFn: () => staffApi.getById(id!),
-    enabled: !!id,
+    queryKey: QUERY_KEYS.STAFF.DETAIL(id ?? ''),
+    queryFn: () => staffApi.getById(id ?? ''),
+    enabled: Boolean(id),
   })
 }
 
-export function useSaveStaff(onSuccessCallback?: () => void) {
-  const queryClient = useQueryClient()
+export function useStaffRoles(enabled = true) {
+  return useQuery({
+    queryKey: QUERY_KEYS.STAFF.ROLES,
+    queryFn: () => staffApi.getRoles(),
+    enabled,
+  })
+}
+
+export function useSaveStaff() {
+  const { t } = useTranslation()
 
   return useMutation({
     mutationFn: (payload: CreateOrUpdateStaffRequest) => staffApi.upsert(payload),
+    meta: { invalidates: [QUERY_KEYS.STAFF.ALL] },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STAFF.ALL })
-      toast.success(`${data.fullName} маълумотлари муваффақиятли сақланди!`)
-      onSuccessCallback?.()
-    },
-    onError: (err: unknown) => {
-      const error = err as { response?: { data?: { message?: string } } }
-      toast.error(error.response?.data?.message || 'Ходим маълумотларини сақлашда хатолик')
+      toast.success(interpolate(t.staff.toasts.saved, { name: data.fullName }))
     },
   })
 }
 
 export function useDeleteStaff() {
-  const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   return useMutation({
     mutationFn: (id: string) => staffApi.delete(id),
+    meta: { invalidates: [QUERY_KEYS.STAFF.ALL] },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STAFF.ALL })
-      toast.success('Ходим муваффақиятли ўчирилди!')
-    },
-    onError: () => {
-      toast.error('Ходимни ўчиришда хатолик юз берди')
+      toast.success(t.staff.toasts.deleted)
     },
   })
 }

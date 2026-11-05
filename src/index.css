@@ -1,5 +1,79 @@
 @import "tailwindcss";
 
+/*
+ * Zucco design tokens (prototype/design-tokens.json).
+ * Components use only these semantic classes (text-heading, bg-primary-soft, border-border, ...),
+ * never raw hex values.
+ */
+@theme {
+  /* Brand */
+  --color-primary: #146B52;
+  --color-primary-hover: #0F5943;
+  --color-primary-soft: #E8F3ED;
+  --color-primary-line: #BBDCCB;
+  --color-primary-ring: #D7EADF;
+  --color-focus: #418A66;
+
+  /* Logo (faqat BrandLogo uchun; sayt ranglariga ta'sir qilmaydi): oy fazalari — 50% / 60% / 100% */
+  --color-logo-1: #2D50BE;
+  --color-logo-2: #3E80F2;
+  --color-logo-3: #40DCF2;
+  --color-logo-shadow: #020617;
+
+  /* Typography: kichik o'lchamlar ham rem'da, shunda butun UI bitta asosiy shriftdan masshtablanadi */
+  --text-2xs: 0.75rem;
+  --text-2xs--line-height: 1rem;
+  --text-3xs: 0.6875rem;
+  --text-3xs--line-height: 1rem;
+
+  /* Surfaces */
+  --color-surface: #FFFFFF;
+  --color-canvas: #F6F8F7;
+  --color-surface-muted: #F8FAF9;
+  --color-surface-tint: #FCFEFC;
+  --color-skeleton: #F0F3F1;
+  --color-divider: #F0F4F1;
+  --color-divider-strong: #EDF2EE;
+  --color-border: #E3EAE5;
+
+  /* Text */
+  --color-heading: #1E2B24;
+  --color-secondary-ink: #344B3E;
+  --color-copy-strong: #4D6255;
+  --color-copy: #5A6C62;
+  --color-caption: #65776C;
+  --color-subtle: #8B9C91;
+
+  /* Neutral */
+  --color-neutral-ink: #4B5563;
+  --color-neutral-line: #E5E9EB;
+  --color-neutral-soft: #F3F4F6;
+
+  /* Success */
+  --color-success: #059669;
+  --color-success-ink: #047857;
+  --color-positive: #027A48;
+  --color-success-soft: #ECFDF5;
+  --color-success-line: #D1FAE5;
+  --color-success-border: #A7F3D0;
+
+  /* Warning */
+  --color-warning: #F59E0B;
+  --color-warning-strong: #D97706;
+  --color-warning-deep: #B45309;
+  --color-warning-ink: #92400E;
+  --color-warning-soft: #FFFBEB;
+  --color-warning-tint: #FEF3C7;
+  --color-warning-border: #FDE68A;
+
+  /* Debt / destructive */
+  --color-debt: #E11D48;
+  --color-debt-ink: #BE123C;
+  --color-debt-soft: #FFF1F2;
+  --color-debt-line: #FFE4E6;
+  --color-debt-border: #FECDD3;
+}
+
 @layer base {
   :root {
     --background: #F6F8F7;
@@ -46,14 +120,91 @@
   }
 }
 
+/*
+ * Tungi rejim: komponentlar faqat token klasslarini ishlatgani uchun mavzu
+ * token qiymatlarini almashtirish orqali o'zgaradi (themeStore → <html data-theme>).
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-logo-1: #4A6BDA;
+  --color-logo-2: #5B95F7;
+  --color-logo-3: #4BE0F4;
+
+  --color-primary: #2F9A76;
+  --color-primary-hover: #278463;
+  --color-primary-soft: #16302A;
+  --color-primary-line: #285443;
+  --color-primary-ring: #1F3D33;
+  --color-focus: #4FB38C;
+
+  --color-surface: #161F1B;
+  --color-canvas: #0E1412;
+  --color-surface-muted: #1A2420;
+  --color-surface-tint: #18221D;
+  --color-skeleton: #222D28;
+  --color-divider: #23302A;
+  --color-divider-strong: #29362F;
+  --color-border: #2E3B34;
+
+  --color-heading: #E6EEE9;
+  --color-secondary-ink: #CAD6CF;
+  --color-copy-strong: #B5C4BB;
+  --color-copy: #A4B4AA;
+  --color-caption: #8E9F95;
+  --color-subtle: #708178;
+
+  --color-neutral-ink: #C3CAD0;
+  --color-neutral-line: #2F3A40;
+  --color-neutral-soft: #1E262B;
+
+  --color-success: #34D399;
+  --color-success-ink: #6EE7B7;
+  --color-positive: #4ADE80;
+  --color-success-soft: #12291F;
+  --color-success-line: #173A2B;
+  --color-success-border: #1F5A40;
+
+  --color-warning: #FBBF24;
+  --color-warning-strong: #F59E0B;
+  --color-warning-deep: #FCD34D;
+  --color-warning-ink: #FDE68A;
+  --color-warning-soft: #2A220F;
+  --color-warning-tint: #3A2E10;
+  --color-warning-border: #5C4813;
+
+  --color-debt: #FB7185;
+  --color-debt-ink: #FDA4AF;
+  --color-debt-soft: #2E1519;
+  --color-debt-line: #3F1D23;
+  --color-debt-border: #5F2731;
+}
+
+/*
+ * Asosiy masshtab: barcha Tailwind o'lchamlari (matn, ikonka, oraliq) rem'da.
+ * 101.25% = brauzer standarti 16px bo'lsa ~16.2px (brauzerdagi 90% zoom bilan tasdiqlangan o'lcham);
+ */
+html {
+  font-size: 101.25%;
+}
+
 body {
   margin: 0;
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-canvas);
+  color: var(--color-heading);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-size: 13px;
+  font-size: 0.875rem;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Native <select> ro'yxati brauzer tomonidan chiziladi va select'dagi matn rangini meros oladi.
+ * Fon ham token'dan berilmasa, tungi rejimda och matn oq fonda ko'rinmay qoladi.
+ */
+select option {
+  background-color: var(--color-surface);
+  color: var(--color-heading);
 }
 
 /* Tabular numbers for all financial, table and counter metrics */

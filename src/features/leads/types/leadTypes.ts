@@ -1,3 +1,4 @@
+/** Backend `Zucco.Domain.Leads.Enums` bilan 1:1 (JSON'da raqam sifatida keladi). */
 export const LEAD_STAGE_TYPE = {
   NewLead: 1,
   Contacted: 2,
@@ -19,24 +20,42 @@ export const LEAD_STATUS = {
 export type LeadStatus = (typeof LEAD_STATUS)[keyof typeof LEAD_STATUS]
 
 export const LOST_REASON = {
+  None: 0,
   TooExpensive: 1,
-  ScheduleConflict: 2,
-  LocationFar: 3,
-  CompetitorChosen: 4,
-  NoResponse: 5,
+  UnsuitableTime: 2,
+  LocationTooFar: 3,
+  ChoseCompetitor: 4,
+  PhoneUnreachable: 5,
   Other: 6,
 } as const
 
 export type LostReason = (typeof LOST_REASON)[keyof typeof LOST_REASON]
 
-export const LOST_REASON_LABELS: Record<LostReason, string> = {
-  [LOST_REASON.TooExpensive]: 'Нарх қимматлик қилди',
-  [LOST_REASON.ScheduleConflict]: 'Дарс вақти тўғри келмади',
-  [LOST_REASON.LocationFar]: 'Манзил узоқлик қилди',
-  [LOST_REASON.CompetitorChosen]: 'Бошқа марказни танлади',
-  [LOST_REASON.NoResponse]: 'Алоқага чиқмади (жавоб бермади)',
-  [LOST_REASON.Other]: 'Бошқа сабаб',
-}
+/** Foydalanuvchi tanlay oladigan sabablar (`None` faqat backend standart qiymati). */
+export const SELECTABLE_LOST_REASONS: readonly LostReason[] = [
+  LOST_REASON.TooExpensive,
+  LOST_REASON.UnsuitableTime,
+  LOST_REASON.LocationTooFar,
+  LOST_REASON.ChoseCompetitor,
+  LOST_REASON.PhoneUnreachable,
+  LOST_REASON.Other,
+]
+
+export const LEAD_ACTIVITY_TYPE = {
+  Note: 1,
+  Call: 2,
+  Meeting: 3,
+  StageChange: 4,
+} as const
+
+export type LeadActivityType = (typeof LEAD_ACTIVITY_TYPE)[keyof typeof LEAD_ACTIVITY_TYPE]
+
+/** Qo'lda qo'shiladigan faoliyat turlari (`StageChange` backend tomonidan yoziladi). */
+export const MANUAL_ACTIVITY_TYPES: readonly LeadActivityType[] = [
+  LEAD_ACTIVITY_TYPE.Note,
+  LEAD_ACTIVITY_TYPE.Call,
+  LEAD_ACTIVITY_TYPE.Meeting,
+]
 
 export interface LeadListItem {
   id: string
@@ -54,6 +73,25 @@ export interface LeadListItem {
   createdAt: string
 }
 
+export interface LeadActivityItem {
+  id: string
+  activityType: LeadActivityType
+  note: string
+  createdAt: string
+  createdBy?: string | null
+}
+
+/** Backend `LeadResponse` (`GET /api/leads/{id}`). */
+export interface LeadResponse extends LeadListItem {
+  parentPhone?: string | null
+  assignedToUserId?: string | null
+  assignedToName?: string | null
+  note?: string | null
+  lostReason: LostReason
+  lostReasonDetails?: string | null
+  activities: LeadActivityItem[]
+}
+
 export interface KanbanColumn {
   stageId: string
   stageName: string
@@ -62,6 +100,12 @@ export interface KanbanColumn {
   colorHex?: string | null
   totalLeads: number
   leads: LeadListItem[]
+}
+
+/** `type` (interface emas): query key `Record<string, unknown>` sifatida qabul qilishi uchun. */
+export type KanbanFilters = {
+  branchId?: string
+  courseId?: string
 }
 
 export interface LeadStageDto {
@@ -79,7 +123,7 @@ export interface LeadSourceDto {
 }
 
 export interface CreateOrUpdateLeadRequest {
-  id?: string
+  id?: string | null
   fullName: string
   phone: string
   stageId: string
@@ -103,8 +147,19 @@ export interface ConvertLeadRequest {
   joinedDate?: string | null
 }
 
+export interface LeadConversionResponse {
+  leadId: string
+  studentId: string
+}
+
 export interface MarkLeadLostRequest {
   leadId: string
   reason: LostReason
   details?: string | null
+}
+
+export interface AddLeadActivityRequest {
+  leadId: string
+  activityType: LeadActivityType
+  note: string
 }

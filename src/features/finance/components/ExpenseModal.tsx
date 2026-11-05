@@ -1,138 +1,107 @@
+import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Modal } from '@/components/ui/Modal'
-import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { useCashAccounts, useRecordExpense } from '../hooks/useFinance'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { Modal } from '@/components/ui/Modal'
+import { interpolate, useTranslation } from '@/i18n'
 import { formatCurrency } from '@/utils/formatters'
-
-const expenseSchema = z.object({
-  cashAccountId: z.string().min(1, 'Касса ҳисобини танланг'),
-  amount: z.number().min(500, 'Минимал сумма: 500 сўм'),
-  recipient: z.string().optional(),
-  description: z.string().min(3, 'Харажат мақсади ёки изоҳини киритинг'),
-})
-
-type ExpenseFormData = z.infer<typeof expenseSchema>
+import { useCashAccounts, useExpenseCategories, useRecordExpense } from '../hooks/useFinance'
+import { useConfirmedOperation } from '@/hooks/useConfirmedOperation'
+import {
+  createExpenseSchema,
+  toRecordExpenseRequest,
+  type ExpenseFormValues,
+} from '../schemas/financeSchemas'
+import { getDefaultAccountId } from '../utils/cashAccounts'
+import { ExpenseFormFields } from './expenses/ExpenseFormFields'
 
 interface ExpenseModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
+/** Xarajatni qayd etish. Har ochilishda yangi forma va yangi `operationId`. */
 export function ExpenseModal({ isOpen, onClose }: ExpenseModalProps) {
-  const { data: accounts = [], isLoading: isLoadingAccounts } = useCashAccounts()
-  const defaultAccount = accounts.find((a) => a.isDefault) || accounts[0]
+  if (!isOpen) return null
+  return <ExpenseModalContent onClose={onClose} />
+}
 
-  const recordExpenseMutation = useRecordExpense(() => {
-    onClose()
+function ExpenseModalContent({ onClose }: Pick<ExpenseModalProps, 'onClose'>) {
+  const { t } = useTranslation()
+  const schema = useMemo(() => createExpenseSchema(t), [t])
+  const accountsQuery = useCashAccounts()
+  const categoriesQuery = useExpenseCategories()
+  const recordExpense = useRecordExpense()
+  const operation = useConfirmedOperation({
+    submit: (values: ExpenseFormValues, operationId) => recordExpense.mutateAsync(toRecordExpenseRequest(values, operationId)),
+    onSuccess: () => onClose(),
   })
+  const accounts = useMemo(() => accountsQuery.data ?? [], [accountsQuery.data])
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<ExpenseFormData>({
-    resolver: zodResolver(expenseSchema),
-    values: {
-      cashAccountId: defaultAccount?.id || '',
-      amount: 150000,
-      recipient: '',
-      description: 'Офис учун канцелярия ва маркерлар',
-    },
+  const form = useForm<ExpenseFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { expenseCategoryId: '', cashAccountId: '', description: '', recipient: '' },
   })
+  const { getValues, setValue } = form
 
-  const onSubmit = (data: ExpenseFormData) => {
-    recordExpenseMutation.mutate({
-      cashAccountId: data.cashAccountId,
-      amount: Number(data.amount),
-      recipient: data.recipient || null,
-      description: data.description,
-    })
-    reset()
-  }
+  useEffect(() => {
+    if (accounts.length > 0 && !getValues('cashAccountId')) {
+      setValue('cashAccountId', getDefaultAccountId(accounts))
+    }
+  }, [accounts, getValues, setValue])
+
+
+  const pending = operation.pendingValues
+  const pendingAccount = accounts.find((account) => account.id === pending?.cashAccountId)
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Харажатни қайд этиш"
-      description="Марказ кассасидан чиқим қилиш ва балансни камайтириш"
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Касса ҳисоби <span className="text-[#E11D48]">*</span>
-          </label>
-          <select
-            {...register('cashAccountId')}
-            disabled={isLoadingAccounts}
-            className="w-full h-10 px-3 rounded-lg border border-[#E5E9EB] text-sm text-[#1E2B24] bg-white focus:outline-hidden focus:border-[#027A48] focus:ring-1 focus:ring-[#027A48] transition-all"
-          >
-            {accounts.map((acc) => (
-              <option key={acc.id} value={acc.id}>
-                {acc.name} — Мавжуд: {formatCurrency(acc.balance)}
-              </option>
-            ))}
-          </select>
-          {errors.cashAccountId && (
-            <p className="text-xs text-[#E11D48] mt-1">{errors.cashAccountId.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Чиқим суммаси (сўм) <span className="text-[#E11D48]">*</span>
-          </label>
-          <Input
-            type="number"
-            step="10000"
-            error={errors.amount?.message}
-            {...register('amount', { valueAsNumber: true })}
+    <>
+      <Modal
+        isOpen
+        onClose={onClose}
+        title={t.expenses.modal.title}
+        description={t.expenses.modal.description}
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={onClose}>
+              {t.common.cancel}
+            </Button>
+            <Button
+              type="submit"
+              form="expense-form"
+              variant="danger"
+              size="sm"
+              isLoading={recordExpense.isPending}
+            >
+              {t.expenses.modal.submit}
+            </Button>
+          </>
+        }
+      >
+        <form id="expense-form" noValidate onSubmit={form.handleSubmit(operation.requestConfirm)}>
+          <ExpenseFormFields
+            form={form}
+            accounts={accounts}
+            isLoadingAccounts={accountsQuery.isLoading}
+            categories={categoriesQuery.data ?? []}
+            isLoadingCategories={categoriesQuery.isLoading}
           />
-        </div>
+        </form>
+      </Modal>
 
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Олувчи шахс ёки компания (ихтиёрий)
-          </label>
-          <Input
-            placeholder="Масалан: Ishonch Do'koni MChJ"
-            error={errors.recipient?.message}
-            {...register('recipient')}
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Харажат мақсади ва изоҳ <span className="text-[#E11D48]">*</span>
-          </label>
-          <textarea
-            {...register('description')}
-            rows={3}
-            placeholder="Нима мақсадда харажат қилинганлигини ёзинг..."
-            className="w-full px-3 py-2 rounded-lg border border-[#E5E9EB] text-sm text-[#1E2B24] placeholder:text-[#8C9E94] focus:outline-hidden focus:border-[#027A48] focus:ring-1 focus:ring-[#027A48] transition-all resize-none"
-          />
-          {errors.description && (
-            <p className="text-xs text-[#E11D48] mt-1">{errors.description.message}</p>
-          )}
-        </div>
-
-        <div className="flex justify-end gap-3 pt-4 border-t border-[#E5E9EB]">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Бекор қилиш
-          </Button>
-          <Button
-            type="submit"
-            variant="danger"
-            isLoading={isSubmitting || recordExpenseMutation.isPending}
-          >
-            Харажатни сақлаш
-          </Button>
-        </div>
-      </form>
-    </Modal>
+      <ConfirmDialog
+        isOpen={operation.isConfirmOpen}
+        onClose={operation.cancel}
+        onConfirm={() => void operation.confirm()}
+        variant="primary"
+        title={t.expenses.modal.confirmTitle}
+        description={interpolate(t.expenses.modal.confirmDescription, {
+          amount: formatCurrency(pending?.amount ?? 0),
+          account: pendingAccount?.name ?? '',
+        })}
+        isLoading={recordExpense.isPending}
+      />
+    </>
   )
 }
