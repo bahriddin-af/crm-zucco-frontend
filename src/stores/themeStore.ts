@@ -8,11 +8,8 @@ export const THEMES = {
 
 export type Theme = (typeof THEMES)[keyof typeof THEMES]
 
-const DARK_SCHEME_QUERY = '(prefers-color-scheme: dark)'
-
-/** Birinchi kirishda operatsion tizim sozlamasiga moslashadi. */
-const systemTheme = (): Theme =>
-  typeof window !== 'undefined' && window.matchMedia?.(DARK_SCHEME_QUERY).matches ? THEMES.DARK : THEMES.LIGHT
+/** Birinchi kirishda har doim kunduzgi (oq) mavzu; tungi rejim faqat foydalanuvchi tanlasa yoqiladi. */
+const DEFAULT_THEME: Theme = THEMES.LIGHT
 
 /** `index.css` dagi `:root[data-theme='dark']` token qiymatlarini yoqadi/o'chiradi. */
 export const applyTheme = (theme: Theme): void => {
@@ -28,7 +25,7 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: systemTheme(),
+      theme: DEFAULT_THEME,
       toggleTheme: () => set({ theme: get().theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK }),
     }),
     { name: 'zucco-theme-storage' }

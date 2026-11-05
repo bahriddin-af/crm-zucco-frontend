@@ -73,7 +73,7 @@ export function StaffListPage() {
           value={role ?? ''}
           onChange={(e) => handleRoleChange(e.target.value)}
           aria-label={t.staff.roleFilter}
-          className="sm:w-60 min-h-[32px]"
+          className="sm:w-60 min-h-9"
         >
           <option value="">{t.staff.allRoles}</option>
           {STAFF_ROLE_TYPE_VALUES.map((value) => (

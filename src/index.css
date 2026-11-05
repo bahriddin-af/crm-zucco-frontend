@@ -14,11 +14,17 @@
   --color-primary-ring: #D7EADF;
   --color-focus: #418A66;
 
+  /* Logo (faqat BrandLogo uchun; sayt ranglariga ta'sir qilmaydi): oy fazalari — 50% / 60% / 100% */
+  --color-logo-1: #2D50BE;
+  --color-logo-2: #3E80F2;
+  --color-logo-3: #40DCF2;
+  --color-logo-shadow: #020617;
+
   /* Typography: kichik o'lchamlar ham rem'da, shunda butun UI bitta asosiy shriftdan masshtablanadi */
-  --text-2xs: 0.6875rem;
+  --text-2xs: 0.75rem;
   --text-2xs--line-height: 1rem;
-  --text-3xs: 0.625rem;
-  --text-3xs--line-height: 0.875rem;
+  --text-3xs: 0.6875rem;
+  --text-3xs--line-height: 1rem;
 
   /* Surfaces */
   --color-surface: #FFFFFF;
@@ -121,6 +127,10 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
+  --color-logo-1: #4A6BDA;
+  --color-logo-2: #5B95F7;
+  --color-logo-3: #4BE0F4;
+
   --color-primary: #2F9A76;
   --color-primary-hover: #278463;
   --color-primary-soft: #16302A;
@@ -172,10 +182,10 @@
 
 /*
  * Asosiy masshtab: barcha Tailwind o'lchamlari (matn, ikonka, oraliq) rem'da.
- * 112.5% = brauzer standarti 16px bo'lsa 18px; foydalanuvchi brauzer sozlamasi ham hisobga olinadi.
+ * 101.25% = brauzer standarti 16px bo'lsa ~16.2px (brauzerdagi 90% zoom bilan tasdiqlangan o'lcham);
  */
 html {
-  font-size: 112.5%;
+  font-size: 101.25%;
 }
 
 body {
@@ -183,9 +193,18 @@ body {
   background-color: var(--color-canvas);
   color: var(--color-heading);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Native <select> ro'yxati brauzer tomonidan chiziladi va select'dagi matn rangini meros oladi.
+ * Fon ham token'dan berilmasa, tungi rejimda och matn oq fonda ko'rinmay qoladi.
+ */
+select option {
+  background-color: var(--color-surface);
+  color: var(--color-heading);
 }
 
 /* Tabular numbers for all financial, table and counter metrics */

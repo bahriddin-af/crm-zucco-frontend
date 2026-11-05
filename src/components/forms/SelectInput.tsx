@@ -11,7 +11,7 @@ export const SelectInput = forwardRef<HTMLSelectElement, SelectInputProps>(
   ({ className, hasError = false, ...props }, ref) => (
     <select
       ref={ref}
-      className={cn(FIELD_CONTROL_CLASS, 'min-h-[34px]', hasError && FIELD_ERROR_CLASS, className)}
+      className={cn(FIELD_CONTROL_CLASS, 'min-h-9', hasError && FIELD_ERROR_CLASS, className)}
       {...props}
     />
   )

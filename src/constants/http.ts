@@ -10,7 +10,17 @@ export const HTTP_STATUS = {
   NOT_FOUND: 404,
   CONFLICT: 409,
   TOO_MANY_REQUESTS: 429,
+  BAD_GATEWAY: 502,
+  SERVICE_UNAVAILABLE: 503,
+  GATEWAY_TIMEOUT: 504,
 } as const
+
+/** Proxy/gateway backendga yetib bora olmaganda qaytaradigan holatlar (backend so'rovni bajarmagan). */
+export const SERVER_UNREACHABLE_STATUSES: readonly number[] = [
+  HTTP_STATUS.BAD_GATEWAY,
+  HTTP_STATUS.SERVICE_UNAVAILABLE,
+  HTTP_STATUS.GATEWAY_TIMEOUT,
+]
 
 /** Yozish amallari: ularning har biri idempotentlik kaliti (`operationId`) bilan yuboriladi. */
 export const WRITE_METHODS = ['post', 'put', 'patch', 'delete'] as const
