@@ -1,5 +1,66 @@
 @import "tailwindcss";
 
+/*
+ * Zucco design tokens (prototype/design-tokens.json).
+ * Components use only these semantic classes (text-heading, bg-primary-soft, border-border, ...),
+ * never raw hex values.
+ */
+@theme {
+  /* Brand */
+  --color-primary: #146B52;
+  --color-primary-hover: #0F5943;
+  --color-primary-soft: #E8F3ED;
+  --color-primary-line: #BBDCCB;
+  --color-primary-ring: #D7EADF;
+  --color-focus: #418A66;
+
+  /* Surfaces */
+  --color-canvas: #F6F8F7;
+  --color-surface-muted: #F8FAF9;
+  --color-surface-tint: #FCFEFC;
+  --color-skeleton: #F0F3F1;
+  --color-divider: #F0F4F1;
+  --color-divider-strong: #EDF2EE;
+  --color-border: #E3EAE5;
+
+  /* Text */
+  --color-heading: #1E2B24;
+  --color-secondary-ink: #344B3E;
+  --color-copy-strong: #4D6255;
+  --color-copy: #5A6C62;
+  --color-caption: #65776C;
+  --color-subtle: #8B9C91;
+
+  /* Neutral */
+  --color-neutral-ink: #4B5563;
+  --color-neutral-line: #E5E9EB;
+  --color-neutral-soft: #F3F4F6;
+
+  /* Success */
+  --color-success: #059669;
+  --color-success-ink: #047857;
+  --color-positive: #027A48;
+  --color-success-soft: #ECFDF5;
+  --color-success-line: #D1FAE5;
+  --color-success-border: #A7F3D0;
+
+  /* Warning */
+  --color-warning: #F59E0B;
+  --color-warning-strong: #D97706;
+  --color-warning-deep: #B45309;
+  --color-warning-ink: #92400E;
+  --color-warning-soft: #FFFBEB;
+  --color-warning-tint: #FEF3C7;
+  --color-warning-border: #FDE68A;
+
+  /* Debt / destructive */
+  --color-debt: #E11D48;
+  --color-debt-ink: #BE123C;
+  --color-debt-soft: #FFF1F2;
+  --color-debt-line: #FFE4E6;
+  --color-debt-border: #FECDD3;
+}
+
 @layer base {
   :root {
     --background: #F6F8F7;

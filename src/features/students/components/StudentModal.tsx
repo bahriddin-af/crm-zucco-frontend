@@ -1,178 +1,126 @@
-import { useEffect } from 'react'
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import {
-  GENDER,
-  STUDENT_STATUS,
-  type StudentDetail,
-} from '../types/studentTypes'
+import { useTranslation } from '@/i18n'
+import { FormField } from '@/components/forms/FormField'
+import { SelectInput } from '@/components/forms/SelectInput'
+import { emptyToNull, normalizePhone } from '@/utils/formUtils'
 import { useSaveStudent } from '../hooks/useStudents'
-
-const studentSchema = z.object({
-  fullName: z.string().min(2, 'Исм-шарифни киритинг'),
-  phone: z.string().min(9, 'Телефон рақамини тўлиқ киритинг'),
-  birthDate: z.string().optional(),
-  gender: z.number().min(1),
-  address: z.string().optional(),
-  note: z.string().optional(),
-})
-
-type StudentFormData = z.infer<typeof studentSchema>
+import { createStudentSchema, type StudentFormValues } from '../schemas/studentSchemas'
+import { GENDER, GENDER_VALUES, STUDENT_STATUS, STUDENT_STATUS_VALUES, type StudentDetail } from '../types/studentTypes'
 
 interface StudentModalProps {
-  isOpen: boolean
   onClose: () => void
-  studentToEdit?: StudentDetail | null
+  /** Berilsa — tahrirlash rejimi. */
+  student?: StudentDetail
 }
 
-export function StudentModal({ isOpen, onClose, studentToEdit }: StudentModalProps) {
-  const saveMutation = useSaveStudent(() => {
-    onClose()
-  })
+const FORM_ID = 'student-form'
+
+export function StudentModal({ onClose, student }: StudentModalProps) {
+  const { t } = useTranslation()
+  const schema = useMemo(() => createStudentSchema(t), [t])
+  const saveMutation = useSaveStudent()
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
-  } = useForm<StudentFormData>({
-    resolver: zodResolver(studentSchema),
+  } = useForm<StudentFormValues>({
+    resolver: zodResolver(schema),
     defaultValues: {
-      fullName: '',
-      phone: '+998',
-      birthDate: '',
-      gender: GENDER.Male,
-      address: '',
-      note: '',
+      fullName: student?.fullName ?? '',
+      phone: student?.phone ?? '',
+      birthDate: student?.birthDate ?? '',
+      gender: student?.gender ?? GENDER.Male,
+      status: student?.status ?? STUDENT_STATUS.Active,
+      address: student?.address ?? '',
+      note: student?.note ?? '',
     },
   })
 
-  useEffect(() => {
-    if (studentToEdit) {
-      reset({
-        fullName: studentToEdit.fullName,
-        phone: studentToEdit.phone,
-        birthDate: studentToEdit.birthDate || '',
-        gender: studentToEdit.gender,
-        address: studentToEdit.address || '',
-        note: studentToEdit.note || '',
-      })
-    } else {
-      reset({
-        fullName: '',
-        phone: '+998',
-        birthDate: '',
-        gender: GENDER.Male,
-        address: '',
-        note: '',
-      })
-    }
-  }, [studentToEdit, isOpen, reset])
-
-  const onSubmit = (data: StudentFormData) => {
-    saveMutation.mutate({
-      id: studentToEdit ? studentToEdit.id : undefined,
-      fullName: data.fullName,
-      phone: data.phone,
-      birthDate: data.birthDate || null,
-      gender: data.gender as typeof GENDER[keyof typeof GENDER],
-      address: data.address || null,
-      note: data.note || null,
-      status: studentToEdit ? studentToEdit.status : STUDENT_STATUS.Active,
-    })
+  const onSubmit = (values: StudentFormValues) => {
+    const gender = GENDER_VALUES.find((value) => value === values.gender)
+    const status = STUDENT_STATUS_VALUES.find((value) => value === values.status)
+    saveMutation.mutate(
+      {
+        id: student?.id ?? null,
+        fullName: values.fullName,
+        phone: normalizePhone(values.phone),
+        birthDate: emptyToNull(values.birthDate),
+        gender,
+        status,
+        address: emptyToNull(values.address),
+        note: emptyToNull(values.note),
+      },
+      { onSuccess: onClose }
+    )
   }
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen
       onClose={onClose}
-      title={studentToEdit ? 'Талаба маълумотларини таҳрирлаш' : 'Янги талаба рўйхатга олиш'}
-      description="Ўқув марказига янги талаба карточкасини яратиш"
-      maxWidth="md"
+      title={student ? t.students.form.editTitle : t.students.form.createTitle}
+      description={t.students.form.description}
       footer={
         <>
-          <Button variant="secondary" size="md" onClick={onClose}>
-            Бекор қилиш
+          <Button variant="secondary" onClick={onClose}>
+            {t.common.cancel}
           </Button>
-          <Button
-            variant="primary"
-            size="md"
-            isLoading={saveMutation.isPending}
-            onClick={handleSubmit(onSubmit)}
-          >
-            {studentToEdit ? 'Сақлаш' : 'Рўйхатга олиш'}
+          <Button type="submit" form={FORM_ID} variant="primary" isLoading={saveMutation.isPending}>
+            {student ? t.common.save : t.students.form.submitCreate}
           </Button>
         </>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Талаба исм-шарифи <span className="text-red-500">*</span>
-          </label>
+      <form id={FORM_ID} onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <FormField label={t.students.form.fullName} htmlFor="student-full-name" required>
           <Input
-            placeholder="Масалан: Темур Бекмирзаев"
-            {...register('fullName')}
+            id="student-full-name"
+            placeholder={t.students.form.fullNamePlaceholder}
             error={errors.fullName?.message}
+            {...register('fullName')}
           />
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Телефон рақами <span className="text-red-500">*</span>
-          </label>
-          <Input
-            placeholder="+998901234567"
-            {...register('phone')}
-            error={errors.phone?.message}
-          />
-        </div>
+        </FormField>
 
         <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-              Туғилган санаси
-            </label>
-            <Input type="date" {...register('birthDate')} />
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-              Жинси
-            </label>
-            <select
-              className="flex w-full min-h-[34px] rounded-md border border-[#E3EAE5] bg-white px-3 py-1.5 text-xs text-[#1E2B24] shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#418A66]"
-              {...register('gender', { valueAsNumber: true })}
-            >
-              <option value={GENDER.Male}>Эркак (Ўғил бола)</option>
-              <option value={GENDER.Female}>Аёл (Қиз бола)</option>
-            </select>
-          </div>
+          <FormField label={t.students.form.phone} htmlFor="student-phone" required>
+            <Input id="student-phone" type="tel" error={errors.phone?.message} {...register('phone')} />
+          </FormField>
+          <FormField label={t.students.form.birthDate} htmlFor="student-birth-date">
+            <Input id="student-birth-date" type="date" {...register('birthDate')} />
+          </FormField>
+          <FormField label={t.students.form.gender} htmlFor="student-gender" error={errors.gender?.message}>
+            <SelectInput id="student-gender" {...register('gender', { valueAsNumber: true })}>
+              {GENDER_VALUES.map((gender) => (
+                <option key={gender} value={gender}>
+                  {t.students.genders[gender]}
+                </option>
+              ))}
+            </SelectInput>
+          </FormField>
+          <FormField label={t.students.form.status} htmlFor="student-status" error={errors.status?.message}>
+            <SelectInput id="student-status" {...register('status', { valueAsNumber: true })}>
+              {STUDENT_STATUS_VALUES.map((status) => (
+                <option key={status} value={status}>
+                  {t.students.statuses[status]}
+                </option>
+              ))}
+            </SelectInput>
+          </FormField>
         </div>
 
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Яшаш манзили
-          </label>
-          <Input
-            placeholder="Чилонзор тумани, 9-мавзе..."
-            {...register('address')}
-          />
-        </div>
+        <FormField label={t.students.form.address} htmlFor="student-address">
+          <Input id="student-address" placeholder={t.students.form.addressPlaceholder} {...register('address')} />
+        </FormField>
 
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Қўшимча эслатма
-          </label>
-          <Input
-            placeholder="Мақсади, мактаби ёки бошқа маълумотлар..."
-            {...register('note')}
-          />
-        </div>
+        <FormField label={t.students.form.note} htmlFor="student-note">
+          <Input id="student-note" placeholder={t.students.form.notePlaceholder} {...register('note')} />
+        </FormField>
       </form>
     </Modal>
   )

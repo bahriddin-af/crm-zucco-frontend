@@ -1,3 +1,4 @@
+/** Backend `Zucco.Domain.Courses.Enums` bilan 1:1 (JSON'da raqam sifatida keladi). */
 export const COURSE_LEVEL = {
   General: 1,
   Beginner: 2,
@@ -9,16 +10,7 @@ export const COURSE_LEVEL = {
 } as const
 
 export type CourseLevel = (typeof COURSE_LEVEL)[keyof typeof COURSE_LEVEL]
-
-export const COURSE_LEVEL_LABELS: Record<CourseLevel, string> = {
-  [COURSE_LEVEL.General]: 'Умумий',
-  [COURSE_LEVEL.Beginner]: 'Beginner (A1)',
-  [COURSE_LEVEL.Elementary]: 'Elementary (A2)',
-  [COURSE_LEVEL.PreIntermediate]: 'Pre-Intermediate (B1)',
-  [COURSE_LEVEL.Intermediate]: 'Intermediate (B1+)',
-  [COURSE_LEVEL.UpperIntermediate]: 'Upper-Intermediate (B2)',
-  [COURSE_LEVEL.Advanced]: 'Advanced (C1)',
-}
+export const COURSE_LEVEL_VALUES = Object.values(COURSE_LEVEL)
 
 export const COURSE_STATUS = {
   Active: 1,
@@ -27,6 +19,9 @@ export const COURSE_STATUS = {
 } as const
 
 export type CourseStatus = (typeof COURSE_STATUS)[keyof typeof COURSE_STATUS]
+export const COURSE_STATUS_VALUES = Object.values(COURSE_STATUS)
+
+export const COURSES_PAGE_SIZE = 12
 
 export interface CourseListItem {
   id: string
@@ -41,19 +36,38 @@ export interface CourseListItem {
   status: CourseStatus
 }
 
+export interface CourseResponse extends CourseListItem {
+  description?: string | null
+  createdAt: string
+}
+
+export interface CourseListFilters {
+  page?: number
+  pageSize?: number
+  subjectId?: string
+  status?: CourseStatus
+  search?: string
+}
+
 export interface SubjectItem {
   id: string
   name: string
-  description?: string
+  description?: string | null
   courseCount: number
   createdAt: string
 }
 
-export interface CreateCourseRequest {
-  id?: string
+export interface CreateOrUpdateSubjectRequest {
+  id?: string | null
+  name: string
+  description?: string | null
+}
+
+export interface CreateOrUpdateCourseRequest {
+  id?: string | null
   subjectId: string
   name: string
-  description?: string
+  description?: string | null
   durationMonths: number
   lessonsPerMonth: number
   lessonDurationMinutes: number

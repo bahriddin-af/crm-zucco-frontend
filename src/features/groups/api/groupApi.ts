@@ -1,51 +1,35 @@
 import { apiClient } from '@/api/client'
 import { API_ROUTES } from '@/api/apiRoutes'
 import type { ApiResponse, PagedResult } from '@/types/api'
-import type {
-  GroupListItem,
-  GroupResponse,
-  CreateOrUpdateGroupRequest,
-  RoomOption,
-  TeacherOption,
-  CourseOption,
-  GroupStatus,
+import { OPTIONS_PAGE_SIZE } from '@/constants/pagination'
+import {
+  type ChangeStudentGroupStatusRequest,
+  type CreateOrUpdateGroupRequest,
+  type GenerateGroupScheduleRequest,
+  type GroupListFilters,
+  type GroupListItem,
+  type GroupResponse,
+  type LessonItem,
+  type RoomOption,
 } from '../types/groupTypes'
 
+const DEFAULT_LIST_PAGE_SIZE = 50
+
 export const groupApi = {
-  getGroups: async (params?: {
-    page?: number
-    pageSize?: number
-    status?: GroupStatus
-    courseId?: string
-    teacherId?: string
-    branchId?: string
-    search?: string
-  }) => {
-    const response = await apiClient.get<ApiResponse<PagedResult<GroupListItem>>>(
-      API_ROUTES.GROUPS.LIST,
-      {
-        params: {
-          page: 1,
-          pageSize: 50,
-          ...params,
-        },
-      }
-    )
+  getGroups: async (filters?: GroupListFilters) => {
+    const response = await apiClient.get<ApiResponse<PagedResult<GroupListItem>>>(API_ROUTES.GROUPS.LIST, {
+      params: { page: 1, pageSize: DEFAULT_LIST_PAGE_SIZE, ...filters },
+    })
     return response.data.data
   },
 
   getGroupById: async (id: string) => {
-    const response = await apiClient.get<ApiResponse<GroupResponse>>(
-      API_ROUTES.GROUPS.DETAIL(id)
-    )
+    const response = await apiClient.get<ApiResponse<GroupResponse>>(API_ROUTES.GROUPS.DETAIL(id))
     return response.data.data
   },
 
   createOrUpdateGroup: async (payload: CreateOrUpdateGroupRequest) => {
-    const response = await apiClient.post<ApiResponse<GroupResponse>>(
-      API_ROUTES.GROUPS.CREATE_OR_UPDATE,
-      payload
-    )
+    const response = await apiClient.post<ApiResponse<GroupResponse>>(API_ROUTES.GROUPS.CREATE_OR_UPDATE, payload)
     return response.data.data
   },
 
@@ -54,28 +38,42 @@ export const groupApi = {
     return response.data
   },
 
-  // Auxiliary API calls for Group Modal dropdowns
-  getCourses: async () => {
-    const response = await apiClient.get<ApiResponse<PagedResult<CourseOption>>>(
-      API_ROUTES.COURSES.LIST,
-      { params: { pageSize: 100 } }
-    )
-    return response.data.data.items
+  changeStudentStatus: async (groupId: string, studentId: string, payload: ChangeStudentGroupStatusRequest) => {
+    const response = await apiClient.patch<ApiResponse>(API_ROUTES.GROUPS.STUDENT_STATUS(groupId, studentId), {
+      groupId,
+      studentId,
+      ...payload,
+    })
+    return response.data
   },
 
-  getTeachers: async () => {
-    const response = await apiClient.get<ApiResponse<PagedResult<TeacherOption>>>(
-      API_ROUTES.STAFF.LIST,
-      { params: { role: 3, pageSize: 100 } }
-    )
-    return response.data.data.items
+  getLessons: async (groupId: string) => {
+    const response = await apiClient.get<ApiResponse<LessonItem[]>>(API_ROUTES.GROUPS.LESSONS(groupId))
+    return response.data.data
+  },
+
+  /** Idempotent: mavjud darslar qayta yaratilmaydi, faqat yetishmaganlari qo'shiladi. */
+  generateSchedule: async (groupId: string, payload: GenerateGroupScheduleRequest) => {
+    const response = await apiClient.post<ApiResponse<LessonItem[]>>(API_ROUTES.GROUPS.GENERATE_SCHEDULE(groupId), {
+      groupId,
+      ...payload,
+    })
+    return response.data.data
+  },
+
+  /**
+   * Backend body sifatida xom JSON satr (`[FromBody] string reason`) kutadi. Oldindan
+   * `JSON.stringify` qilinadi: aks holda "123" kabi sabab raqam sifatida yuborilib qoladi.
+   */
+  cancelLesson: async (lessonId: string, reason: string) => {
+    const response = await apiClient.post<ApiResponse>(API_ROUTES.GROUPS.CANCEL_LESSON(lessonId), JSON.stringify(reason))
+    return response.data
   },
 
   getRooms: async (branchId: string) => {
-    const response = await apiClient.get<ApiResponse<PagedResult<RoomOption>>>(
-      API_ROUTES.BRANCHES.ROOMS(branchId),
-      { params: { pageSize: 100 } }
-    )
-    return response.data.data.items
+    const response = await apiClient.get<ApiResponse<PagedResult<RoomOption>>>(API_ROUTES.BRANCHES.ROOMS(branchId), {
+      params: { pageSize: OPTIONS_PAGE_SIZE },
+    })
+    return response.data.data
   },
 }

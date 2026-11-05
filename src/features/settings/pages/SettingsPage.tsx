@@ -1,53 +1,33 @@
-import { Save } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { toast } from 'sonner'
+import { ErrorBoundary } from '@/components/common/ErrorBoundary'
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher'
+import { useTranslation } from '@/i18n'
+import { ProfileCard } from '../components/ProfileCard'
+import { ChangePasswordForm } from '../components/ChangePasswordForm'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { SectionCard } from '@/components/ui/SectionCard'
 
+/** Shaxsiy sozlamalar: profil, parol va interfeys tili. */
 export function SettingsPage() {
-  const handleSave = () => {
-    toast.success('Созламалар сақланди!')
-  }
+  const { t } = useTranslation()
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <div>
-        <h1 className="text-xl font-bold text-[#1E2B24] tracking-tight">
-          Марказ созламалари
-        </h1>
-        <p className="text-xs text-[#65776C] mt-0.5">
-          Ўқув маркази номи, контактлари ва умумий қоидалар
-        </p>
-      </div>
+      <PageHeader title={t.settings.title} subtitle={t.settings.subtitle} />
 
-      <div className="bg-white border border-[#E3EAE5] rounded-lg p-6 shadow-xs space-y-4">
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Ўқув маркази номи
-          </label>
-          <Input defaultValue="Zucco Academy" />
-        </div>
+      <ErrorBoundary>
+        <ProfileCard />
+      </ErrorBoundary>
 
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Асосий телефон рақами
-          </label>
-          <Input defaultValue="+998 (71) 200-00-20" />
-        </div>
+      <ErrorBoundary>
+        <ChangePasswordForm />
+      </ErrorBoundary>
 
-        <div>
-          <label className="block text-xs font-medium text-[#1E2B24] mb-1">
-            Юридик манзил
-          </label>
-          <Input defaultValue="Тошкент ш., Чилонзор тумани, 9-мавзе, 12-уй" />
+      <SectionCard title={t.settings.languageTitle}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <p className="text-[11px] text-caption">{t.settings.languageDescription}</p>
+          <LanguageSwitcher />
         </div>
-
-        <div className="pt-4 border-t border-[#E3EAE5] flex justify-end">
-          <Button variant="primary" size="sm" onClick={handleSave}>
-            <Save className="w-3.5 h-3.5" />
-            <span>Ўзгаришларни сақлаш</span>
-          </Button>
-        </div>
-      </div>
+      </SectionCard>
     </div>
   )
 }

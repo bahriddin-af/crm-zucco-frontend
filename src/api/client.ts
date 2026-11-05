@@ -1,15 +1,23 @@
-import axios, { type InternalAxiosRequestConfig } from 'axios'
+import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { API_ROUTES } from '@/api/apiRoutes'
+import { BEARER_PREFIX, HTTP_HEADERS, HTTP_STATUS, WRITE_METHODS } from '@/constants/http'
 import { ROUTES } from '@/routes/paths'
 import { useAuthStore } from '@/stores/authStore'
+import type { ApiResponse } from '@/types/api'
 
-export const getApiBaseUrl = () => {
+const PRODUCTION_API_URL = 'https://api.zucco.uz'
+const TEST_API_URL = 'https://api-test.zucco.uz'
+const TEST_HOST_MARKER = 'test'
+
+export const getApiBaseUrl = (): string => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL
-  if (typeof window !== 'undefined' && window.location.hostname.includes('test')) {
-    return 'https://api-test.zucco.uz'
+  // Dev serverda so'rovlar vite.config.ts dagi `/api` proxy orqali lokal backendga boradi.
+  if (import.meta.env.DEV) return ''
+  if (typeof window !== 'undefined' && window.location.hostname.includes(TEST_HOST_MARKER)) {
+    return TEST_API_URL
   }
-  return 'https://api.zucco.uz'
+  return PRODUCTION_API_URL
 }
 
 export const apiClient = axios.create({
@@ -19,106 +27,109 @@ export const apiClient = axios.create({
   },
 })
 
-// Request Interceptor: Auth token, active branch (Tenant context), and Idempotency key
-apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const { token, activeBranchId } = useAuthStore.getState()
-
-    if (token && !config.headers.Authorization) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-
-    if (activeBranchId && !config.headers['X-Branch-Id']) {
-      config.headers['X-Branch-Id'] = activeBranchId
-    }
-
-    // Har bir yozish (POST, PUT, DELETE, PATCH) amali uchun X-Operation-Id (UUID v4)
-    if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
-      if (!config.headers['X-Operation-Id']) {
-        config.headers['X-Operation-Id'] = uuidv4()
-      }
-    }
-
-    return config
-  },
-  (error) => Promise.reject(error)
-)
-
-// Response Interceptor: 401 Token Rotation & Auto Refresh
-let isRefreshing = false
-let failedQueue: Array<{
-  resolve: (value?: unknown) => void
-  reject: (reason?: unknown) => void
-}> = []
-
-const processQueue = (error: unknown, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error)
-    } else {
-      prom.resolve(token)
-    }
-  })
-  failedQueue = []
+interface TokenPair {
+  accessToken: string
+  refreshToken: string
 }
 
-apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config
+interface RetriableRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean
+}
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      const { refreshToken, setAuth, logout, user } = useAuthStore.getState()
+const isWriteMethod = (method?: string): boolean =>
+  WRITE_METHODS.some((writeMethod) => writeMethod === method?.toLowerCase())
 
-      // Agar refresh token yo'q bo'lsa yoki eski mock token ('rf-...') bo'lsa, sessiyani tozalab login sahifasiga yo'naltirish
-      if (!refreshToken || refreshToken.startsWith('rf-')) {
-        logout()
-        if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth/login')) {
-          window.location.href = ROUTES.AUTH.LOGIN
-        }
-        return Promise.reject(error)
-      }
+/** Body ichidagi `operationId` (agar bo'lsa) — backend idempotentligi aynan shu qiymatga tayanadi. */
+export const readOperationId = (data: unknown): string | undefined => {
+  if (typeof data !== 'object' || data === null || !('operationId' in data)) return undefined
+  const { operationId } = data as { operationId?: unknown }
+  return typeof operationId === 'string' && operationId.length > 0 ? operationId : undefined
+}
 
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject })
-        })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`
-            return apiClient(originalRequest)
-          })
-          .catch((err) => Promise.reject(err))
-      }
+export const attachRequestContext = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+  const { token, activeBranchId } = useAuthStore.getState()
 
-      originalRequest._retry = true
-      isRefreshing = true
+  if (token && !config.headers.get(HTTP_HEADERS.AUTHORIZATION)) {
+    config.headers.set(HTTP_HEADERS.AUTHORIZATION, `${BEARER_PREFIX}${token}`)
+  }
 
-      try {
-        const response = await axios.post<{
-          success: boolean
-          data: { accessToken: string; refreshToken: string }
-        }>(`${getApiBaseUrl()}${API_ROUTES.AUTH.REFRESH}`, { refreshToken })
+  if (activeBranchId && !config.headers.get(HTTP_HEADERS.BRANCH_ID)) {
+    config.headers.set(HTTP_HEADERS.BRANCH_ID, activeBranchId)
+  }
 
-        const { accessToken: newToken, refreshToken: newRefreshToken } = response.data.data
-        if (user) {
-          setAuth(newToken, newRefreshToken, user)
-        }
+  // Header va body'dagi operationId bitta UUID bo'lishi shart: backend body'dagisini tekshiradi.
+  if (isWriteMethod(config.method) && !config.headers.get(HTTP_HEADERS.OPERATION_ID)) {
+    config.headers.set(HTTP_HEADERS.OPERATION_ID, readOperationId(config.data) ?? uuidv4())
+  }
 
-        processQueue(null, newToken)
-        originalRequest.headers.Authorization = `Bearer ${newToken}`
-        return apiClient(originalRequest)
-      } catch (refreshError) {
-        processQueue(refreshError, null)
-        logout()
-        if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth/login')) {
-          window.location.href = ROUTES.AUTH.LOGIN
-        }
-        return Promise.reject(refreshError)
-      } finally {
-        isRefreshing = false
-      }
-    }
+  return config
+}
 
+apiClient.interceptors.request.use(attachRequestContext)
+
+let refreshPromise: Promise<string> | null = null
+
+const redirectToLogin = (): void => {
+  useAuthStore.getState().logout()
+  if (typeof window !== 'undefined' && !window.location.pathname.startsWith(ROUTES.AUTH.LOGIN)) {
+    window.location.assign(ROUTES.AUTH.LOGIN)
+  }
+}
+
+/**
+ * Bir vaqtda kelgan barcha 401 javoblar bitta refresh so'rovini kutadi (navbat),
+ * so'ng yangi token bilan avtomatik qayta yuboriladi.
+ */
+export const refreshAccessToken = (): Promise<string> => {
+  if (refreshPromise) return refreshPromise
+
+  const { refreshToken } = useAuthStore.getState()
+  if (!refreshToken) return Promise.reject(new Error('refresh_token_missing'))
+
+  refreshPromise = axios
+    .post<ApiResponse<TokenPair>>(`${getApiBaseUrl()}${API_ROUTES.AUTH.REFRESH}`, { refreshToken })
+    .then((response) => {
+      const { accessToken, refreshToken: rotatedRefreshToken } = response.data.data
+      useAuthStore.getState().updateTokens(accessToken, rotatedRefreshToken)
+      return accessToken
+    })
+    .finally(() => {
+      refreshPromise = null
+    })
+
+  return refreshPromise
+}
+
+/**
+ * Bu yo'llardagi 401 — sessiya muddati emas, foydalanuvchi ma'lumotlari xatosi (noto'g'ri parol,
+ * yaroqsiz refresh token). Refresh + qayta yuborish asl xatoni yashirib qo'ymasligi uchun ular o'tkazib yuboriladi.
+ */
+const NO_REFRESH_ROUTES: readonly string[] = [
+  API_ROUTES.AUTH.LOGIN,
+  API_ROUTES.AUTH.REFRESH,
+  API_ROUTES.AUTH.CHANGE_PASSWORD,
+]
+
+const canRefreshAndRetry = (config?: RetriableRequestConfig): config is RetriableRequestConfig =>
+  config !== undefined && !config._retry && !NO_REFRESH_ROUTES.includes(config.url ?? '')
+
+const handleResponseError = async (error: AxiosError) => {
+  const originalRequest = error.config as RetriableRequestConfig | undefined
+
+  if (error.response?.status !== HTTP_STATUS.UNAUTHORIZED || !canRefreshAndRetry(originalRequest)) {
     return Promise.reject(error)
   }
-)
+
+  originalRequest._retry = true
+
+  try {
+    const accessToken = await refreshAccessToken()
+    originalRequest.headers.set(HTTP_HEADERS.AUTHORIZATION, `${BEARER_PREFIX}${accessToken}`)
+    return apiClient(originalRequest)
+  } catch (refreshError) {
+    redirectToLogin()
+    return Promise.reject(refreshError)
+  }
+}
+
+apiClient.interceptors.response.use((response: AxiosResponse) => response, handleResponseError)

@@ -1,39 +1,49 @@
+import { getTranslations, type SupportedLanguage } from '@/i18n'
 import { useLanguageStore } from '@/stores/languageStore'
 
 /**
- * Zucco markaziy formatlash yordamchilari (Ko'p tillilikka to'liq moslangan)
+ * Zucco markaziy formatlash yordamchilari. Barcha pul, tanga, sana va foizlar shu yerdan
+ * joriy interfeys tiliga mos formatlanadi; birliklar (so'm, tanga) i18n `common` namespace'idan olinadi.
  */
 
-export function formatCurrency(amount: number, customLang?: string): string {
-  const lang = customLang || useLanguageStore.getState().language
-
-  const formatted = new Intl.NumberFormat('uz-UZ', {
-    maximumFractionDigits: 0,
-  }).format(amount)
-
-  if (lang === 'en') return `${formatted} UZS`
-  if (lang === 'ru') return `${formatted} сум`
-  if (lang === 'uz') return `${formatted} so'm`
-  return `${formatted} сўм`
+const INTL_LOCALES: Record<SupportedLanguage, string> = {
+  'uz-Cyrl': 'uz-Cyrl-UZ',
+  uz: 'uz-Latn-UZ',
+  ru: 'ru-RU',
+  en: 'en-US',
 }
 
-export function formatCoins(coins: number, customLang?: string): string {
-  const lang = customLang || useLanguageStore.getState().language
-  const formatted = new Intl.NumberFormat('uz-UZ').format(coins)
+/** Raqamlar guruhlanishi barcha tillarda bir xil ko'rinishi uchun (1 250 000). */
+const NUMBER_LOCALE = 'uz-UZ'
+const PERCENT_SCALE = 100
+const PERCENT_FRACTION_DIGITS = 1
 
-  if (lang === 'en') return `${formatted} coins`
-  if (lang === 'ru') return `${formatted} монет`
-  if (lang === 'uz') return `${formatted} tanga`
-  return `${formatted} танга`
+const currentLanguage = (language?: SupportedLanguage): SupportedLanguage =>
+  language ?? useLanguageStore.getState().language
+
+export function formatCurrency(amount: number, language?: SupportedLanguage): string {
+  const formatted = new Intl.NumberFormat(NUMBER_LOCALE, { maximumFractionDigits: 0 }).format(amount)
+  return `${formatted} ${getTranslations(currentLanguage(language)).common.sumUnit}`
 }
 
-export function formatDate(date: string | Date, customLang?: string): string {
-  const lang = customLang || useLanguageStore.getState().language
+export function formatCoins(coins: number, language?: SupportedLanguage): string {
+  const formatted = new Intl.NumberFormat(NUMBER_LOCALE).format(coins)
+  return `${formatted} ${getTranslations(currentLanguage(language)).common.coinsUnit}`
+}
+
+/** `12.5` → `12,5%`; `signed` bo'lsa `+12,5%` (o'zgarish ko'rsatkichlari uchun). */
+export function formatPercent(value: number, signed = false, language?: SupportedLanguage): string {
+  return new Intl.NumberFormat(INTL_LOCALES[currentLanguage(language)], {
+    style: 'percent',
+    maximumFractionDigits: PERCENT_FRACTION_DIGITS,
+    signDisplay: signed ? 'exceptZero' : 'auto',
+  }).format(value / PERCENT_SCALE)
+}
+
+export function formatDate(date: string | Date, language?: SupportedLanguage): string {
   const d = typeof date === 'string' ? new Date(date) : date
 
-  const locale = lang === 'en' ? 'en-US' : lang === 'ru' ? 'ru-RU' : 'uz-UZ'
-
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(INTL_LOCALES[currentLanguage(language)], {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -42,7 +52,7 @@ export function formatDate(date: string | Date, customLang?: string): string {
 
 export function formatTime(time: string | Date): string {
   const d = typeof time === 'string' ? new Date(time) : time
-  return new Intl.DateTimeFormat('uz-UZ', {
+  return new Intl.DateTimeFormat(NUMBER_LOCALE, {
     hour: '2-digit',
     minute: '2-digit',
   }).format(d)

@@ -2,26 +2,29 @@ import { Globe } from 'lucide-react'
 import { LANGUAGES, type SupportedLanguage } from '@/i18n/types'
 import { useTranslation } from '@/i18n'
 
+const isSupportedLanguage = (value: string): value is SupportedLanguage =>
+  LANGUAGES.some((lang) => lang.code === value)
+
 export function LanguageSwitcher() {
-  const { language, setLanguage } = useTranslation()
+  const { t, language, setLanguage } = useTranslation()
 
   return (
-    <div className="relative inline-flex items-center">
-      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#F6F8F7] border border-[#E3EAE5] text-xs font-medium text-[#344B3E]">
-        <Globe className="w-3.5 h-3.5 text-[#146B52]" />
-        <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value as SupportedLanguage)}
-          className="bg-transparent border-none text-xs font-semibold text-[#1E2B24] focus:outline-none cursor-pointer"
-          aria-label="Тилни танлаш / Select language"
-        >
-          {LANGUAGES.map((lang) => (
-            <option key={lang.code} value={lang.code}>
-              {lang.flag} {lang.label}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-canvas border border-border text-xs font-medium text-secondary-ink">
+      <Globe className="w-3.5 h-3.5 text-primary" />
+      <select
+        value={language}
+        onChange={(e) => {
+          if (isSupportedLanguage(e.target.value)) setLanguage(e.target.value)
+        }}
+        className="bg-transparent border-none text-xs font-semibold text-heading focus:outline-none cursor-pointer"
+        aria-label={t.layout.selectLanguage}
+      >
+        {LANGUAGES.map((lang) => (
+          <option key={lang.code} value={lang.code}>
+            {lang.flag} {lang.label}
+          </option>
+        ))}
+      </select>
     </div>
   )
 }
