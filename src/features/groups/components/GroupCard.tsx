@@ -33,7 +33,7 @@ export function GroupCard({ group, onAction }: GroupCardProps) {
   const { t } = useTranslation()
 
   return (
-    <article className="bg-white border border-border rounded-lg p-5 shadow-xs flex flex-col justify-between gap-3.5 hover:border-primary-line hover:shadow-sm transition-all">
+    <article className="bg-surface border border-border rounded-lg p-5 shadow-xs flex flex-col justify-between gap-3.5 hover:border-primary-line hover:shadow-sm transition-all">
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
@@ -48,7 +48,7 @@ export function GroupCard({ group, onAction }: GroupCardProps) {
             <User className="w-3.5 h-3.5 text-subtle shrink-0" />
             <span className="truncate">{group.teacherName || t.groups.noTeacher}</span>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-copy-strong bg-canvas px-2 py-0.5 rounded border border-border shrink-0">
+          <div className="flex items-center gap-1 text-2xs text-copy-strong bg-canvas px-2 py-0.5 rounded border border-border shrink-0">
             <Building className="w-3 h-3 text-primary" />
             <span>{group.roomName || t.groups.noRoom}</span>
           </div>

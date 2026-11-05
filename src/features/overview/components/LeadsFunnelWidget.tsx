@@ -29,7 +29,7 @@ export function LeadsFunnelWidget() {
           const percent = totalLeads > 0 ? (column.totalLeads / totalLeads) * FULL_PERCENT : 0
           return (
             <div key={column.stageId} className="space-y-1">
-              <div className="flex justify-between text-[11px]">
+              <div className="flex justify-between text-2xs">
                 <span className="text-caption">{column.stageName}</span>
                 <span className="font-semibold text-heading tabular-nums">{column.totalLeads}</span>
               </div>

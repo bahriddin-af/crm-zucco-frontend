@@ -22,9 +22,9 @@ export function FormField({ label, htmlFor, required = false, error, hint, class
         {required && <span className="text-debt-ink ml-0.5">*</span>}
       </label>
       {children}
-      {hint && !error && <p className="text-[11px] text-caption">{hint}</p>}
+      {hint && !error && <p className="text-2xs text-caption">{hint}</p>}
       {error && (
-        <p role="alert" className="text-[11px] text-debt-ink">
+        <p role="alert" className="text-2xs text-debt-ink">
           {error}
         </p>
       )}

@@ -39,7 +39,7 @@ export function StudentPicker({ id, value, onChange, error }: StudentPickerProps
             </option>
           ))}
         </SelectInput>
-        {!isLoading && students.length === 0 && <p className="text-[11px] text-caption">{t.coins.picker.empty}</p>}
+        {!isLoading && students.length === 0 && <p className="text-2xs text-caption">{t.coins.picker.empty}</p>}
       </div>
     </FormField>
   )

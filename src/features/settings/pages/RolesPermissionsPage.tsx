@@ -29,7 +29,7 @@ export function RolesPermissionsPage() {
   return (
     <div className="space-y-5">
       <PageHeader title={t.roles.title} subtitle={t.roles.subtitle} />
-      <div className="flex items-start gap-2 rounded-md border border-primary-ring bg-primary-soft px-3 py-2 text-[11px] text-primary-hover">
+      <div className="flex items-start gap-2 rounded-md border border-primary-ring bg-primary-soft px-3 py-2 text-2xs text-primary-hover">
         <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
         <span>{t.roles.readOnlyNote}</span>
       </div>

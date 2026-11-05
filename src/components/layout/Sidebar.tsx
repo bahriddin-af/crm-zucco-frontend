@@ -20,8 +20,8 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'fixed top-0 bottom-0 left-0 z-30 flex flex-col bg-white border-r border-border transition-all duration-200 select-none',
-        isCollapsed ? 'w-[72px] px-2.5 py-4' : 'w-[240px] px-3.5 py-4'
+        'fixed top-0 bottom-0 left-0 z-30 flex flex-col bg-surface border-r border-border transition-all duration-200 select-none',
+        isCollapsed ? 'w-18 px-2.5 py-4' : 'w-64 px-3.5 py-4'
       )}
     >
       <div className="flex items-center gap-2.5 px-2 mb-5">
@@ -31,7 +31,7 @@ export function Sidebar() {
         {!isCollapsed && (
           <div className="flex items-center justify-between w-full">
             <span className="font-bold text-lg text-heading tracking-tight">{t.layout.brandName}</span>
-            <span className="text-[10px] font-medium text-primary bg-primary-soft px-1.5 py-0.5 rounded">
+            <span className="text-3xs font-medium text-primary bg-primary-soft px-1.5 py-0.5 rounded">
               {t.layout.brandBadge}
             </span>
           </div>
@@ -42,7 +42,7 @@ export function Sidebar() {
         {sections.map((section) => (
           <div key={section.title} className="space-y-1">
             {!isCollapsed && (
-              <h4 className="px-2.5 text-[10px] font-semibold text-subtle tracking-wider uppercase mb-1.5">
+              <h4 className="px-2.5 text-2xs font-semibold text-subtle tracking-wider uppercase mb-1.5">
                 {section.title}
               </h4>
             )}
@@ -55,13 +55,13 @@ export function Sidebar() {
                 aria-label={isCollapsed ? item.label : undefined}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-2.5 rounded-md text-xs font-medium min-h-[36px] transition-colors',
+                    'flex items-center gap-3 rounded-md text-sm font-medium min-h-10 transition-colors',
                     isCollapsed ? 'justify-center px-0' : 'px-2.5',
                     isActive ? 'bg-primary-soft text-primary font-semibold' : 'text-copy-strong hover:bg-canvas'
                   )
                 }
               >
-                <item.icon className="w-4 h-4 shrink-0" />
+                <item.icon className="w-5 h-5 shrink-0" />
                 {!isCollapsed && <span className="truncate flex-1">{item.label}</span>}
               </NavLink>
             ))}

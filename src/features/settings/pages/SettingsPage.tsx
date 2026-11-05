@@ -24,7 +24,7 @@ export function SettingsPage() {
 
       <SectionCard title={t.settings.languageTitle}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <p className="text-[11px] text-caption">{t.settings.languageDescription}</p>
+          <p className="text-2xs text-caption">{t.settings.languageDescription}</p>
           <LanguageSwitcher />
         </div>
       </SectionCard>

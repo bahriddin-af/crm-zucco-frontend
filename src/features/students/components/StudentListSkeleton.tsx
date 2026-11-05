@@ -4,7 +4,7 @@ const SKELETON_ROWS = 5
 
 export function StudentListSkeleton() {
   return (
-    <div className="bg-white border border-border rounded-lg p-4 space-y-3">
+    <div className="bg-surface border border-border rounded-lg p-4 space-y-3">
       {Array.from({ length: SKELETON_ROWS }, (_, index) => (
         <div key={index} className="flex justify-between items-center py-2 border-b border-divider last:border-none">
           <div className="space-y-1">

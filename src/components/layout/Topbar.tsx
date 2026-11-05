@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useTranslation } from '@/i18n'
 import { Button } from '@/components/ui/Button'
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { PermissionGuard } from '@/components/common/PermissionGuard'
 import { useLogout } from '@/features/auth/hooks/useAuth'
 import { BranchSwitcher } from './BranchSwitcher'
@@ -18,7 +19,7 @@ export function Topbar() {
   const initial = (user?.fullName || t.layout.userFallback).charAt(0).toUpperCase()
 
   return (
-    <header className="sticky top-0 z-20 h-14 bg-white border-b border-border px-6 flex items-center justify-between gap-4 select-none">
+    <header className="sticky top-0 z-20 h-14 bg-surface border-b border-border px-6 flex items-center justify-between gap-4 select-none">
       <div className="flex items-center gap-3">
         <BranchSwitcher />
       </div>
@@ -26,6 +27,7 @@ export function Topbar() {
       <div className="flex items-center gap-3">
         <GlobalStudentSearch />
         <LanguageSwitcher />
+        <ThemeToggle />
 
         <PermissionGuard permission={PERMISSIONS.FINANCE.PAYMENT_CREATE}>
           <Link to={ROUTES.FINANCE.DESK} className="hidden sm:inline-flex">

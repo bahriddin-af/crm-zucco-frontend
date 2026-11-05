@@ -59,7 +59,7 @@ export function StaffListPage() {
         }
       />
 
-      <div className="bg-white p-3 rounded-lg border border-border shadow-xs flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+      <div className="bg-surface p-3 rounded-lg border border-border shadow-xs flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
         <SearchInput
           value={search}
           onChange={(value) => {
@@ -85,7 +85,7 @@ export function StaffListPage() {
       </div>
 
       {isLoading && (
-        <ListSkeleton rows={SKELETON_ROWS} rowClassName="h-12 w-full" className="bg-white border border-border rounded-xl p-6 space-y-3" />
+        <ListSkeleton rows={SKELETON_ROWS} rowClassName="h-12 w-full" className="bg-surface border border-border rounded-xl p-6 space-y-3" />
       )}
       {error && !isLoading && <ErrorState error={error} onRetry={() => void refetch()} />}
       {!isLoading && !error && staff.length === 0 && (

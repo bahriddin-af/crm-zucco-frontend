@@ -23,16 +23,16 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
   const { t } = useTranslation()
 
   return (
-    <article className="bg-white border border-border rounded-lg p-5 shadow-xs flex flex-col justify-between gap-4 hover:border-primary-line hover:shadow-sm transition-all">
+    <article className="bg-surface border border-border rounded-lg p-5 shadow-xs flex flex-col justify-between gap-4 hover:border-primary-line hover:shadow-sm transition-all">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[10px] font-bold text-primary bg-primary-soft px-2 py-0.5 rounded truncate max-w-[60%]">
+          <span className="text-3xs font-bold text-primary bg-primary-soft px-2 py-0.5 rounded truncate max-w-[60%]">
             {course.subjectName}
           </span>
           <Badge variant={STATUS_VARIANT[course.status]}>{t.courses.statuses[course.status]}</Badge>
         </div>
         <h3 className="text-sm font-bold text-heading">{course.name}</h3>
-        <p className="text-[11px] text-caption">{t.courses.levels[course.level]}</p>
+        <p className="text-2xs text-caption">{t.courses.levels[course.level]}</p>
         <div className="flex items-center gap-1.5 text-xs text-caption">
           <Clock className="w-3.5 h-3.5 text-subtle" />
           <span>

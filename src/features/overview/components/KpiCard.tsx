@@ -31,9 +31,9 @@ interface KpiCardProps {
 
 export function KpiCard({ label, icon: Icon, tone = 'primary', value, hint, isLoading, error, onRetry }: KpiCardProps) {
   return (
-    <div className="p-4 bg-white border border-border rounded-lg shadow-xs">
+    <div className="p-4 bg-surface border border-border rounded-lg shadow-xs">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[11px] font-medium text-caption">{label}</span>
+        <span className="text-2xs font-medium text-caption">{label}</span>
         <div className={cn('w-7 h-7 rounded-md flex items-center justify-center', TONE_ICON_CLASS[tone])}>
           <Icon className="w-3.5 h-3.5" />
         </div>
@@ -43,7 +43,7 @@ export function KpiCard({ label, icon: Icon, tone = 'primary', value, hint, isLo
       {!isLoading && !error && (
         <>
           <div className={cn('text-2xl font-bold tabular-nums tracking-tight', TONE_VALUE_CLASS[tone])}>{value}</div>
-          {hint && <div className="mt-2 text-[10px] text-caption">{hint}</div>}
+          {hint && <div className="mt-2 text-3xs text-caption">{hint}</div>}
         </>
       )}
     </div>

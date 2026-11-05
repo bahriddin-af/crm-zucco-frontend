@@ -19,7 +19,7 @@ export function ReportsPage() {
   }
 
   const periodPicker = (
-    <label className="flex items-center gap-2 text-[11px] text-caption">
+    <label className="flex items-center gap-2 text-2xs text-caption">
       <span>{t.reports.period}</span>
       <Input
         type="month"

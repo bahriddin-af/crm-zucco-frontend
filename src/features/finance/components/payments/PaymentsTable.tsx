@@ -27,8 +27,8 @@ export function PaymentsTable({ payments }: PaymentsTableProps) {
       {payments.map((payment) => (
         <tr key={payment.id} className="hover:bg-surface-tint transition-colors">
           <td className={CELL_CLASS}>
-            <div className="font-mono text-[11px] text-heading truncate max-w-40">{payment.receiptNumber}</div>
-            <div className="text-[11px] text-caption tabular-nums">
+            <div className="font-mono text-2xs text-heading truncate max-w-40">{payment.receiptNumber}</div>
+            <div className="text-2xs text-caption tabular-nums">
               {formatDate(payment.paymentDate)} · {formatTime(payment.paymentDate)}
             </div>
           </td>

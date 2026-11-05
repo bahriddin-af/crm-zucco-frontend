@@ -3,6 +3,7 @@ import { ROUTES } from '@/routes/paths'
 import { useAuthStore } from '@/stores/authStore'
 import { useTranslation } from '@/i18n'
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { LoginForm } from '../components/LoginForm'
 
 interface LocationState {
@@ -26,10 +27,7 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-canvas flex flex-col justify-center items-center p-4 gap-4">
-      <div className="w-full max-w-[420px] flex justify-end">
-        <LanguageSwitcher />
-      </div>
-      <div className="w-full max-w-[420px] bg-white border border-border rounded-xl shadow-lg p-7 space-y-6">
+      <div className="w-full max-w-[420px] bg-surface border border-border rounded-xl shadow-lg p-7 space-y-6">
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-2xl mx-auto shadow-sm">
             {t.layout.brandInitial}
@@ -39,6 +37,11 @@ export function LoginPage() {
         </div>
 
         <LoginForm />
+      </div>
+
+      <div className="flex items-center gap-3">
+        <LanguageSwitcher variant="compact" />
+        <ThemeToggle />
       </div>
     </div>
   )

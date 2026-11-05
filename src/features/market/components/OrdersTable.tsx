@@ -23,7 +23,7 @@ export function OrdersTable({ orders, onDeliver }: OrdersTableProps) {
     <div className="overflow-x-auto">
       <table className="w-full text-left text-xs border-collapse">
         <thead>
-          <tr className="bg-canvas border-b border-border text-caption text-[11px] font-semibold">
+          <tr className="bg-canvas border-b border-border text-caption text-2xs font-semibold">
             <th className="py-2.5 px-3">{t.market.orderStudent}</th>
             <th className="py-2.5 px-3">{t.market.orderItem}</th>
             <th className="py-2.5 px-3 text-right">{t.market.priceInCoins}</th>

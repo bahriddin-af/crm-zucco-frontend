@@ -35,7 +35,7 @@ export function LeadCard({ lead, nextStage, canUpdate, canConvert, onMoveStage, 
       onDragStart={canUpdate ? handleDragStart : undefined}
       title={canUpdate ? t.leads.dragHint : undefined}
       className={cn(
-        'bg-white border border-border rounded-lg p-3.5 shadow-xs space-y-2.5 hover:border-primary-line hover:shadow-sm transition-all',
+        'bg-surface border border-border rounded-lg p-3.5 shadow-xs space-y-2.5 hover:border-primary-line hover:shadow-sm transition-all',
         canUpdate && 'cursor-grab active:cursor-grabbing'
       )}
     >
@@ -48,13 +48,13 @@ export function LeadCard({ lead, nextStage, canUpdate, canConvert, onMoveStage, 
           {lead.fullName}
         </button>
         {lead.courseName && (
-          <span className="text-[10px] font-medium text-primary bg-primary-soft px-1.5 py-0.5 rounded shrink-0 truncate max-w-[100px]">
+          <span className="text-3xs font-medium text-primary bg-primary-soft px-1.5 py-0.5 rounded shrink-0 truncate max-w-[100px]">
             {lead.courseName}
           </span>
         )}
       </div>
 
-      <div className="flex items-center gap-1.5 text-[11px] text-caption">
+      <div className="flex items-center gap-1.5 text-2xs text-caption">
         <Phone className="w-3 h-3 text-subtle" />
         <a href={`tel:${lead.phone}`} className="hover:text-primary transition-colors font-medium tabular-nums">
           {formatPhone(lead.phone)}
@@ -69,7 +69,7 @@ export function LeadCard({ lead, nextStage, canUpdate, canConvert, onMoveStage, 
                 type="button"
                 onClick={() => onConvert(lead)}
                 title={t.leads.card.convertTitle}
-                className="p-1 rounded text-primary hover:bg-primary-soft transition-colors flex items-center gap-1 text-[11px] font-medium"
+                className="p-1 rounded text-primary hover:bg-primary-soft transition-colors flex items-center gap-1 text-2xs font-medium"
               >
                 <UserCheck className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">{t.leads.card.convert}</span>
@@ -94,7 +94,7 @@ export function LeadCard({ lead, nextStage, canUpdate, canConvert, onMoveStage, 
               onClick={() => onMoveStage(lead.id, nextStage.id)}
               title={moveLabel}
               aria-label={moveLabel}
-              className="p-1 px-1.5 rounded bg-canvas hover:bg-primary-soft text-primary text-[10px] font-medium transition-colors flex items-center gap-0.5 max-w-[110px]"
+              className="p-1 px-1.5 rounded bg-canvas hover:bg-primary-soft text-primary text-3xs font-medium transition-colors flex items-center gap-0.5 max-w-[110px]"
             >
               <span className="truncate">{nextStage.name}</span>
               <ArrowRight className="w-3 h-3 shrink-0" />

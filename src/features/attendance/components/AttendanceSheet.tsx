@@ -36,7 +36,7 @@ export function AttendanceSheet({ lesson, today }: AttendanceSheetProps) {
 
   if (sheetQuery.isLoading) {
     return (
-      <ListSkeleton rows={SKELETON_ROWS} rowClassName="h-12 w-full" className="bg-white border border-border rounded-lg p-5 space-y-3" />
+      <ListSkeleton rows={SKELETON_ROWS} rowClassName="h-12 w-full" className="bg-surface border border-border rounded-lg p-5 space-y-3" />
     )
   }
   if (sheetQuery.isError || !sheetQuery.data) {
@@ -62,7 +62,7 @@ export function AttendanceSheet({ lesson, today }: AttendanceSheetProps) {
   }
 
   return (
-    <div className="bg-white border border-border rounded-lg shadow-xs overflow-hidden">
+    <div className="bg-surface border border-border rounded-lg shadow-xs overflow-hidden">
       <div className="p-4 border-b border-border bg-canvas space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-xs font-bold text-heading">
@@ -78,7 +78,7 @@ export function AttendanceSheet({ lesson, today }: AttendanceSheetProps) {
           <Badge variant={sheet.isMarked ? 'success' : 'accent'}>{sheet.isMarked ? t.attendance.marked : t.attendance.notMarked}</Badge>
         </div>
         {!isMarkable && (
-          <p role="status" className="text-[11px] text-warning-ink bg-warning-soft border border-warning-tint rounded px-2.5 py-1.5">
+          <p role="status" className="text-2xs text-warning-ink bg-warning-soft border border-warning-tint rounded px-2.5 py-1.5">
             {lesson.status === LESSON_STATUS.Cancelled ? t.attendance.cancelledLesson : t.attendance.futureLesson}
           </p>
         )}

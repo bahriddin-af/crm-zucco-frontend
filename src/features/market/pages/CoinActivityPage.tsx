@@ -76,7 +76,7 @@ export function CoinActivityPage() {
       </div>
 
       <ErrorBoundary>
-        <div className="bg-white border border-border rounded-lg shadow-xs p-3">
+        <div className="bg-surface border border-border rounded-lg shadow-xs p-3">
           {isLoading && <ListSkeleton rows={8} />}
           {isError && <ErrorState error={error} onRetry={() => void refetch()} />}
           {data && data.items.length === 0 && (

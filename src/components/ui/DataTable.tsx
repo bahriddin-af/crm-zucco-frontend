@@ -18,7 +18,7 @@ export function DataTable({ columns, children }: DataTableProps) {
     <div className="overflow-x-auto">
       <table className="w-full text-left text-xs border-collapse">
         <thead>
-          <tr className="bg-canvas border-b border-border text-caption text-[11px] font-semibold">
+          <tr className="bg-canvas border-b border-border text-caption text-2xs font-semibold">
             {columns.map((column) => (
               <th
                 key={column.key}

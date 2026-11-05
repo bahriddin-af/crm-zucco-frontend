@@ -40,7 +40,7 @@ export function AttendanceStudentRow({ student, canGrade, disabled, onMark }: At
     <tr className="hover:bg-surface-muted align-top">
       <td className="py-3 px-4">
         <p className="font-bold text-heading">{student.studentName}</p>
-        <p className="text-[11px] text-caption tabular-nums">{formatPhone(student.phone)}</p>
+        <p className="text-2xs text-caption tabular-nums">{formatPhone(student.phone)}</p>
       </td>
       <td className="py-3 px-4">
         <AttendanceStatusButtons

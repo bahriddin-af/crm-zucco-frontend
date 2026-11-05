@@ -43,7 +43,7 @@ export function SalarySchemesTable({ schemes, onEdit }: SalarySchemesTableProps)
               ? formatPercent(scheme.rateValue)
               : formatCurrency(scheme.rateValue)}
           </td>
-          <td className={`${CELL_CLASS} text-[11px] text-caption`}>
+          <td className={`${CELL_CLASS} text-2xs text-caption`}>
             {scheme.onlyPaidStudents && <div>{messages.onlyPaidStudents}</div>}
             {scheme.requireAttendanceMarked && <div>{messages.requireAttendanceMarked}</div>}
           </td>

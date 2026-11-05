@@ -73,14 +73,14 @@ function PaymentDrawerContent({ onClose, preselectedStudentId }: Omit<PaymentDra
         role="dialog"
         aria-modal="true"
         aria-labelledby="payment-drawer-title"
-        className="relative z-10 w-full max-w-md bg-white h-full shadow-xl flex flex-col"
+        className="relative z-10 w-full max-w-md bg-surface h-full shadow-xl flex flex-col"
       >
         <header className="flex items-start justify-between px-5 py-4 border-b border-border">
           <div>
             <h2 id="payment-drawer-title" className="text-sm font-semibold text-heading">
               {t.finance.drawer.title}
             </h2>
-            <p className="text-[11px] text-caption mt-0.5">{t.finance.drawer.description}</p>
+            <p className="text-2xs text-caption mt-0.5">{t.finance.drawer.description}</p>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose} aria-label={t.ui.close}>
             <X className="w-4 h-4" />

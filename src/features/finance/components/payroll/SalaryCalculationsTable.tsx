@@ -88,7 +88,7 @@ export function SalaryCalculationsTable({ calculations, onApprove, onPay }: Sala
               </PermissionGuard>
             )}
             {calculation.status === SALARY_STATUS.Paid && calculation.paidAt && (
-              <span className="inline-flex items-center gap-1 text-[11px] text-success-ink font-semibold">
+              <span className="inline-flex items-center gap-1 text-2xs text-success-ink font-semibold">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 {interpolate(messages.paidAt, { date: formatDate(calculation.paidAt) })}
               </span>

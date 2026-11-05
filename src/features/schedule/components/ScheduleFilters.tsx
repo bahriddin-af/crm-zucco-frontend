@@ -18,7 +18,7 @@ export function ScheduleFilters({ value, onChange }: ScheduleFiltersProps) {
   const { data: rooms = [] } = useRoomOptions(value.branchId)
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-white p-3 rounded-lg border border-border shadow-xs">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-surface p-3 rounded-lg border border-border shadow-xs">
       <SelectInput
         aria-label={t.schedule.branch}
         value={value.branchId}

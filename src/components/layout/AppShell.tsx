@@ -31,7 +31,7 @@ export function AppShell() {
       <div
         className={cn(
           'flex flex-col min-h-screen transition-all duration-200',
-          isCollapsed ? 'pl-[72px]' : 'pl-[240px]'
+          isCollapsed ? 'pl-18' : 'pl-64'
         )}
       >
         <OfflineBanner />

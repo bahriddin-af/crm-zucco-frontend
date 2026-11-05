@@ -16,7 +16,7 @@ export function PayrollFiltersBar({ period, teacherId, onPeriodChange, onTeacher
   const { t } = useTranslation()
 
   return (
-    <div className="bg-white rounded-lg border border-border shadow-xs p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="bg-surface rounded-lg border border-border shadow-xs p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
       <FormField label={t.payroll.period} htmlFor="payroll-period">
         <Input
           id="payroll-period"

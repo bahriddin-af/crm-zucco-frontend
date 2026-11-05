@@ -60,7 +60,7 @@ export function ChangePasswordForm() {
   return (
     <SectionCard title={t.settings.passwordTitle}>
       <form className="space-y-3 max-w-md" noValidate onSubmit={handleSubmit(onSubmit)}>
-        <p className="text-[11px] text-caption">{t.settings.passwordHint}</p>
+        <p className="text-2xs text-caption">{t.settings.passwordHint}</p>
         <FormField label={t.settings.currentPassword} htmlFor="current-password" error={errors.currentPassword?.message}>
           <Input id="current-password" type="password" autoComplete="current-password" {...register('currentPassword')} />
         </FormField>

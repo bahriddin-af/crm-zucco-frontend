@@ -33,7 +33,7 @@ export function GroupsGrid({ data, isLoading, error, onRetry, hasFilters, onCrea
     return (
       <div className={GRID_CLASS}>
         {Array.from({ length: SKELETON_CARDS }, (_, index) => (
-          <div key={index} className="bg-white border border-border rounded-lg p-5 space-y-3.5">
+          <div key={index} className="bg-surface border border-border rounded-lg p-5 space-y-3.5">
             <Skeleton className="h-5 w-40" />
             <Skeleton className="h-4 w-28" />
             <Skeleton className="h-10 w-full" />

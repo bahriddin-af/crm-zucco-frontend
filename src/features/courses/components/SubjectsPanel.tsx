@@ -34,13 +34,13 @@ export function SubjectsPanel() {
       )
     }
     if (subjectsQuery.isError) return <ErrorState error={subjectsQuery.error} onRetry={() => void subjectsQuery.refetch()} />
-    if (subjects.length === 0) return <p className="text-[11px] text-caption">{t.courses.subjectsEmpty}</p>
+    if (subjects.length === 0) return <p className="text-2xs text-caption">{t.courses.subjectsEmpty}</p>
     return (
       <ul className="flex flex-wrap gap-2">
         {subjects.map((subject) => (
           <li key={subject.id} className="flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-md border border-border bg-canvas text-xs">
             <span className="font-semibold text-heading">{subject.name}</span>
-            <span className="text-[11px] text-caption">{interpolate(t.courses.subjectCourses, { count: subject.courseCount })}</span>
+            <span className="text-2xs text-caption">{interpolate(t.courses.subjectCourses, { count: subject.courseCount })}</span>
             <PermissionGuard permission={PERMISSIONS.COURSES.UPDATE}>
               <Button variant="ghost" size="icon" className="h-6 w-6" aria-label={t.courses.edit} onClick={() => setDialog({ type: 'edit', subject })}>
                 <Edit2 className="w-3 h-3" />
@@ -58,7 +58,7 @@ export function SubjectsPanel() {
   }
 
   return (
-    <section className="bg-white p-3.5 rounded-lg border border-border shadow-xs space-y-3">
+    <section className="bg-surface p-3.5 rounded-lg border border-border shadow-xs space-y-3">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-xs font-semibold text-heading">{t.courses.subjectsTitle}</h2>
         <PermissionGuard permission={PERMISSIONS.COURSES.CREATE}>

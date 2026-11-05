@@ -30,9 +30,9 @@ interface StatCardProps {
 /** KPI kartochkasi: yorliq, qiymat (tonga qarab rang), ixtiyoriy ikonka va izoh. */
 export function StatCard({ label, value, hint, icon, tone = 'neutral', isLoading }: StatCardProps) {
   return (
-    <div className="bg-white p-5 rounded-lg border border-border shadow-xs">
+    <div className="bg-surface p-5 rounded-lg border border-border shadow-xs">
       <div className="flex items-center justify-between text-caption mb-2">
-        <span className="text-[11px] font-medium uppercase tracking-wider">{label}</span>
+        <span className="text-2xs font-medium uppercase tracking-wider">{label}</span>
         {icon && (
           <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center', ICON_TONE[tone])}>
             {icon}
@@ -44,7 +44,7 @@ export function StatCard({ label, value, hint, icon, tone = 'neutral', isLoading
       ) : (
         <div className={cn('text-2xl font-bold tabular-nums', VALUE_TONE[tone])}>{value}</div>
       )}
-      {hint && <div className="text-[11px] text-caption mt-1.5">{hint}</div>}
+      {hint && <div className="text-2xs text-caption mt-1.5">{hint}</div>}
     </div>
   )
 }

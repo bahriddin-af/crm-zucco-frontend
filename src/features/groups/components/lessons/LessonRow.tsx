@@ -31,9 +31,9 @@ export function LessonRow({ lesson, onCancel }: LessonRowProps) {
             {t.groups.weekdaysShort[weekday]}, {formatDate(date)} · {shortTime(lesson.startTime)}–{shortTime(lesson.endTime)}
           </span>
         </div>
-        {lesson.topic && <p className="text-[11px] text-copy truncate">{lesson.topic}</p>}
+        {lesson.topic && <p className="text-2xs text-copy truncate">{lesson.topic}</p>}
         {lesson.cancellationReason && (
-          <p className="text-[11px] text-debt-ink truncate">
+          <p className="text-2xs text-debt-ink truncate">
             {interpolate(t.groups.cancelledReason, { reason: lesson.cancellationReason })}
           </p>
         )}

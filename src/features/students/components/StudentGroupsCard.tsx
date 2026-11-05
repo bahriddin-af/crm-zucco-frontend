@@ -6,7 +6,7 @@ export function StudentGroupsCard({ groups }: { groups: EnrolledGroupInfo[] }) {
   const { t } = useTranslation()
 
   return (
-    <section className="bg-white border border-border rounded-xl p-5 shadow-xs space-y-4">
+    <section className="bg-surface border border-border rounded-xl p-5 shadow-xs space-y-4">
       <h3 className="text-sm font-bold text-heading">{interpolate(t.students.detail.groupsTitle, { count: groups.length })}</h3>
 
       {groups.length === 0 ? (
@@ -18,9 +18,9 @@ export function StudentGroupsCard({ groups }: { groups: EnrolledGroupInfo[] }) {
               <div className="flex justify-between items-start gap-2">
                 <div>
                   <h4 className="text-xs font-bold text-heading">{group.groupName}</h4>
-                  <p className="text-[11px] text-caption">{group.courseName}</p>
+                  <p className="text-2xs text-caption">{group.courseName}</p>
                 </div>
-                <span className="text-[10px] bg-primary-soft text-primary font-semibold px-2 py-0.5 rounded">
+                <span className="text-3xs bg-primary-soft text-primary font-semibold px-2 py-0.5 rounded">
                   {interpolate(t.students.detail.teacher, { name: group.teacherName })}
                 </span>
               </div>

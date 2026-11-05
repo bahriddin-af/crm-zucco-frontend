@@ -64,7 +64,7 @@ export function StudentFreezeModal({ student, onClose }: StudentFreezeModalProps
       }
     >
       <form id={FORM_ID} onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-        <div className="p-3 bg-warning-soft border border-warning-border rounded-md text-[11px] text-warning-ink">
+        <div className="p-3 bg-warning-soft border border-warning-border rounded-md text-2xs text-warning-ink">
           {t.students.freeze.note}
         </div>
 

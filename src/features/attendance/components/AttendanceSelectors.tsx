@@ -19,7 +19,7 @@ export function AttendanceSelectors(props: AttendanceSelectorsProps) {
   const { t } = useTranslation()
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white p-3.5 rounded-lg border border-border shadow-xs">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-surface p-3.5 rounded-lg border border-border shadow-xs">
       <FormField label={t.attendance.group} htmlFor="attendance-group">
         <SelectInput
           id="attendance-group"

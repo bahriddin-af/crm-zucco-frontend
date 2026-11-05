@@ -16,7 +16,7 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
 
   return (
     <div className="flex items-center justify-between gap-3 pt-3">
-      <span className="text-[11px] text-caption tabular-nums">
+      <span className="text-2xs text-caption tabular-nums">
         {interpolate(t.ui.pageOf, { page, total: totalPages })}
       </span>
       <div className="flex items-center gap-2">
