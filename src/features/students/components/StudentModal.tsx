@@ -9,6 +9,7 @@ import { FormField } from '@/components/forms/FormField'
 import { SelectInput } from '@/components/forms/SelectInput'
 import { emptyToNull, normalizePhone } from '@/utils/formUtils'
 import { useSaveStudent } from '../hooks/useStudents'
+import { StudentParentsFields } from './StudentParentsFields'
 import { createStudentSchema, type StudentFormValues } from '../schemas/studentSchemas'
 import { GENDER, GENDER_VALUES, STUDENT_STATUS, STUDENT_STATUS_VALUES, type StudentDetail } from '../types/studentTypes'
 
@@ -27,6 +28,7 @@ export function StudentModal({ onClose, student }: StudentModalProps) {
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<StudentFormValues>({
@@ -39,6 +41,12 @@ export function StudentModal({ onClose, student }: StudentModalProps) {
       status: student?.status ?? STUDENT_STATUS.Active,
       address: student?.address ?? '',
       note: student?.note ?? '',
+      parents: (student?.parents ?? []).map((parent) => ({
+        id: parent.id ?? null,
+        fullName: parent.fullName,
+        phone: parent.phone,
+        relationship: parent.relationship,
+      })),
     },
   })
 
@@ -55,6 +63,13 @@ export function StudentModal({ onClose, student }: StudentModalProps) {
         status,
         address: emptyToNull(values.address),
         note: emptyToNull(values.note),
+        // Backend ro'yxatni to'liq almashtiradi: bo'sh massiv barcha ota-onalarni o'chiradi.
+        parents: values.parents.map((parent) => ({
+          id: parent.id,
+          fullName: parent.fullName,
+          phone: normalizePhone(parent.phone),
+          relationship: parent.relationship,
+        })),
       },
       { onSuccess: onClose }
     )
@@ -66,6 +81,7 @@ export function StudentModal({ onClose, student }: StudentModalProps) {
       onClose={onClose}
       title={student ? t.students.form.editTitle : t.students.form.createTitle}
       description={t.students.form.description}
+      maxWidth="xl"
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>
@@ -121,6 +137,8 @@ export function StudentModal({ onClose, student }: StudentModalProps) {
         <FormField label={t.students.form.note} htmlFor="student-note">
           <Input id="student-note" placeholder={t.students.form.notePlaceholder} {...register('note')} />
         </FormField>
+
+        <StudentParentsFields control={control} register={register} errors={errors} />
       </form>
     </Modal>
   )
