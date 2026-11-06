@@ -69,6 +69,12 @@ Brauzerda: `http://localhost:5173`
 pnpm build
 ```
 
+### Vercel: xavfsizlik header'lari va kesh
+`vercel.json` barcha sahifalarga CSP, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`/`frame-ancestors`,
+`Permissions-Policy` va HSTS qo'yadi; `/assets/*` (hash'li fayllar) bir yil `immutable` keshlanadi, `index.html` esa keshlanmaydi.
+CSP `connect-src` da API manzillari qo'lda yozilgan (`https://api.zucco.uz`, `https://api-test.zucco.uz`) — statik `vercel.json`
+`VITE_API_URL` ni o'qiy olmaydi. API manzili o'zgarsa, `vercel.json` dagi `connect-src` ni ham yangilang.
+
 ---
 
 ## 📄 Qoidalar va Standartlar
