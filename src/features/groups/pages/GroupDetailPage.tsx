@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '@/routes/paths'
 import { BackLink } from '@/components/ui/BackLink'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
-import { DetailPageSkeleton } from '@/components/ui/DetailPageSkeleton'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
@@ -33,7 +33,7 @@ export function GroupDetailPage() {
   const [cancelTarget, setCancelTarget] = useState<LessonItem | null>(null)
   const backLink = <BackLink to={ROUTES.GROUPS.LIST} label={t.groups.detail.backToList} />
 
-  if (isLoading) return <DetailPageSkeleton />
+  if (isLoading) return <PageSkeleton />
   if (error || !group) {
     return (
       <div className="space-y-4">

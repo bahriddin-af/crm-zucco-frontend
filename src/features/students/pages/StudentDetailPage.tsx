@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '@/routes/paths'
 import { BackLink } from '@/components/ui/BackLink'
-import { DetailPageSkeleton } from '@/components/ui/DetailPageSkeleton'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
@@ -32,7 +32,7 @@ export function StudentDetailPage() {
 
   const backLink = <BackLink to={ROUTES.STUDENTS.LIST} label={t.students.detail.backToList} />
 
-  if (isLoading) return <DetailPageSkeleton />
+  if (isLoading) return <PageSkeleton />
 
   if (error || !student) {
     return (
