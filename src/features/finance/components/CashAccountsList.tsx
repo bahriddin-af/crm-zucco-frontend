@@ -1,65 +1,57 @@
-import { Banknote, Building, CreditCard, Smartphone, type LucideIcon } from 'lucide-react'
-import { Badge } from '@/components/ui/Badge'
+import { useState } from 'react'
+import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { ErrorState } from '@/components/ui/ErrorState'
-import { Skeleton } from '@/components/ui/Skeleton'
-import { useTranslation } from '@/i18n'
-import { formatCurrency } from '@/utils/formatters'
-import { useCashAccounts } from '../hooks/useFinance'
-import { CASH_ACCOUNT_TYPE, type CashAccountType } from '../types/financeTypes'
+import { ListState } from '@/components/ui/ListState'
 import { SectionCard } from '@/components/ui/SectionCard'
+import { PermissionGuard } from '@/components/common/PermissionGuard'
+import { PERMISSIONS } from '@/constants/permissions'
+import { useTranslation } from '@/i18n'
+import { useCashAccounts } from '../hooks/useFinance'
+import type { CashAccount } from '../types/financeTypes'
+import { CashAccountModal } from './accounts/CashAccountModal'
+import { CashAccountRow } from './accounts/CashAccountRow'
 
-const ACCOUNT_ICONS: Record<CashAccountType, LucideIcon> = {
-  [CASH_ACCOUNT_TYPE.Cash]: Banknote,
-  [CASH_ACCOUNT_TYPE.BankAccount]: Building,
-  [CASH_ACCOUNT_TYPE.Terminal]: CreditCard,
-  [CASH_ACCOUNT_TYPE.OnlineAggregator]: Smartphone,
-}
+const SKELETON_ROWS = 3
 
-const SKELETON_ROWS = [1, 2, 3]
+/** `undefined` — modal yopiq, `null` — yangi hisob, obyekt — tahrirlash. */
+type EditingAccount = CashAccount | null | undefined
 
 export function CashAccountsList() {
   const { t } = useTranslation()
   const { data: accounts = [], isLoading, isError, error, refetch } = useCashAccounts()
+  const [editing, setEditing] = useState<EditingAccount>(undefined)
 
   return (
-    <SectionCard title={t.finance.cashAccountsTitle} subtitle={t.finance.cashAccountsSubtitle}>
-      {isLoading ? (
-        <div className="space-y-3">
-          {SKELETON_ROWS.map((row) => (
-            <Skeleton key={row} className="h-14" />
-          ))}
-        </div>
-      ) : isError ? (
-        <ErrorState error={error} onRetry={() => void refetch()} />
-      ) : accounts.length === 0 ? (
-        <EmptyState title={t.finance.cashAccountsEmpty} />
-      ) : (
+    <SectionCard
+      title={t.finance.cashAccountsTitle}
+      subtitle={t.finance.cashAccountsSubtitle}
+      actions={
+        <PermissionGuard permission={PERMISSIONS.FINANCE.CASH_ACCOUNT_MANAGE}>
+          <Button type="button" variant="secondary" size="sm" onClick={() => setEditing(null)}>
+            <Plus className="w-3.5 h-3.5" />
+            <span>{t.finance.accountForm.add}</span>
+          </Button>
+        </PermissionGuard>
+      }
+    >
+      <ListState
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRetry={() => void refetch()}
+        isEmpty={accounts.length === 0}
+        empty={<EmptyState title={t.finance.cashAccountsEmpty} />}
+        skeletonRows={SKELETON_ROWS}
+      >
         <ul className="divide-y divide-divider">
-          {accounts.map((account) => {
-            const Icon = ACCOUNT_ICONS[account.type]
-            return (
-              <li key={account.id} className="py-3 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 shrink-0 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-xs text-heading truncate">{account.name}</span>
-                      {account.isDefault && <Badge variant="success">{t.finance.defaultAccount}</Badge>}
-                    </div>
-                    <span className="text-2xs text-caption">{t.finance.cashAccountTypes[account.type]}</span>
-                  </div>
-                </div>
-                <span className="text-sm font-bold text-heading tabular-nums">
-                  {formatCurrency(account.balance)}
-                </span>
-              </li>
-            )
-          })}
+          {accounts.map((account) => (
+            <CashAccountRow key={account.id} account={account} onEdit={setEditing} />
+          ))}
         </ul>
-      )}
+      </ListState>
+
+      {editing !== undefined && <CashAccountModal account={editing} onClose={() => setEditing(undefined)} />}
     </SectionCard>
   )
 }

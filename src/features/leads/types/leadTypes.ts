@@ -103,6 +103,19 @@ export interface KanbanColumn {
 }
 
 /** `type` (interface emas): query key `Record<string, unknown>` sifatida qabul qilishi uchun. */
+export const LEADS_PAGE_SIZE = 20
+
+/** Backend `GET /api/leads` (sahifali ro'yxat) filtrlari. */
+export interface LeadsListFilters {
+  page?: number
+  pageSize?: number
+  search?: string
+  courseId?: string
+  stageId?: string
+  branchId?: string
+  status?: LeadStatus
+}
+
 export type KanbanFilters = {
   branchId?: string
   courseId?: string

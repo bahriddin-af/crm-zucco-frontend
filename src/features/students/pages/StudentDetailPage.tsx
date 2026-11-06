@@ -6,6 +6,9 @@ import { DetailPageSkeleton } from '@/components/ui/DetailPageSkeleton'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
+import { PermissionGuard } from '@/components/common/PermissionGuard'
+import { PERMISSIONS } from '@/constants/permissions'
+import { StudentAttendanceHistory } from '@/features/attendance/components/StudentAttendanceHistory'
 import { interpolate, useTranslation } from '@/i18n'
 import { StudentProfileHeader } from '../components/StudentProfileHeader'
 import { StudentGroupsCard } from '../components/StudentGroupsCard'
@@ -67,6 +70,12 @@ export function StudentDetailPage() {
           <StudentParentsCard student={student} />
         </ErrorBoundary>
       </div>
+
+      <PermissionGuard permission={PERMISSIONS.ATTENDANCE.VIEW}>
+        <ErrorBoundary>
+          <StudentAttendanceHistory studentId={student.id} />
+        </ErrorBoundary>
+      </PermissionGuard>
 
       {dialog === 'edit' && <StudentModal student={student} onClose={closeDialog} />}
       {dialog === 'enroll' && <StudentEnrollModal student={student} onClose={closeDialog} />}

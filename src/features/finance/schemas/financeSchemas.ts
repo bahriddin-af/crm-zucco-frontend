@@ -4,8 +4,12 @@ import { hasMoneyPrecision } from '@/utils/money'
 import { MONTH_PERIOD_PATTERN } from '@/utils/dateUtils'
 import { ACCOUNTING } from '@/constants/accounting'
 import {
+  CASH_ACCOUNT_TYPE,
+  CASH_ACCOUNT_TYPE_VALUES,
   FINANCE_TEXT_LIMITS,
   PAYMENT_METHODS,
+  type CashAccount,
+  type CreateOrUpdateCashAccountRequest,
   type RecordExpenseRequest,
   type RecordPaymentRequest,
 } from '../types/financeTypes'
@@ -96,5 +100,42 @@ export function toRecordExpenseRequest(
     description: values.description.trim(),
     recipient: optionalText(values.recipient),
     operationId,
+  }
+}
+
+/** Backend `CreateOrUpdateCashAccountRequest`: `Guard.Text` (bo'sh emas), `Guard.Defined` (tur). */
+export function createCashAccountSchema(t: Translations) {
+  return z.object({
+    name: maxText(t, FINANCE_TEXT_LIMITS.CASH_ACCOUNT_NAME).refine(
+      (value) => value.trim().length > 0,
+      t.finance.accountForm.nameRequired
+    ),
+    type: z.literal(CASH_ACCOUNT_TYPE_VALUES, { error: t.groups.validation.optionInvalid }),
+    branchId: z.string(),
+    isDefault: z.boolean(),
+  })
+}
+
+export type CashAccountFormValues = z.infer<ReturnType<typeof createCashAccountSchema>>
+
+export function toCashAccountFormValues(account: CashAccount | null): CashAccountFormValues {
+  return {
+    name: account?.name ?? '',
+    type: account?.type ?? CASH_ACCOUNT_TYPE.Cash,
+    branchId: account?.branchId ?? '',
+    isDefault: account?.isDefault ?? false,
+  }
+}
+
+export function toCashAccountRequest(
+  values: CashAccountFormValues,
+  id: string | null
+): CreateOrUpdateCashAccountRequest {
+  return {
+    id,
+    name: values.name.trim(),
+    type: values.type,
+    branchId: values.branchId || null,
+    isDefault: values.isDefault,
   }
 }
