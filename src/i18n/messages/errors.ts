@@ -62,6 +62,7 @@ const uzCyrl = {
   password_required_for_new_staff: 'Янги ходим учун пароль киритиш шарт.',
   protected_account: 'Ушбу ҳисобни ўзгартириб бўлмайди.',
   role_not_found: 'Рол топилмади.',
+  branch_access_denied: 'Сиз ушбу филиал маълумотларини кўра олмайсиз.',
 }
 
 export type ErrorMessages = typeof uzCyrl
@@ -126,6 +127,7 @@ export const errorsMessages: Record<SupportedLanguage, ErrorMessages> = {
     password_required_for_new_staff: 'Yangi xodim uchun parol kiritish shart.',
     protected_account: "Ushbu hisobni o'zgartirib bo'lmaydi.",
     role_not_found: 'Rol topilmadi.',
+    branch_access_denied: "Siz ushbu filial ma'lumotlarini ko'ra olmaysiz.",
   },
   ru: {
     generic: 'Произошла непредвиденная ошибка. Попробуйте ещё раз.',
@@ -185,6 +187,7 @@ export const errorsMessages: Record<SupportedLanguage, ErrorMessages> = {
     password_required_for_new_staff: 'Для нового сотрудника нужен пароль.',
     protected_account: 'Эту учётную запись нельзя изменить.',
     role_not_found: 'Роль не найдена.',
+    branch_access_denied: 'У вас нет доступа к данным этого филиала.',
   },
   en: {
     generic: 'Something went wrong. Please try again.',
@@ -244,5 +247,6 @@ export const errorsMessages: Record<SupportedLanguage, ErrorMessages> = {
     password_required_for_new_staff: 'A password is required for new staff.',
     protected_account: 'This account cannot be changed.',
     role_not_found: 'Role not found.',
+    branch_access_denied: 'You do not have access to this branch.',
   },
 }

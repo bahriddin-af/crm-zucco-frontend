@@ -4,6 +4,8 @@ export const PERMISSIONS = {
     CREATE: 'branches.create',
     UPDATE: 'branches.update',
     DELETE: 'branches.delete',
+    /** Filialga bog'langan xodim ham barcha filiallar ma'lumotini ko'radi. */
+    ACCESS_ALL: 'branches.access_all',
   },
   ROOMS: {
     VIEW: 'rooms.view',
