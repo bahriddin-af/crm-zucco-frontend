@@ -66,8 +66,17 @@ Brauzerda: `http://localhost:5173`
 
 ### Production Build:
 ```bash
-pnpm build
+VITE_API_URL=https://api.zucco.uz pnpm build
 ```
+
+### API manzili (`VITE_API_URL`)
+
+Ilova backend manzilini faqat `VITE_API_URL` dan oladi; hostname bo'yicha taxmin qilinmaydi.
+
+* **Build'da majburiy.** O'rnatilmasa yoki URL noto'g'ri bo'lsa, `pnpm build` aniq xato bilan to'xtaydi.
+* **Vercel:** Project → Settings → Environment Variables bo'limida `VITE_API_URL` ni **Production** (prod API) va **Preview** (test API) muhitlari uchun alohida o'rnating. Aks holda preview deploy build bosqichida yiqiladi.
+* **Lokal dev:** bo'sh qoldiring — so'rovlar `vite.config.ts` dagi `/api` proxy orqali ketadi (`pnpm dev` → lokal backend, `pnpm dev:test` → test server).
+* Namuna: `.env.example`. `.env*` fayllar commit qilinmaydi.
 
 ---
 
