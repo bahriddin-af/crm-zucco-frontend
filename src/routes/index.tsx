@@ -11,9 +11,12 @@ import { LeadsPage } from '@/features/leads/pages/LeadsPage'
 import { StudentListPage } from '@/features/students/pages/StudentListPage'
 import { StudentDetailPage } from '@/features/students/pages/StudentDetailPage'
 import { GroupListPage } from '@/features/groups/pages/GroupListPage'
+import { GroupDetailPage } from '@/features/groups/pages/GroupDetailPage'
 import { CourseListPage } from '@/features/courses/pages/CourseListPage'
+import { CourseDetailPage } from '@/features/courses/pages/CourseDetailPage'
 import { SchedulePage } from '@/features/schedule/pages/SchedulePage'
 import { AttendanceJournalPage } from '@/features/attendance/pages/AttendanceJournalPage'
+import { TeacherAttendancePage } from '@/features/attendance/pages/TeacherAttendancePage'
 import { FinanceDeskPage } from '@/features/finance/pages/FinanceDeskPage'
 import { ExpensesPage } from '@/features/finance/pages/ExpensesPage'
 import { PayrollPage } from '@/features/finance/pages/PayrollPage'
@@ -53,9 +56,12 @@ export function AppRoutes() {
 
           {/* Academic */}
           {guarded(ROUTES.COURSES.LIST, <CourseListPage />)}
+          {guarded(ROUTES.COURSES.DETAIL, <CourseDetailPage />)}
           {guarded(ROUTES.GROUPS.LIST, <GroupListPage />)}
+          {guarded(ROUTES.GROUPS.DETAIL, <GroupDetailPage />)}
           {guarded(ROUTES.SCHEDULE, <SchedulePage />)}
           {guarded(ROUTES.ATTENDANCE.JOURNAL, <AttendanceJournalPage />)}
+          {guarded(ROUTES.ATTENDANCE.TEACHER, <TeacherAttendancePage />)}
 
           {/* Finance & Team */}
           {guarded(ROUTES.FINANCE.DESK, <FinanceDeskPage />)}

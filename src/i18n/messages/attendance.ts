@@ -31,6 +31,15 @@ const uzCyrl = {
   futureLesson: 'Келгуси дарс учун давомат белгилаб бўлмайди.',
   cancelledLesson: 'Дарс бекор қилинган — давомат белгиланмайди.',
   scoreInvalid: 'Баҳо 0 дан 100 гача бутун сон бўлиши керак',
+  teacher: {
+    title: 'Менинг дарсларим',
+    subtitle: 'Сўнгги 7 кундаги дарсларингиз бўйича давомат ва баҳолар',
+    open: 'Менинг дарсларим',
+    lessonsTitle: 'Дарслар',
+    emptyTitle: 'Дарслар топилмади',
+    emptyDescription: 'Сўнгги 7 кунда сизга бириктирилган дарс йўқ.',
+    lessonOption: '{group} · {date}, {time}',
+  },
 }
 
 export type AttendanceMessages = typeof uzCyrl
@@ -68,6 +77,15 @@ export const attendanceMessages: Record<SupportedLanguage, AttendanceMessages> =
     futureLesson: "Kelgusi dars uchun davomat belgilab bo'lmaydi.",
     cancelledLesson: 'Dars bekor qilingan — davomat belgilanmaydi.',
     scoreInvalid: "Baho 0 dan 100 gacha butun son bo'lishi kerak",
+    teacher: {
+      title: 'Mening darslarim',
+      subtitle: "So'nggi 7 kundagi darslaringiz bo'yicha davomat va baholar",
+      open: 'Mening darslarim',
+      lessonsTitle: 'Darslar',
+      emptyTitle: 'Darslar topilmadi',
+      emptyDescription: "So'nggi 7 kunda sizga biriktirilgan dars yo'q.",
+      lessonOption: '{group} · {date}, {time}',
+    },
   },
   ru: {
     title: 'Журнал посещаемости',
@@ -100,6 +118,15 @@ export const attendanceMessages: Record<SupportedLanguage, AttendanceMessages> =
     futureLesson: 'Нельзя отмечать посещаемость будущего занятия.',
     cancelledLesson: 'Занятие отменено — посещаемость не отмечается.',
     scoreInvalid: 'Оценка должна быть целым числом от 0 до 100',
+    teacher: {
+      title: 'Мои занятия',
+      subtitle: 'Посещаемость и оценки по вашим занятиям за последние 7 дней',
+      open: 'Мои занятия',
+      lessonsTitle: 'Занятия',
+      emptyTitle: 'Занятия не найдены',
+      emptyDescription: 'За последние 7 дней у вас нет назначенных занятий.',
+      lessonOption: '{group} · {date}, {time}',
+    },
   },
   en: {
     title: 'Attendance journal',
@@ -132,5 +159,14 @@ export const attendanceMessages: Record<SupportedLanguage, AttendanceMessages> =
     futureLesson: 'Attendance cannot be marked for a future lesson.',
     cancelledLesson: 'The lesson is cancelled — attendance is not marked.',
     scoreInvalid: 'Grade must be a whole number from 0 to 100',
+    teacher: {
+      title: 'My lessons',
+      subtitle: 'Attendance and grades for your lessons in the last 7 days',
+      open: 'My lessons',
+      lessonsTitle: 'Lessons',
+      emptyTitle: 'No lessons found',
+      emptyDescription: 'You have no assigned lessons in the last 7 days.',
+      lessonOption: '{group} · {date}, {time}',
+    },
   },
 }
