@@ -1,17 +1,46 @@
 import { z } from 'zod'
-import type { Translations } from '@/i18n'
+import { interpolate, type Translations } from '@/i18n'
 import { PHONE_PATTERN } from '@/utils/formUtils'
 import { todayIsoDate } from '@/utils/dateUtils'
-import { GENDER_VALUES, STUDENT_STATUS_VALUES } from '../types/studentTypes'
+import {
+  GENDER_VALUES,
+  PARENT_RELATIONSHIP_VALUES,
+  STUDENT_PARENT_LIMITS,
+  STUDENT_STATUS_VALUES,
+} from '../types/studentTypes'
 
 /** Backend `Guard.Money`: 2 kasr xonasigacha manfiy bo'lmagan summa. */
 const AMOUNT_PATTERN = /^\d+(\.\d{1,2})?$/
 
 const isOneOf = (values: readonly number[]) => (value: number): boolean => values.includes(value)
 
+/**
+ * Backend `StudentParentDto` + `StudentParent.Create` (`Guard.Text` ism/telefon, `Guard.Defined` qarindoshlik)
+ * va `StudentParentConfiguration` (ism ≤ 150 belgi; telefon ≤ 25 — `PHONE_PATTERN` 20 belgidan oshirmaydi).
+ */
+export function createStudentParentSchema(t: Translations) {
+  return z.object({
+    /** Mavjud yozuv ID'si (faqat ma'lumot uchun: backend ro'yxatni to'liq almashtiradi). */
+    id: z.string().nullable(),
+    fullName: z
+      .string()
+      .trim()
+      .min(1, t.common.requiredField)
+      .max(
+        STUDENT_PARENT_LIMITS.FULL_NAME,
+        interpolate(t.students.form.nameTooLong, { max: STUDENT_PARENT_LIMITS.FULL_NAME })
+      ),
+    phone: z.string().trim().min(1, t.common.requiredField).regex(PHONE_PATTERN, t.common.invalidPhone),
+    relationship: z.literal(PARENT_RELATIONSHIP_VALUES, { error: t.common.requiredField }),
+  })
+}
+
+export type StudentParentFormValues = z.infer<ReturnType<typeof createStudentParentSchema>>
+
 /** Backend `CreateOrUpdateStudentRequest` + `Student.Create/Update` (`Guard.Text`, `Guard.Defined`). */
 export function createStudentSchema(t: Translations) {
   return z.object({
+    parents: z.array(createStudentParentSchema(t)),
     fullName: z.string().trim().min(1, t.common.requiredField),
     phone: z.string().trim().min(1, t.common.requiredField).regex(PHONE_PATTERN, t.common.invalidPhone),
     birthDate: z.string(),

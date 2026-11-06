@@ -27,6 +27,12 @@ export const PARENT_RELATIONSHIP = {
 } as const
 
 export type ParentRelationship = (typeof PARENT_RELATIONSHIP)[keyof typeof PARENT_RELATIONSHIP]
+export const PARENT_RELATIONSHIP_VALUES: readonly ParentRelationship[] = Object.values(PARENT_RELATIONSHIP)
+
+/** Backend `StudentParentConfiguration` ustun chegaralari. */
+export const STUDENT_PARENT_LIMITS = {
+  FULL_NAME: 150,
+} as const
 
 export interface StudentListItem {
   id: string
