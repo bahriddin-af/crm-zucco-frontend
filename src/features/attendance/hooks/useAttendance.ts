@@ -6,6 +6,14 @@ import { applyAttendanceMarks } from '../utils/attendanceMarks'
 
 export { useGroupLessons, useGenerateSchedule } from '@/features/groups/hooks/useGroupLessons'
 
+export function useStudentAttendanceHistory(studentId: string) {
+  return useQuery({
+    queryKey: QUERY_KEYS.ATTENDANCE.STUDENT(studentId),
+    queryFn: () => attendanceApi.getStudentHistory(studentId),
+    enabled: Boolean(studentId),
+  })
+}
+
 export function useLessonSheet(lessonId: string) {
   return useQuery({
     queryKey: QUERY_KEYS.ATTENDANCE.LESSON(lessonId),

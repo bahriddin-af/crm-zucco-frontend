@@ -1,6 +1,6 @@
 import { apiClient } from '@/api/client'
 import { API_ROUTES } from '@/api/apiRoutes'
-import type { ApiResponse } from '@/types/api'
+import type { ApiResponse, PagedResult } from '@/types/api'
 import type {
   AddLeadActivityRequest,
   ConvertLeadRequest,
@@ -8,6 +8,8 @@ import type {
   KanbanColumn,
   KanbanFilters,
   LeadConversionResponse,
+  LeadListItem,
+  LeadsListFilters,
   LeadResponse,
   LeadSourceDto,
   LeadStageDto,
@@ -18,6 +20,14 @@ import type {
 export const leadApi = {
   getKanbanBoard: async (filters?: KanbanFilters) => {
     const response = await apiClient.get<ApiResponse<KanbanColumn[]>>(API_ROUTES.LEADS.KANBAN, {
+      params: filters,
+    })
+    return response.data.data
+  },
+
+  /** `API_ROUTES.LEADS.LIST` — sahifali ro'yxat (standart: eng yangisi birinchi). */
+  getLeads: async (filters?: LeadsListFilters) => {
+    const response = await apiClient.get<ApiResponse<PagedResult<LeadListItem>>>(API_ROUTES.LEADS.LIST, {
       params: filters,
     })
     return response.data.data

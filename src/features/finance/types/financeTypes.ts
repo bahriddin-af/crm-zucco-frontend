@@ -7,6 +7,7 @@ export const CASH_ACCOUNT_TYPE = {
 } as const
 
 export type CashAccountType = (typeof CASH_ACCOUNT_TYPE)[keyof typeof CASH_ACCOUNT_TYPE]
+export const CASH_ACCOUNT_TYPE_VALUES = Object.values(CASH_ACCOUNT_TYPE)
 
 /** Backend `Zucco.Domain.Finance.Enums.PaymentMethod` (JSON: raqam). */
 export const PAYMENT_METHOD = {
@@ -28,6 +29,8 @@ export const FINANCE_TEXT_LIMITS = {
   PAYMENT_BILLING_PERIOD: 20,
   EXPENSE_DESCRIPTION: 500,
   EXPENSE_RECIPIENT: 150,
+  /** Backend `CashAccountConfiguration.Name` — `HasMaxLength(150)`. */
+  CASH_ACCOUNT_NAME: 150,
 } as const
 
 export const FINANCE_PAGE_SIZE = 20
@@ -38,6 +41,15 @@ export interface CashAccount {
   type: CashAccountType
   branchId?: string | null
   balance: number
+  isDefault: boolean
+}
+
+/** Backend `CreateOrUpdateCashAccountRequest` (upsert: `id` bo'lsa tahrirlash). */
+export interface CreateOrUpdateCashAccountRequest {
+  id?: string | null
+  name: string
+  type: CashAccountType
+  branchId?: string | null
   isDefault: boolean
 }
 

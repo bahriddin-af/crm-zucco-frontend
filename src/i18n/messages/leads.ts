@@ -102,6 +102,15 @@ const uzCyrl = {
     markedLost: 'Лид йўқотилганлар қаторига ўтказилди',
     activityAdded: 'Фаолият қайд этилди',
   },
+  table: {
+    viewLabel: 'Кўриниш',
+    kanbanView: 'Воронка',
+    tableView: 'Жадвал',
+    client: 'Мижоз',
+    total: 'Жами: {count}',
+    emptyTitle: 'Лидлар топилмади',
+    emptyDescription: 'Қидирув ёки филтр бўйича мос лид йўқ.',
+  },
 }
 
 export type LeadsMessages = typeof uzCyrl
@@ -210,6 +219,15 @@ export const leadsMessages: Record<SupportedLanguage, LeadsMessages> = {
       markedLost: "Lid yo'qotilganlar qatoriga o'tkazildi",
       activityAdded: 'Faoliyat qayd etildi',
     },
+    table: {
+      viewLabel: "Ko'rinish",
+      kanbanView: 'Voronka',
+      tableView: 'Jadval',
+      client: 'Mijoz',
+      total: 'Jami: {count}',
+      emptyTitle: 'Lidlar topilmadi',
+      emptyDescription: "Qidiruv yoki filtr bo'yicha mos lid yo'q.",
+    },
   },
   ru: {
     title: 'Воронка лидов',
@@ -313,6 +331,15 @@ export const leadsMessages: Record<SupportedLanguage, LeadsMessages> = {
       markedLost: 'Лид перемещён в потерянные',
       activityAdded: 'Активность зафиксирована',
     },
+    table: {
+      viewLabel: 'Вид',
+      kanbanView: 'Воронка',
+      tableView: 'Таблица',
+      client: 'Клиент',
+      total: 'Всего: {count}',
+      emptyTitle: 'Лиды не найдены',
+      emptyDescription: 'Нет лидов, подходящих под поиск или фильтр.',
+    },
   },
   en: {
     title: 'Leads Pipeline',
@@ -415,6 +442,15 @@ export const leadsMessages: Record<SupportedLanguage, LeadsMessages> = {
       converted: 'Lead converted to student',
       markedLost: 'Lead marked as lost',
       activityAdded: 'Activity recorded',
+    },
+    table: {
+      viewLabel: 'View',
+      kanbanView: 'Pipeline',
+      tableView: 'Table',
+      client: 'Client',
+      total: 'Total: {count}',
+      emptyTitle: 'No leads found',
+      emptyDescription: 'No leads match the search or filter.',
     },
   },
 }

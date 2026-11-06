@@ -68,3 +68,16 @@ export interface MarkLessonAttendanceRequest {
   students: MarkStudentAttendanceItem[]
   topic?: string | null
 }
+
+/** Backend `StudentAttendanceHistoryItem` (`API_ROUTES.ATTENDANCE.STUDENT`). */
+export interface StudentAttendanceHistoryItem {
+  lessonId: string
+  lessonDate: string
+  groupName: string
+  lessonNumber: number
+  status: AttendanceStatus
+  score?: number | null
+  homeworkStatus: HomeworkStatus
+  comment?: string | null
+  markedAt: string
+}

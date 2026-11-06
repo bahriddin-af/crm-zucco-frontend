@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { UserCheck } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { ROUTES } from '@/routes/paths'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useTranslation } from '@/i18n'
@@ -17,6 +21,7 @@ import { AttendanceContent } from '../components/AttendanceContent'
  */
 export function AttendanceJournalPage() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [today] = useState(todayIsoDate)
   const [selectedGroupId, setSelectedGroupId] = useState('')
   const [selectedLessonId, setSelectedLessonId] = useState('')
@@ -36,7 +41,16 @@ export function AttendanceJournalPage() {
 
   return (
     <div className="space-y-5">
-      <PageHeader title={t.attendance.title} subtitle={t.attendance.subtitle} />
+      <PageHeader
+        title={t.attendance.title}
+        subtitle={t.attendance.subtitle}
+        actions={
+          <Button variant="secondary" size="sm" onClick={() => navigate(ROUTES.ATTENDANCE.TEACHER)}>
+            <UserCheck className="w-3.5 h-3.5" />
+            <span>{t.attendance.teacher.open}</span>
+          </Button>
+        }
+      />
 
       {groupsQuery.isLoading && <Skeleton className="h-16 w-full rounded-lg" />}
       {groupsQuery.isError && <ErrorState error={groupsQuery.error} onRetry={() => void groupsQuery.refetch()} />}

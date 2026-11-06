@@ -1,11 +1,14 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '@/routes/paths'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { BackLink } from '@/components/ui/BackLink'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
+import { PermissionGuard } from '@/components/common/PermissionGuard'
+import { PERMISSIONS } from '@/constants/permissions'
+import { StudentAttendanceHistory } from '@/features/attendance/components/StudentAttendanceHistory'
 import { interpolate, useTranslation } from '@/i18n'
 import { StudentProfileHeader } from '../components/StudentProfileHeader'
 import { StudentGroupsCard } from '../components/StudentGroupsCard'
@@ -27,22 +30,9 @@ export function StudentDetailPage() {
   const [dialog, setDialog] = useState<DetailDialog>(null)
   const closeDialog = () => setDialog(null)
 
-  const backLink = (
-    <Link to={ROUTES.STUDENTS.LIST} className="inline-flex items-center gap-1.5 text-xs text-caption hover:text-primary transition-colors">
-      <ArrowLeft className="w-3.5 h-3.5" />
-      <span>{t.students.detail.backToList}</span>
-    </Link>
-  )
+  const backLink = <BackLink to={ROUTES.STUDENTS.LIST} label={t.students.detail.backToList} />
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-6 w-32" />
-        <Skeleton className="h-40 w-full rounded-xl" />
-        <Skeleton className="h-64 w-full rounded-xl" />
-      </div>
-    )
-  }
+  if (isLoading) return <PageSkeleton />
 
   if (error || !student) {
     return (
@@ -80,6 +70,12 @@ export function StudentDetailPage() {
           <StudentParentsCard student={student} />
         </ErrorBoundary>
       </div>
+
+      <PermissionGuard permission={PERMISSIONS.ATTENDANCE.VIEW}>
+        <ErrorBoundary>
+          <StudentAttendanceHistory studentId={student.id} />
+        </ErrorBoundary>
+      </PermissionGuard>
 
       {dialog === 'edit' && <StudentModal student={student} onClose={closeDialog} />}
       {dialog === 'enroll' && <StudentEnrollModal student={student} onClose={closeDialog} />}

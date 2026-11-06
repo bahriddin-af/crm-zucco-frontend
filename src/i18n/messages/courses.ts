@@ -69,6 +69,13 @@ const uzCyrl = {
   deleteSubjectDescription: '«{name}» йўналишини ўчирасизми? Курслари бор йўналишни ўчириб бўлмайди.',
   subjectSaved: 'Йўналиш сақланди',
   subjectDeleted: 'Йўналиш ўчирилди',
+  detail: {
+    backToList: 'Курслар рўйхатига',
+    noDescription: 'Тавсиф киритилмаган',
+    groupsTitle: 'Курс гуруҳлари',
+    groupsEmptyTitle: 'Бу курсда гуруҳ йўқ',
+    groupsEmptyDescription: 'Гуруҳлар бўлимидан ушбу курс учун янги гуруҳ очинг.',
+  },
 }
 
 export type CoursesMessages = typeof uzCyrl
@@ -144,6 +151,13 @@ export const coursesMessages: Record<SupportedLanguage, CoursesMessages> = {
     deleteSubjectDescription: "«{name}» yo'nalishini o'chirasizmi? Kurslari bor yo'nalishni o'chirib bo'lmaydi.",
     subjectSaved: "Yo'nalish saqlandi",
     subjectDeleted: "Yo'nalish o'chirildi",
+    detail: {
+      backToList: "Kurslar ro'yxatiga",
+      noDescription: 'Tavsif kiritilmagan',
+      groupsTitle: 'Kurs guruhlari',
+      groupsEmptyTitle: "Bu kursda guruh yo'q",
+      groupsEmptyDescription: "Guruhlar bo'limidan ushbu kurs uchun yangi guruh oching.",
+    },
   },
   ru: {
     title: 'Каталог курсов',
@@ -214,6 +228,13 @@ export const coursesMessages: Record<SupportedLanguage, CoursesMessages> = {
     deleteSubjectDescription: 'Удалить направление «{name}»? Направление с курсами удалить нельзя.',
     subjectSaved: 'Направление сохранено',
     subjectDeleted: 'Направление удалено',
+    detail: {
+      backToList: 'К списку курсов',
+      noDescription: 'Описание не указано',
+      groupsTitle: 'Группы курса',
+      groupsEmptyTitle: 'У курса нет групп',
+      groupsEmptyDescription: 'Откройте новую группу для этого курса в разделе «Группы».',
+    },
   },
   en: {
     title: 'Course catalog',
@@ -284,5 +305,12 @@ export const coursesMessages: Record<SupportedLanguage, CoursesMessages> = {
     deleteSubjectDescription: 'Delete the subject "{name}"? Subjects that still have courses cannot be deleted.',
     subjectSaved: 'Subject saved',
     subjectDeleted: 'Subject deleted',
+    detail: {
+      backToList: 'Back to courses',
+      noDescription: 'No description',
+      groupsTitle: 'Course groups',
+      groupsEmptyTitle: 'No groups for this course',
+      groupsEmptyDescription: 'Open a new group for this course in the Groups section.',
+    },
   },
 }

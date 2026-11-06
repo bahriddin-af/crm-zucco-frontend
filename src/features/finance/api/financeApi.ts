@@ -3,6 +3,7 @@ import { API_ROUTES } from '@/api/apiRoutes'
 import type { ApiResponse, PagedResult } from '@/types/api'
 import type {
   CashAccount,
+  CreateOrUpdateCashAccountRequest,
   ExpenseCategory,
   ExpenseResponse,
   ExpensesFilters,
@@ -21,6 +22,12 @@ export const financeApi = {
 
   getCashAccounts: async () => {
     const response = await apiClient.get<ApiResponse<CashAccount[]>>(API_ROUTES.FINANCE.ACCOUNTS)
+    return response.data.data
+  },
+
+  /** `API_ROUTES.FINANCE.ACCOUNTS` — upsert (`id` bo'lsa tahrirlash). */
+  upsertCashAccount: async (payload: CreateOrUpdateCashAccountRequest) => {
+    const response = await apiClient.post<ApiResponse<CashAccount>>(API_ROUTES.FINANCE.ACCOUNTS, payload)
     return response.data.data
   },
 

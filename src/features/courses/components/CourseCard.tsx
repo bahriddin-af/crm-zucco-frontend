@@ -1,17 +1,14 @@
+import { Link, generatePath } from 'react-router-dom'
 import { Clock, Edit2, Layers, Trash2 } from 'lucide-react'
-import { Badge, type BadgeProps } from '@/components/ui/Badge'
+import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { PermissionGuard } from '@/components/common/PermissionGuard'
 import { PERMISSIONS } from '@/constants/permissions'
+import { ROUTES } from '@/routes/paths'
 import { interpolate, useTranslation } from '@/i18n'
 import { formatCurrency } from '@/utils/formatters'
-import { COURSE_STATUS, type CourseListItem, type CourseStatus } from '../types/courseTypes'
-
-const STATUS_VARIANT: Record<CourseStatus, NonNullable<BadgeProps['variant']>> = {
-  [COURSE_STATUS.Active]: 'success',
-  [COURSE_STATUS.Inactive]: 'warning',
-  [COURSE_STATUS.Archived]: 'default',
-}
+import type { CourseListItem } from '../types/courseTypes'
+import { COURSE_STATUS_VARIANT } from '../utils/courseStatus'
 
 interface CourseCardProps {
   course: CourseListItem
@@ -29,9 +26,13 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
           <span className="text-3xs font-bold text-primary bg-primary-soft px-2 py-0.5 rounded truncate max-w-[60%]">
             {course.subjectName}
           </span>
-          <Badge variant={STATUS_VARIANT[course.status]}>{t.courses.statuses[course.status]}</Badge>
+          <Badge variant={COURSE_STATUS_VARIANT[course.status]}>{t.courses.statuses[course.status]}</Badge>
         </div>
-        <h3 className="text-sm font-bold text-heading">{course.name}</h3>
+        <h3 className="text-sm font-bold text-heading">
+          <Link to={generatePath(ROUTES.COURSES.DETAIL, { id: course.id })} className="hover:text-primary transition-colors">
+            {course.name}
+          </Link>
+        </h3>
         <p className="text-2xs text-caption">{t.courses.levels[course.level]}</p>
         <div className="flex items-center gap-1.5 text-xs text-caption">
           <Clock className="w-3.5 h-3.5 text-subtle" />

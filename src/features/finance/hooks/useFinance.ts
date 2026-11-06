@@ -4,6 +4,7 @@ import { QUERY_KEYS } from '@/constants/queryKeys'
 import { interpolate, useTranslation } from '@/i18n'
 import { financeApi } from '../api/financeApi'
 import type {
+  CreateOrUpdateCashAccountRequest,
   ExpensesFilters,
   PaymentsFilters,
   RecordExpenseRequest,
@@ -21,6 +22,19 @@ export function useCashAccounts() {
   return useQuery({
     queryKey: QUERY_KEYS.FINANCE.ACCOUNTS,
     queryFn: () => financeApi.getCashAccounts(),
+  })
+}
+
+export function useSaveCashAccount(onSuccessCallback?: () => void) {
+  const { t } = useTranslation()
+
+  return useMutation({
+    mutationFn: (payload: CreateOrUpdateCashAccountRequest) => financeApi.upsertCashAccount(payload),
+    meta: { invalidates: [QUERY_KEYS.FINANCE.ALL] },
+    onSuccess: () => {
+      toast.success(t.finance.accountForm.saved)
+      onSuccessCallback?.()
+    },
   })
 }
 
