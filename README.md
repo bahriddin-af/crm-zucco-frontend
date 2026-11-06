@@ -66,7 +66,7 @@ Brauzerda: `http://localhost:5173`
 
 ### Production Build:
 ```bash
-pnpm build
+VITE_API_URL=https://api.zucco.uz pnpm build
 ```
 
 ### Vercel: xavfsizlik header'lari va kesh
@@ -74,6 +74,15 @@ pnpm build
 `Permissions-Policy` va HSTS qo'yadi; `/assets/*` (hash'li fayllar) bir yil `immutable` keshlanadi, `index.html` esa keshlanmaydi.
 CSP `connect-src` da API manzillari qo'lda yozilgan (`https://api.zucco.uz`, `https://api-test.zucco.uz`) — statik `vercel.json`
 `VITE_API_URL` ni o'qiy olmaydi. API manzili o'zgarsa, `vercel.json` dagi `connect-src` ni ham yangilang.
+
+### API manzili (`VITE_API_URL`)
+
+Ilova backend manzilini faqat `VITE_API_URL` dan oladi; hostname bo'yicha taxmin qilinmaydi.
+
+* **Build'da majburiy.** O'rnatilmasa yoki URL noto'g'ri bo'lsa, `pnpm build` aniq xato bilan to'xtaydi.
+* **Vercel:** Project → Settings → Environment Variables bo'limida `VITE_API_URL` ni **Production** (prod API) va **Preview** (test API) muhitlari uchun alohida o'rnating. Aks holda preview deploy build bosqichida yiqiladi.
+* **Lokal dev:** bo'sh qoldiring — so'rovlar `vite.config.ts` dagi `/api` proxy orqali ketadi (`pnpm dev` → lokal backend, `pnpm dev:test` → test server).
+* Namuna: `.env.example`. `.env*` fayllar commit qilinmaydi.
 
 ---
 
