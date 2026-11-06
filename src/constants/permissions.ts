@@ -4,6 +4,8 @@ export const PERMISSIONS = {
     CREATE: 'branches.create',
     UPDATE: 'branches.update',
     DELETE: 'branches.delete',
+    /** Filialga bog'langan xodim ham barcha filiallar ma'lumotini ko'radi. */
+    ACCESS_ALL: 'branches.access_all',
   },
   ROOMS: {
     VIEW: 'rooms.view',
@@ -17,6 +19,8 @@ export const PERMISSIONS = {
     UPDATE: 'staff.update',
     DELETE: 'staff.delete',
     ROLES_MANAGE: 'staff.roles_manage',
+    /** Boshqa xodimning parolini qayta o'rnatish (barcha sessiyalari yopiladi). */
+    PASSWORD_RESET: 'staff.password_reset',
   },
   COURSES: {
     VIEW: 'courses.view',
@@ -43,6 +47,10 @@ export const PERMISSIONS = {
     UPDATE: 'students.update',
     DELETE: 'students.delete',
     FREEZE: 'students.freeze',
+    /** Ketib qolish xavfi ro'yxati, xulosasi va tarixi. */
+    RISK_VIEW: 'students.risk_view',
+    /** Xavf ballarini qo'lda qayta hisoblash. */
+    RISK_RECALCULATE: 'students.risk_recalculate',
   },
   ATTENDANCE: {
     VIEW: 'attendance.view',

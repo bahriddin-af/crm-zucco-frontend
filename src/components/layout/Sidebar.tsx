@@ -1,12 +1,11 @@
-import { NavLink } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { ROUTES } from '@/routes/paths'
 import { BrandLogo, BrandMark } from '@/components/ui/BrandLogo'
 import { useAppStore } from '@/stores/appStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useTranslation } from '@/i18n'
 import { cn } from '@/utils/cn'
-import { buildNavSections, filterNavSections } from './navConfig'
+import { buildNavSections, filterNavSections, findActiveNavPath } from './navConfig'
 import { SidebarUserCard } from './SidebarUserCard'
 
 export function Sidebar() {
@@ -17,6 +16,7 @@ export function Sidebar() {
   const hasPermission = useAuthStore((state) => state.hasPermission)
   const { t } = useTranslation()
   const sections = filterNavSections(buildNavSections(t), hasPermission)
+  const activePath = findActiveNavPath(useLocation().pathname, sections)
 
   return (
     <aside
@@ -45,23 +45,21 @@ export function Sidebar() {
               </h4>
             )}
             {section.items.map((item) => (
-              <NavLink
+              <Link
                 key={item.to}
                 to={item.to}
-                end={item.to === ROUTES.OVERVIEW}
                 title={isCollapsed ? item.label : undefined}
                 aria-label={isCollapsed ? item.label : undefined}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center gap-3 rounded-md text-sm font-medium min-h-10 transition-colors',
-                    isCollapsed ? 'justify-center px-0' : 'px-2.5',
-                    isActive ? 'bg-primary-soft text-primary font-semibold' : 'text-copy-strong hover:bg-canvas'
-                  )
-                }
+                aria-current={item.to === activePath ? 'page' : undefined}
+                className={cn(
+                  'flex items-center gap-3 rounded-md text-sm font-medium min-h-10 transition-colors',
+                  isCollapsed ? 'justify-center px-0' : 'px-2.5',
+                  item.to === activePath ? 'bg-primary-soft text-primary font-semibold' : 'text-copy-strong hover:bg-canvas'
+                )}
               >
                 <item.icon className="w-5 h-5 shrink-0" />
                 {!isCollapsed && <span className="truncate flex-1">{item.label}</span>}
-              </NavLink>
+              </Link>
             ))}
           </div>
         ))}

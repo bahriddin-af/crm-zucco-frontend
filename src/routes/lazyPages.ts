@@ -18,7 +18,8 @@ export const StudentDetailPage = lazyPage(
   () => import('@/features/students/pages/StudentDetailPage'),
   'StudentDetailPage'
 )
-export const GroupListPage = lazyPage(() => import('@/features/groups/pages/GroupListPage'), 'GroupListPage')
+export const StudentRiskPage = lazyPage(() => import('@/features/students/pages/StudentRiskPage'), 'StudentRiskPage')
+export const GroupListPage =lazyPage(() => import('@/features/groups/pages/GroupListPage'), 'GroupListPage')
 export const GroupDetailPage = lazyPage(() => import('@/features/groups/pages/GroupDetailPage'), 'GroupDetailPage')
 export const CourseListPage = lazyPage(() => import('@/features/courses/pages/CourseListPage'), 'CourseListPage')
 export const CourseDetailPage = lazyPage(() => import('@/features/courses/pages/CourseDetailPage'), 'CourseDetailPage')

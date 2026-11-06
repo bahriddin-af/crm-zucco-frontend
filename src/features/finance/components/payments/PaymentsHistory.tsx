@@ -10,12 +10,15 @@ import { FINANCE_PAGE_SIZE } from '../../types/financeTypes'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { ListState } from '@/components/ui/ListState'
 import { PaymentsTable } from './PaymentsTable'
+import { PaymentVoidModal } from './PaymentVoidModal'
+import type { PaymentResponse } from '../../types/financeTypes'
 
 /** To'lovlar tarixi: backend qidiruvi (talaba ismi / chek raqami) va sahifalash. */
 export function PaymentsHistory() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
+  const [paymentToVoid, setPaymentToVoid] = useState<PaymentResponse | null>(null)
   const debouncedSearch = useDebouncedValue(search.trim())
 
   const { data, isLoading, isError, error, refetch } = usePayments({
@@ -52,9 +55,10 @@ export function PaymentsHistory() {
           />
         }
       >
-        <PaymentsTable payments={payments} />
+        <PaymentsTable payments={payments} onVoid={setPaymentToVoid} />
         <Pagination page={data?.page ?? page} totalPages={data?.totalPages ?? 0} onPageChange={setPage} />
       </ListState>
+      {paymentToVoid && <PaymentVoidModal payment={paymentToVoid} onClose={() => setPaymentToVoid(null)} />}
     </SectionCard>
   )
 }

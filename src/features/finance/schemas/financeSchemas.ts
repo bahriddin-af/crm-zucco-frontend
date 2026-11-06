@@ -72,6 +72,19 @@ export function toRecordPaymentRequest(
   }
 }
 
+/** Backend `VoidPaymentRequest.Reason`: `Guard.Text` — bo'sh bo'lmagan, ko'pi bilan 500 belgi (trim qilinadi). */
+export function createVoidPaymentSchema(t: Translations) {
+  return z.object({
+    reason: z
+      .string()
+      .trim()
+      .min(1, t.finance.voidPayment.reasonRequired)
+      .max(FINANCE_TEXT_LIMITS.PAYMENT_VOID_REASON, interpolate(t.finance.validation.textTooLong, { max: FINANCE_TEXT_LIMITS.PAYMENT_VOID_REASON })),
+  })
+}
+
+export type VoidPaymentFormValues = z.infer<ReturnType<typeof createVoidPaymentSchema>>
+
 /** Backend `RecordExpenseRequest` ga mos forma sxemasi. */
 export function createExpenseSchema(t: Translations) {
   const messages = t.finance.validation

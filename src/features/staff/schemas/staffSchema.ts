@@ -33,3 +33,18 @@ export function createStaffSchema(t: Translations, isEditing: boolean) {
 }
 
 export type StaffFormValues = z.infer<ReturnType<typeof createStaffSchema>>
+
+/** Backend `ResetStaffPasswordRequest` + `PasswordPolicy` (≥ 12); tasdiqlash faqat frontendda. */
+export function createResetPasswordSchema(t: Translations) {
+  return z
+    .object({
+      newPassword: z.string().min(MIN_PASSWORD_LENGTH, interpolate(t.staff.passwordMin, { min: MIN_PASSWORD_LENGTH })),
+      confirmPassword: z.string(),
+    })
+    .refine((values) => values.newPassword === values.confirmPassword, {
+      message: t.settings.validation.mismatch,
+      path: ['confirmPassword'],
+    })
+}
+
+export type ResetPasswordFormValues = z.infer<ReturnType<typeof createResetPasswordSchema>>

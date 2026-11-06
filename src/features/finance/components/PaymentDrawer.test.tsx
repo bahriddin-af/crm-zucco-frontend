@@ -5,7 +5,7 @@ import { getTranslations } from '@/i18n'
 import { useLanguageStore } from '@/stores/languageStore'
 import { renderWithProviders } from '@/test/renderWithProviders'
 import { financeApi } from '../api/financeApi'
-import { PAYMENT_METHOD, type PaymentResponse } from '../types/financeTypes'
+import { PAYMENT_METHOD, PAYMENT_STATUS, type PaymentResponse } from '../types/financeTypes'
 import { PaymentDrawer } from './PaymentDrawer'
 
 vi.mock('../api/financeApi', () => ({
@@ -38,6 +38,7 @@ const PAYMENT: PaymentResponse = {
   receiptNumber: 'RCP-1',
   paymentDate: '2026-11-05T10:00:00Z',
   studentBalanceAfter: 0,
+  status: PAYMENT_STATUS.Completed,
 }
 
 function renderDrawer(onClose = vi.fn()) {

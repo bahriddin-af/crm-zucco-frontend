@@ -17,6 +17,7 @@ import { StudentFreezeModal } from '../components/StudentFreezeModal'
 import { StudentEnrollModal } from '../components/StudentEnrollModal'
 import { STUDENT_SEARCH_PARAM, STUDENTS_PAGE_SIZE } from '../constants/studentConstants'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { useAuthStore } from '@/stores/authStore'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { useDeleteStudent, useStudentsList, useUnfreezeStudent } from '../hooks/useStudents'
 import type { StudentListItem, StudentStatus } from '../types/studentTypes'
@@ -37,6 +38,7 @@ function StudentListView({ initialSearch }: { initialSearch: string }) {
   const { t } = useTranslation()
   const [search, setSearch] = useState(initialSearch)
   const [status, setStatus] = useState<StudentStatus | undefined>()
+  const [branchId, setBranchId] = useState(() => useAuthStore.getState().activeBranchId ?? '')
   const [page, setPage] = useState(1)
   const [dialog, setDialog] = useState<StudentDialog>(null)
   const closeDialog = () => setDialog(null)
@@ -46,6 +48,7 @@ function StudentListView({ initialSearch }: { initialSearch: string }) {
     page,
     pageSize: STUDENTS_PAGE_SIZE,
     status,
+    branchId: branchId || undefined,
     search: debouncedSearch || undefined,
   })
   const deleteMutation = useDeleteStudent()
@@ -58,6 +61,10 @@ function StudentListView({ initialSearch }: { initialSearch: string }) {
   }
   const handleStatusChange = (value?: StudentStatus) => {
     setStatus(value)
+    setPage(1)
+  }
+  const handleBranchChange = (value: string) => {
+    setBranchId(value)
     setPage(1)
   }
   const confirmDelete = () => {
@@ -85,7 +92,14 @@ function StudentListView({ initialSearch }: { initialSearch: string }) {
         }
       />
 
-      <StudentListToolbar search={search} onSearchChange={handleSearchChange} status={status} onStatusChange={handleStatusChange} />
+      <StudentListToolbar
+        search={search}
+        onSearchChange={handleSearchChange}
+        status={status}
+        onStatusChange={handleStatusChange}
+        branchId={branchId}
+        onBranchChange={handleBranchChange}
+      />
 
       {isLoading && <StudentListSkeleton />}
       {error && !isLoading && <ErrorState error={error} onRetry={() => void refetch()} />}

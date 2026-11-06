@@ -26,6 +26,8 @@ export const API_ROUTES = {
     CONVERT: (id: string) => `/api/leads/${id}/convert`,
     LOST: (id: string) => `/api/leads/${id}/status/lost`,
     ACTIVITIES: (id: string) => `/api/leads/${id}/activities`,
+    /** `DELETE` — lidni arxivlash (soft delete). */
+    ARCHIVE: (id: string) => `/api/leads/${id}`,
     STAGES: '/api/leads/stages',
     SOURCES: '/api/leads/sources',
   },
@@ -35,6 +37,10 @@ export const API_ROUTES = {
     CREATE_OR_UPDATE: '/api/students',
     FREEZE: (id: string) => `/api/students/${id}/freeze`,
     UNFREEZE: (id: string) => `/api/students/${id}/unfreeze`,
+    RISK: '/api/students/risk',
+    RISK_SUMMARY: '/api/students/risk/summary',
+    RISK_RECALCULATE: '/api/students/risk/recalculate',
+    RISK_HISTORY: (id: string) => `/api/students/${id}/risk/history`,
   },
   GROUPS: {
     LIST: '/api/groups',
@@ -64,6 +70,7 @@ export const API_ROUTES = {
   FINANCE: {
     ACCOUNTS: '/api/finance/cash-accounts',
     PAYMENTS: '/api/finance/payments',
+    VOID_PAYMENT: (id: string) => `/api/finance/payments/${id}/void`,
     EXPENSES: '/api/finance/expenses',
     EXPENSE_CATEGORIES: '/api/finance/expense-categories',
     SUMMARY: '/api/finance/summary',
@@ -87,6 +94,7 @@ export const API_ROUTES = {
     CREATE_OR_UPDATE: '/api/staff',
     ROLES: '/api/staff/roles',
     DELETE: (id: string) => `/api/staff/${id}`,
+    RESET_PASSWORD: (id: string) => `/api/staff/${id}/reset-password`,
   },
   NOTIFICATIONS: {
     TEMPLATES: '/api/notifications/templates',

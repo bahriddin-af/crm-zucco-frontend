@@ -56,9 +56,16 @@ const uzCyrl = {
     submitCreate: 'Қўшиш',
   },
   passwordMin: 'Пароль камида {min} та белгидан иборат бўлиши керак',
+  resetPassword: {
+    action: 'Паролни тиклаш',
+    title: 'Янги пароль ўрнатиш',
+    description: '{name} учун янги пароль. Ходимнинг барча фаол сессиялари ёпилади.',
+    submit: 'Паролни сақлаш',
+  },
   toasts: {
     saved: '{name} маълумотлари сақланди',
     deleted: 'Ходим ўчирилди',
+    passwordReset: 'Пароль янгиланди, ходим қайта кириши керак',
   },
 }
 
@@ -122,9 +129,16 @@ export const staffMessages: Record<SupportedLanguage, StaffMessages> = {
       submitCreate: "Qo'shish",
     },
     passwordMin: "Parol kamida {min} ta belgidan iborat bo'lishi kerak",
+    resetPassword: {
+      action: 'Parolni tiklash',
+      title: "Yangi parol o'rnatish",
+      description: '{name} uchun yangi parol. Xodimning barcha faol sessiyalari yopiladi.',
+      submit: 'Parolni saqlash',
+    },
     toasts: {
       saved: "{name} ma'lumotlari saqlandi",
       deleted: "Xodim o'chirildi",
+      passwordReset: 'Parol yangilandi, xodim qayta kirishi kerak',
     },
   },
   ru: {
@@ -183,9 +197,16 @@ export const staffMessages: Record<SupportedLanguage, StaffMessages> = {
       submitCreate: 'Добавить',
     },
     passwordMin: 'Пароль должен содержать не менее {min} символов',
+    resetPassword: {
+      action: 'Сбросить пароль',
+      title: 'Новый пароль',
+      description: 'Новый пароль для {name}. Все активные сессии сотрудника будут завершены.',
+      submit: 'Сохранить пароль',
+    },
     toasts: {
       saved: 'Данные сотрудника {name} сохранены',
       deleted: 'Сотрудник удалён',
+      passwordReset: 'Пароль обновлён, сотруднику нужно войти заново',
     },
   },
   en: {
@@ -244,9 +265,16 @@ export const staffMessages: Record<SupportedLanguage, StaffMessages> = {
       submitCreate: 'Add',
     },
     passwordMin: 'Password must be at least {min} characters',
+    resetPassword: {
+      action: 'Reset password',
+      title: 'Set a new password',
+      description: 'New password for {name}. All of their active sessions will be signed out.',
+      submit: 'Save password',
+    },
     toasts: {
       saved: "{name}'s details saved",
       deleted: 'Staff member removed',
+      passwordReset: 'Password updated; the staff member must sign in again',
     },
   },
 }

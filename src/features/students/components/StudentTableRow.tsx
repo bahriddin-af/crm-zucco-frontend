@@ -33,7 +33,15 @@ export function StudentTableRow({ student, onEnroll, onFreeze, onUnfreeze, onDel
       </td>
       <td className="py-3.5 px-4">
         {student.primaryGroup ? (
-          <span className="font-medium bg-primary-soft text-primary px-2 py-0.5 rounded text-2xs">{student.primaryGroup}</span>
+          <div>
+            <Link
+              to={generatePath(ROUTES.GROUPS.DETAIL, { id: student.primaryGroup.groupId })}
+              className="font-medium bg-primary-soft text-primary px-2 py-0.5 rounded text-2xs hover:underline"
+            >
+              {student.primaryGroup.groupName}
+            </Link>
+            <p className="text-2xs text-caption mt-1">{student.primaryGroup.branchName}</p>
+          </div>
         ) : (
           <span className="text-subtle text-2xs">{t.students.noGroup}</span>
         )}

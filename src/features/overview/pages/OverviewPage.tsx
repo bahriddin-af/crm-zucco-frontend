@@ -11,6 +11,7 @@ import { ActiveStudentsKpi } from '../components/ActiveStudentsKpi'
 import { FinanceKpis } from '../components/FinanceKpis'
 import { ActiveGroupsWidget } from '../components/ActiveGroupsWidget'
 import { LeadsFunnelWidget } from '../components/LeadsFunnelWidget'
+import { RiskSummaryWidget } from '../components/RiskSummaryWidget'
 
 /** Har bir vidjet o'z ruxsati bilan ko'rsatiladi va alohida `ErrorBoundary` ga o'ralgan. */
 export function OverviewPage() {
@@ -68,6 +69,12 @@ export function OverviewPage() {
           </ErrorBoundary>
         </PermissionGuard>
       </div>
+
+      <PermissionGuard permission={PERMISSIONS.STUDENTS.RISK_VIEW}>
+        <ErrorBoundary>
+          <RiskSummaryWidget />
+        </ErrorBoundary>
+      </PermissionGuard>
     </div>
   )
 }

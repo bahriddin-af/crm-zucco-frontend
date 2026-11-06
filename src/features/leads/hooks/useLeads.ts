@@ -122,6 +122,18 @@ export function useMarkLeadLost() {
   })
 }
 
+export function useArchiveLead() {
+  const { t } = useTranslation()
+
+  return useMutation({
+    mutationFn: (leadId: string) => leadApi.archiveLead(leadId),
+    meta: { invalidates: [QUERY_KEYS.LEADS.ALL] },
+    onSuccess: () => {
+      toast.success(t.leads.toasts.archived)
+    },
+  })
+}
+
 export function useAddLeadActivity() {
   const { t } = useTranslation()
 

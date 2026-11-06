@@ -16,6 +16,7 @@ import { navMessages } from './nav'
 import { overviewMessages } from './overview'
 import { payrollMessages } from './payroll'
 import { reportsMessages } from './reports'
+import { riskMessages } from './risk'
 import { rolesMessages } from './roles'
 import { scheduleMessages } from './schedule'
 import { settingsMessages } from './settings'
@@ -46,6 +47,7 @@ const NAMESPACES = {
   overview: overviewMessages,
   payroll: payrollMessages,
   reports: reportsMessages,
+  risk: riskMessages,
   roles: rolesMessages,
   schedule: scheduleMessages,
   settings: settingsMessages,

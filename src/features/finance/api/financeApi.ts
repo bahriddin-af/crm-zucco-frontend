@@ -10,8 +10,10 @@ import type {
   FinancialSummary,
   PaymentResponse,
   PaymentsFilters,
+  PaymentVoidResponse,
   RecordExpenseRequest,
   RecordPaymentRequest,
+  VoidPaymentRequest,
 } from '../types/financeTypes'
 
 export const financeApi = {
@@ -43,6 +45,15 @@ export const financeApi = {
     const response = await apiClient.post<ApiResponse<PaymentResponse>>(
       API_ROUTES.FINANCE.PAYMENTS,
       payload
+    )
+    return response.data.data
+  },
+
+  /** To'lovni bekor qilish (teskari yozuv). `operationId` body ichida — idempotentlik kaliti. */
+  voidPayment: async ({ paymentId, reason, operationId }: VoidPaymentRequest) => {
+    const response = await apiClient.post<ApiResponse<PaymentVoidResponse>>(
+      API_ROUTES.FINANCE.VOID_PAYMENT(paymentId),
+      { reason, operationId }
     )
     return response.data.data
   },

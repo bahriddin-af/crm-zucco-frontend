@@ -15,13 +15,14 @@ import { PageHeader } from '@/components/ui/PageHeader'
 import { ListSkeleton } from '@/components/ui/ListSkeleton'
 import { StaffModal } from '../components/StaffModal'
 import { StaffTable } from '../components/StaffTable'
+import { StaffPasswordResetModal } from '../components/StaffPasswordResetModal'
 import { useDeleteStaff, useStaffList } from '../hooks/useStaff'
 import { STAFF_ROLE_TYPE_VALUES, type StaffListItem, type StaffRoleType } from '../types/staffTypes'
 
 const STAFF_PAGE_SIZE = 20
 const SKELETON_ROWS = 4
 
-type StaffDialog = { kind: 'create' } | { kind: 'edit' | 'delete'; staff: StaffListItem } | null
+type StaffDialog = { kind: 'create' } | { kind: 'edit' | 'delete' | 'resetPassword'; staff: StaffListItem } | null
 
 export function StaffListPage() {
   const { t } = useTranslation()
@@ -97,6 +98,7 @@ export function StaffListPage() {
             staff={staff}
             onEdit={(member) => setDialog({ kind: 'edit', staff: member })}
             onDelete={(member) => setDialog({ kind: 'delete', staff: member })}
+            onResetPassword={(member) => setDialog({ kind: 'resetPassword', staff: member })}
           />
           <Pagination page={page} totalPages={data?.totalPages ?? 1} onPageChange={setPage} />
         </div>
@@ -104,6 +106,7 @@ export function StaffListPage() {
 
       {dialog?.kind === 'create' && <StaffModal onClose={closeDialog} />}
       {dialog?.kind === 'edit' && <StaffModal staffId={dialog.staff.id} onClose={closeDialog} />}
+      {dialog?.kind === 'resetPassword' && <StaffPasswordResetModal staff={dialog.staff} onClose={closeDialog} />}
       <ConfirmDialog
         isOpen={dialog?.kind === 'delete'}
         onClose={closeDialog}
