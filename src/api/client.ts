@@ -6,19 +6,12 @@ import { ROUTES } from '@/routes/paths'
 import { useAuthStore } from '@/stores/authStore'
 import type { ApiResponse } from '@/types/api'
 
-const PRODUCTION_API_URL = 'https://api.zucco.uz'
-const TEST_API_URL = 'https://api-test.zucco.uz'
-const TEST_HOST_MARKER = 'test'
-
-export const getApiBaseUrl = (): string => {
-  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL
-  // Dev serverda so'rovlar vite.config.ts dagi `/api` proxy orqali lokal backendga boradi.
-  if (import.meta.env.DEV) return ''
-  if (typeof window !== 'undefined' && window.location.hostname.includes(TEST_HOST_MARKER)) {
-    return TEST_API_URL
-  }
-  return PRODUCTION_API_URL
-}
+/**
+ * API manzili faqat `VITE_API_URL` dan olinadi (har bir muhit uchun alohida).
+ * Production build'da u majburiy — vite.config.ts tekshiradi, shuning uchun hostname bo'yicha taxmin qilinmaydi.
+ * Dev serverda bo'sh bo'lsa, so'rovlar vite.config.ts dagi `/api` proxy orqali ketadi.
+ */
+export const getApiBaseUrl = (): string => import.meta.env.VITE_API_URL ?? ''
 
 export const apiClient = axios.create({
   baseURL: getApiBaseUrl(),

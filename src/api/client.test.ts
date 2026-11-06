@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosHeaders, type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios'
-import { apiClient, attachRequestContext, readOperationId, refreshAccessToken } from '@/api/client'
+import { apiClient, attachRequestContext, getApiBaseUrl, readOperationId, refreshAccessToken } from '@/api/client'
 import { API_ROUTES } from '@/api/apiRoutes'
 import { HTTP_STATUS } from '@/constants/http'
 import { HTTP_HEADERS } from '@/constants/http'
@@ -130,4 +130,20 @@ describe('401 handling', () => {
       expect(useAuthStore.getState().token).toBe('expired')
     }
   )
+})
+
+describe('getApiBaseUrl', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it('uses VITE_API_URL as is and never guesses from the hostname', () => {
+    vi.stubEnv('VITE_API_URL', 'https://api.example.test')
+    expect(getApiBaseUrl()).toBe('https://api.example.test')
+  })
+
+  it('falls back to the same origin (dev /api proxy) when VITE_API_URL is not set', () => {
+    vi.stubEnv('VITE_API_URL', undefined)
+    expect(getApiBaseUrl()).toBe('')
+  })
 })
