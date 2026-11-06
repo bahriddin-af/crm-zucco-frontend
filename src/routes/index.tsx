@@ -1,6 +1,9 @@
+import type { ReactNode } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ROUTES } from './paths'
 import { ProtectedRoute } from './ProtectedRoute'
+import { PermissionRoute } from './PermissionRoute'
+import { AccessDeniedPage } from '@/features/auth/pages/AccessDeniedPage'
 import { AppShell } from '@/components/layout/AppShell'
 import { LoginPage } from '@/features/auth/pages/LoginPage'
 import { OverviewPage } from '@/features/overview/pages/OverviewPage'
@@ -23,6 +26,11 @@ import { SettingsPage } from '@/features/settings/pages/SettingsPage'
 import { RolesPermissionsPage } from '@/features/settings/pages/RolesPermissionsPage'
 import { BranchesPage } from '@/features/branches/pages/BranchesPage'
 
+/** Sahifani route darajasidagi ruxsat tekshiruvi bilan o'raydi (ruxsat `routePermissions.ts` dan). */
+function guarded(path: string, page: ReactNode) {
+  return <Route key={path} path={path} element={<PermissionRoute path={path}>{page}</PermissionRoute>} />
+}
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -33,37 +41,38 @@ export function AppRoutes() {
       {/* Protected CRM App Layout */}
       <Route element={<ProtectedRoute />}>
         <Route element={<AppShell />}>
-          <Route path={ROUTES.OVERVIEW} element={<OverviewPage />} />
+          {guarded(ROUTES.OVERVIEW, <OverviewPage />)}
+          <Route path={ROUTES.ACCESS_DENIED} element={<AccessDeniedPage />} />
 
           {/* Reception / Leads */}
-          <Route path={ROUTES.LEADS.LIST} element={<LeadsPage />} />
+          {guarded(ROUTES.LEADS.LIST, <LeadsPage />)}
 
           {/* Students */}
-          <Route path={ROUTES.STUDENTS.LIST} element={<StudentListPage />} />
-          <Route path={ROUTES.STUDENTS.DETAIL} element={<StudentDetailPage />} />
+          {guarded(ROUTES.STUDENTS.LIST, <StudentListPage />)}
+          {guarded(ROUTES.STUDENTS.DETAIL, <StudentDetailPage />)}
 
           {/* Academic */}
-          <Route path={ROUTES.COURSES.LIST} element={<CourseListPage />} />
-          <Route path={ROUTES.GROUPS.LIST} element={<GroupListPage />} />
-          <Route path={ROUTES.SCHEDULE} element={<SchedulePage />} />
-          <Route path={ROUTES.ATTENDANCE.JOURNAL} element={<AttendanceJournalPage />} />
+          {guarded(ROUTES.COURSES.LIST, <CourseListPage />)}
+          {guarded(ROUTES.GROUPS.LIST, <GroupListPage />)}
+          {guarded(ROUTES.SCHEDULE, <SchedulePage />)}
+          {guarded(ROUTES.ATTENDANCE.JOURNAL, <AttendanceJournalPage />)}
 
           {/* Finance & Team */}
-          <Route path={ROUTES.FINANCE.DESK} element={<FinanceDeskPage />} />
-          <Route path={ROUTES.FINANCE.EXPENSES} element={<ExpensesPage />} />
-          <Route path={ROUTES.FINANCE.PAYROLL} element={<PayrollPage />} />
-          <Route path={ROUTES.STAFF.LIST} element={<StaffListPage />} />
-          <Route path={ROUTES.REPORTS} element={<ReportsPage />} />
+          {guarded(ROUTES.FINANCE.DESK, <FinanceDeskPage />)}
+          {guarded(ROUTES.FINANCE.EXPENSES, <ExpensesPage />)}
+          {guarded(ROUTES.FINANCE.PAYROLL, <PayrollPage />)}
+          {guarded(ROUTES.STAFF.LIST, <StaffListPage />)}
+          {guarded(ROUTES.REPORTS, <ReportsPage />)}
 
           {/* Gamification */}
-          <Route path={ROUTES.MARKET.ITEMS} element={<MarketPage />} />
-          <Route path={ROUTES.MARKET.COIN_ACTIVITY} element={<CoinActivityPage />} />
+          {guarded(ROUTES.MARKET.ITEMS, <MarketPage />)}
+          {guarded(ROUTES.MARKET.COIN_ACTIVITY, <CoinActivityPage />)}
 
           {/* Notifications & Settings */}
-          <Route path={ROUTES.NOTIFICATIONS.SMS} element={<SmsCenterPage />} />
-          <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
-          <Route path={ROUTES.STAFF.ROLES} element={<RolesPermissionsPage />} />
-          <Route path={ROUTES.BRANCHES} element={<BranchesPage />} />
+          {guarded(ROUTES.NOTIFICATIONS.SMS, <SmsCenterPage />)}
+          {guarded(ROUTES.SETTINGS, <SettingsPage />)}
+          {guarded(ROUTES.STAFF.ROLES, <RolesPermissionsPage />)}
+          {guarded(ROUTES.BRANCHES, <BranchesPage />)}
         </Route>
       </Route>
 

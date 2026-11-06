@@ -3,6 +3,7 @@ export const ROUTES = {
     LOGIN: '/auth/login',
   },
   OVERVIEW: '/',
+  ACCESS_DENIED: '/access-denied',
   LEADS: {
     LIST: '/leads',
     CONVERT: '/leads/convert/:id',

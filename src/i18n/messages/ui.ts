@@ -18,6 +18,9 @@ const uzCyrl = {
   nextPage: 'Кейинги',
   pageOf: 'Саҳифа {page} / {total}',
   close: 'Ёпиш',
+  accessDeniedTitle: 'Рухсат йўқ',
+  accessDeniedDescription: 'Ушбу саҳифани кўриш учун рухсатингиз йўқ. Керак бўлса, марказ администраторига мурожаат қилинг.',
+  accessDeniedBack: 'Бош саҳифага қайтиш',
 }
 
 export type UiMessages = typeof uzCyrl
@@ -41,6 +44,9 @@ export const uiMessages: Record<SupportedLanguage, UiMessages> = {
     nextPage: 'Keyingi',
     pageOf: 'Sahifa {page} / {total}',
     close: 'Yopish',
+    accessDeniedTitle: "Ruxsat yo'q",
+    accessDeniedDescription: "Ushbu sahifani ko'rish uchun ruxsatingiz yo'q. Kerak bo'lsa, markaz administratoriga murojaat qiling.",
+    accessDeniedBack: 'Bosh sahifaga qaytish',
   },
   ru: {
     confirmTitle: 'Подтвердите действие',
@@ -59,6 +65,9 @@ export const uiMessages: Record<SupportedLanguage, UiMessages> = {
     nextPage: 'Далее',
     pageOf: 'Страница {page} из {total}',
     close: 'Закрыть',
+    accessDeniedTitle: 'Нет доступа',
+    accessDeniedDescription: 'У вас нет прав на просмотр этой страницы. При необходимости обратитесь к администратору центра.',
+    accessDeniedBack: 'Вернуться на главную',
   },
   en: {
     confirmTitle: 'Confirm action',
@@ -77,5 +86,8 @@ export const uiMessages: Record<SupportedLanguage, UiMessages> = {
     nextPage: 'Next',
     pageOf: 'Page {page} of {total}',
     close: 'Close',
+    accessDeniedTitle: 'Access denied',
+    accessDeniedDescription: 'You do not have permission to view this page. Contact your center administrator if you need access.',
+    accessDeniedBack: 'Back to overview',
   },
 }
