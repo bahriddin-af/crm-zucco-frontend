@@ -47,6 +47,10 @@ export const PERMISSIONS = {
     UPDATE: 'students.update',
     DELETE: 'students.delete',
     FREEZE: 'students.freeze',
+    /** Ketib qolish xavfi ro'yxati, xulosasi va tarixi. */
+    RISK_VIEW: 'students.risk_view',
+    /** Xavf ballarini qo'lda qayta hisoblash. */
+    RISK_RECALCULATE: 'students.risk_recalculate',
   },
   ATTENDANCE: {
     VIEW: 'attendance.view',

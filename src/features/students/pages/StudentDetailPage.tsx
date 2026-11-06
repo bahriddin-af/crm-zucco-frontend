@@ -16,6 +16,7 @@ import { StudentParentsCard } from '../components/StudentParentsCard'
 import { StudentModal } from '../components/StudentModal'
 import { StudentFreezeModal } from '../components/StudentFreezeModal'
 import { StudentEnrollModal } from '../components/StudentEnrollModal'
+import { StudentRiskCard } from '../components/risk/StudentRiskCard'
 import { useDeleteStudent, useStudentDetail, useUnfreezeStudent } from '../hooks/useStudents'
 
 type DetailDialog = 'edit' | 'enroll' | 'freeze' | 'delete' | null
@@ -70,6 +71,12 @@ export function StudentDetailPage() {
           <StudentParentsCard student={student} />
         </ErrorBoundary>
       </div>
+
+      <PermissionGuard permission={PERMISSIONS.STUDENTS.RISK_VIEW}>
+        <ErrorBoundary>
+          <StudentRiskCard studentId={student.id} />
+        </ErrorBoundary>
+      </PermissionGuard>
 
       <PermissionGuard permission={PERMISSIONS.ATTENDANCE.VIEW}>
         <ErrorBoundary>

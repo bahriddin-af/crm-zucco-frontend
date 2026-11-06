@@ -14,6 +14,7 @@ import {
   Receipt,
   Settings,
   ShieldCheck,
+  TriangleAlert,
   UserCheck,
   Users,
   Wallet,
@@ -47,6 +48,7 @@ export function buildNavSections(t: Translations): NavSection[] {
       items: [
         { label: t.nav.leads, to: ROUTES.LEADS.LIST, icon: Users },
         { label: t.nav.students, to: ROUTES.STUDENTS.LIST, icon: GraduationCap },
+        { label: t.nav.studentRisk, to: ROUTES.STUDENTS.RISK, icon: TriangleAlert },
         { label: t.nav.smsCenter, to: ROUTES.NOTIFICATIONS.SMS, icon: MessageSquare },
       ],
     },
@@ -101,6 +103,19 @@ export function filterNavSections(
       }),
     }))
     .filter((section) => section.items.length > 0)
+}
+
+/**
+ * Joriy manzilga eng aniq mos keladigan menyu bandi (`/students/risk` da faqat «Xavf», `/students/123` da «Talabalar»).
+ * Bosh sahifa faqat aynan `/` da faol.
+ */
+export function findActiveNavPath(pathname: string, sections: NavSection[]): string | undefined {
+  const matches = sections
+    .flatMap((section) => section.items.map((item) => item.to))
+    .filter((to) =>
+      to === ROUTES.OVERVIEW ? pathname === to : pathname === to || pathname.startsWith(`${to}/`)
+    )
+  return matches.sort((a, b) => b.length - a.length)[0]
 }
 
 /** Backend rol nomini joriy tildagi nomga aylantiradi (noma'lum rol o'z nomi bilan ko'rsatiladi). */

@@ -12,6 +12,7 @@ import {
   LeadsPage,
   StudentListPage,
   StudentDetailPage,
+  StudentRiskPage,
   GroupListPage,
   GroupDetailPage,
   CourseListPage,
@@ -68,6 +69,7 @@ export function AppRoutes() {
 
           {/* Students */}
           {guarded(ROUTES.STUDENTS.LIST, <StudentListPage />)}
+          {guarded(ROUTES.STUDENTS.RISK, <StudentRiskPage />)}
           {guarded(ROUTES.STUDENTS.DETAIL, <StudentDetailPage />)}
 
           {/* Academic */}

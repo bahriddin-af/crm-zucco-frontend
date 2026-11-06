@@ -37,6 +37,10 @@ export const API_ROUTES = {
     CREATE_OR_UPDATE: '/api/students',
     FREEZE: (id: string) => `/api/students/${id}/freeze`,
     UNFREEZE: (id: string) => `/api/students/${id}/unfreeze`,
+    RISK: '/api/students/risk',
+    RISK_SUMMARY: '/api/students/risk/summary',
+    RISK_RECALCULATE: '/api/students/risk/recalculate',
+    RISK_HISTORY: (id: string) => `/api/students/${id}/risk/history`,
   },
   GROUPS: {
     LIST: '/api/groups',

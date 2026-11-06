@@ -10,6 +10,7 @@ export const ROUTES = {
   STUDENTS: {
     LIST: '/students',
     DETAIL: '/students/:id',
+    RISK: '/students/risk',
   },
   GROUPS: {
     LIST: '/groups',
