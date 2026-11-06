@@ -71,6 +71,12 @@ export const leadApi = {
     return response.data
   },
 
+  /** Lidni arxivlash (soft delete): voronka va ro'yxatdan chiqadi. */
+  archiveLead: async (leadId: string) => {
+    const response = await apiClient.delete<ApiResponse>(API_ROUTES.LEADS.ARCHIVE(leadId))
+    return response.data
+  },
+
   addActivity: async (payload: AddLeadActivityRequest) => {
     const response = await apiClient.post<ApiResponse>(API_ROUTES.LEADS.ACTIVITIES(payload.leadId), payload)
     return response.data

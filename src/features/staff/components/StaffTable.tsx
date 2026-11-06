@@ -1,9 +1,10 @@
-import { Edit2, Shield, Trash2 } from 'lucide-react'
+import { Edit2, KeyRound, Shield, Trash2 } from 'lucide-react'
 import { Badge, type BadgeProps } from '@/components/ui/Badge'
 import { PermissionGuard } from '@/components/common/PermissionGuard'
 import { PERMISSIONS } from '@/constants/permissions'
 import { useTranslation } from '@/i18n'
 import { formatPhone } from '@/utils/formatters'
+import { useAuthStore } from '@/stores/authStore'
 import { USER_STATUS, type StaffListItem, type UserStatus } from '../types/staffTypes'
 
 const STATUS_VARIANTS: Record<UserStatus, BadgeProps['variant']> = {
@@ -16,10 +17,13 @@ interface StaffTableProps {
   staff: StaffListItem[]
   onEdit: (staff: StaffListItem) => void
   onDelete: (staff: StaffListItem) => void
+  onResetPassword: (staff: StaffListItem) => void
 }
 
-export function StaffTable({ staff, onEdit, onDelete }: StaffTableProps) {
+export function StaffTable({ staff, onEdit, onDelete, onResetPassword }: StaffTableProps) {
   const { t } = useTranslation()
+  /** O'z paroli faqat sozlamalarda (joriy parol bilan) o'zgartiriladi — backend ham rad etadi. */
+  const currentUserId = useAuthStore((state) => state.user?.id)
 
   return (
     <div className="bg-surface border border-border rounded-xl shadow-xs overflow-x-auto">
@@ -67,6 +71,19 @@ export function StaffTable({ staff, onEdit, onDelete }: StaffTableProps) {
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                   </PermissionGuard>
+                  {member.id !== currentUserId && (
+                    <PermissionGuard permission={PERMISSIONS.STAFF.PASSWORD_RESET}>
+                      <button
+                        type="button"
+                        onClick={() => onResetPassword(member)}
+                        title={t.staff.resetPassword.action}
+                        aria-label={t.staff.resetPassword.action}
+                        className="p-1.5 text-copy hover:text-warning-deep hover:bg-warning-tint rounded-md transition-colors"
+                      >
+                        <KeyRound className="w-3.5 h-3.5" />
+                      </button>
+                    </PermissionGuard>
+                  )}
                   <PermissionGuard permission={PERMISSIONS.STAFF.DELETE}>
                     <button
                       type="button"

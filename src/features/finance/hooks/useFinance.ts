@@ -9,6 +9,7 @@ import type {
   PaymentsFilters,
   RecordExpenseRequest,
   RecordPaymentRequest,
+  VoidPaymentRequest,
 } from '../types/financeTypes'
 
 export function useFinanceSummary() {
@@ -72,6 +73,21 @@ export function useRecordPayment() {
     },
     onSuccess: (payment) => {
       toast.success(interpolate(t.finance.drawer.success, { receipt: payment.receiptNumber }))
+    },
+  })
+}
+
+/** Xatolar (`payment_already_voided`, `insufficient_cash_balance`, ...) global toast qilinadi. */
+export function useVoidPayment() {
+  const { t } = useTranslation()
+
+  return useMutation({
+    mutationFn: (payload: VoidPaymentRequest) => financeApi.voidPayment(payload),
+    meta: {
+      invalidates: [QUERY_KEYS.FINANCE.ALL, QUERY_KEYS.STUDENTS.ALL, QUERY_KEYS.REPORTS.ALL, QUERY_KEYS.PAYROLL.ALL],
+    },
+    onSuccess: () => {
+      toast.success(t.finance.voidPayment.success)
     },
   })
 }

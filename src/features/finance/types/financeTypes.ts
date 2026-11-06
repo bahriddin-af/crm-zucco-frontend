@@ -23,11 +23,22 @@ export type PaymentMethod = (typeof PAYMENT_METHOD)[keyof typeof PAYMENT_METHOD]
 
 export const PAYMENT_METHODS: readonly PaymentMethod[] = Object.values(PAYMENT_METHOD)
 
+/** Backend `Zucco.Domain.Finance.Enums.PaymentStatus` (JSON: raqam). */
+export const PAYMENT_STATUS = {
+  Completed: 1,
+  /** `PaymentVoid` teskari yozuvi bilan bekor qilingan (o'chirilmaydi). */
+  Voided: 2,
+} as const
+
+export type PaymentStatus = (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS]
+
 /** EF konfiguratsiyasidagi `HasMaxLength` qiymatlari. */
 export const FINANCE_TEXT_LIMITS = {
   PAYMENT_COMMENT: 500,
   PAYMENT_BILLING_PERIOD: 20,
   EXPENSE_DESCRIPTION: 500,
+  /** Backend `Constants.Accounting.MaximumVoidReasonLength`. */
+  PAYMENT_VOID_REASON: 500,
   EXPENSE_RECIPIENT: 150,
   /** Backend `CashAccountConfiguration.Name` — `HasMaxLength(150)`. */
   CASH_ACCOUNT_NAME: 150,
@@ -89,6 +100,25 @@ export interface PaymentResponse {
   paymentDate: string
   comment?: string | null
   studentBalanceAfter: number
+  status: PaymentStatus
+}
+
+/** Backend `VoidPaymentRequest`: `paymentId` URL'da, body — `reason` va `operationId`. */
+export interface VoidPaymentRequest {
+  paymentId: string
+  reason: string
+  operationId: string
+}
+
+/** Backend `PaymentVoidResponse`. */
+export interface PaymentVoidResponse {
+  id: string
+  paymentId: string
+  amount: number
+  reason: string
+  voidedAt: string
+  studentBalanceAfter: number
+  cashAccountBalanceAfter: number
 }
 
 /** Backend `RecordExpenseRequest`. */

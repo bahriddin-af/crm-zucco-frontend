@@ -19,6 +19,8 @@ export const PERMISSIONS = {
     UPDATE: 'staff.update',
     DELETE: 'staff.delete',
     ROLES_MANAGE: 'staff.roles_manage',
+    /** Boshqa xodimning parolini qayta o'rnatish (barcha sessiyalari yopiladi). */
+    PASSWORD_RESET: 'staff.password_reset',
   },
   COURSES: {
     VIEW: 'courses.view',

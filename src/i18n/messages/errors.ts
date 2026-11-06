@@ -63,6 +63,10 @@ const uzCyrl = {
   protected_account: 'Ушбу ҳисобни ўзгартириб бўлмайди.',
   role_not_found: 'Рол топилмади.',
   branch_access_denied: 'Сиз ушбу филиал маълумотларини кўра олмайсиз.',
+  payment_not_found: 'Тўлов топилмади.',
+  payment_already_voided: 'Тўлов аллақачон бекор қилинган.',
+  user_not_found: 'Ходим топилмади.',
+  self_password_reset_not_allowed: 'Ўз паролингизни созламалар орқали ўзгартиринг.',
 }
 
 export type ErrorMessages = typeof uzCyrl
@@ -128,6 +132,10 @@ export const errorsMessages: Record<SupportedLanguage, ErrorMessages> = {
     protected_account: "Ushbu hisobni o'zgartirib bo'lmaydi.",
     role_not_found: 'Rol topilmadi.',
     branch_access_denied: "Siz ushbu filial ma'lumotlarini ko'ra olmaysiz.",
+    payment_not_found: "To'lov topilmadi.",
+    payment_already_voided: "To'lov allaqachon bekor qilingan.",
+    user_not_found: 'Xodim topilmadi.',
+    self_password_reset_not_allowed: "O'z parolingizni sozlamalar orqali o'zgartiring.",
   },
   ru: {
     generic: 'Произошла непредвиденная ошибка. Попробуйте ещё раз.',
@@ -188,6 +196,10 @@ export const errorsMessages: Record<SupportedLanguage, ErrorMessages> = {
     protected_account: 'Эту учётную запись нельзя изменить.',
     role_not_found: 'Роль не найдена.',
     branch_access_denied: 'У вас нет доступа к данным этого филиала.',
+    payment_not_found: 'Платёж не найден.',
+    payment_already_voided: 'Платёж уже аннулирован.',
+    user_not_found: 'Сотрудник не найден.',
+    self_password_reset_not_allowed: 'Свой пароль меняйте в настройках.',
   },
   en: {
     generic: 'Something went wrong. Please try again.',
@@ -248,5 +260,9 @@ export const errorsMessages: Record<SupportedLanguage, ErrorMessages> = {
     protected_account: 'This account cannot be changed.',
     role_not_found: 'Role not found.',
     branch_access_denied: 'You do not have access to this branch.',
+    payment_not_found: 'Payment not found.',
+    payment_already_voided: 'This payment has already been voided.',
+    user_not_found: 'Staff member not found.',
+    self_password_reset_not_allowed: 'Change your own password in Settings.',
   },
 }

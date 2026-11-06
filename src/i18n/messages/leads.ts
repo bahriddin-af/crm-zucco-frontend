@@ -88,6 +88,8 @@ const uzCyrl = {
     activities: 'Фаолият тарихи',
     noActivities: 'Ҳозирча фаолият қайд этилмаган.',
     edit: 'Таҳрирлаш',
+    archive: 'Архивлаш',
+    archiveConfirm: '{name} лиди архивланади ва воронкадан чиқарилади. Давом этасизми?',
   },
   activityForm: {
     type: 'Фаолият тури',
@@ -101,6 +103,7 @@ const uzCyrl = {
     converted: 'Лид талабага айлантирилди',
     markedLost: 'Лид йўқотилганлар қаторига ўтказилди',
     activityAdded: 'Фаолият қайд этилди',
+    archived: 'Лид архивланди',
   },
   table: {
     viewLabel: 'Кўриниш',
@@ -205,6 +208,8 @@ export const leadsMessages: Record<SupportedLanguage, LeadsMessages> = {
       activities: 'Faoliyat tarixi',
       noActivities: 'Hozircha faoliyat qayd etilmagan.',
       edit: 'Tahrirlash',
+      archive: 'Arxivlash',
+      archiveConfirm: '{name} lidi arxivlanadi va voronkadan chiqariladi. Davom etasizmi?',
     },
     activityForm: {
       type: 'Faoliyat turi',
@@ -218,6 +223,7 @@ export const leadsMessages: Record<SupportedLanguage, LeadsMessages> = {
       converted: 'Lid talabaga aylantirildi',
       markedLost: "Lid yo'qotilganlar qatoriga o'tkazildi",
       activityAdded: 'Faoliyat qayd etildi',
+      archived: 'Lid arxivlandi',
     },
     table: {
       viewLabel: "Ko'rinish",
@@ -317,6 +323,8 @@ export const leadsMessages: Record<SupportedLanguage, LeadsMessages> = {
       activities: 'История активности',
       noActivities: 'Активность пока не зафиксирована.',
       edit: 'Редактировать',
+      archive: 'Архивировать',
+      archiveConfirm: 'Лид {name} будет архивирован и убран из воронки. Продолжить?',
     },
     activityForm: {
       type: 'Тип активности',
@@ -330,6 +338,7 @@ export const leadsMessages: Record<SupportedLanguage, LeadsMessages> = {
       converted: 'Лид конвертирован в студента',
       markedLost: 'Лид перемещён в потерянные',
       activityAdded: 'Активность зафиксирована',
+      archived: 'Лид архивирован',
     },
     table: {
       viewLabel: 'Вид',
@@ -429,6 +438,8 @@ export const leadsMessages: Record<SupportedLanguage, LeadsMessages> = {
       activities: 'Activity history',
       noActivities: 'No activity recorded yet.',
       edit: 'Edit',
+      archive: 'Archive',
+      archiveConfirm: '{name} will be archived and removed from the pipeline. Continue?',
     },
     activityForm: {
       type: 'Activity type',
@@ -442,6 +453,7 @@ export const leadsMessages: Record<SupportedLanguage, LeadsMessages> = {
       converted: 'Lead converted to student',
       markedLost: 'Lead marked as lost',
       activityAdded: 'Activity recorded',
+      archived: 'Lead archived',
     },
     table: {
       viewLabel: 'View',
