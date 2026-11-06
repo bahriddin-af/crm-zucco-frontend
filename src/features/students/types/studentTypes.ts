@@ -35,8 +35,19 @@ export interface StudentListItem {
   status: StudentStatus
   balance: number
   coinsBalance: number
-  primaryGroup?: string | null
+  primaryGroup?: StudentPrimaryGroup | null
   createdAt: string
+}
+
+/**
+ * Backend `StudentPrimaryGroup`: eng yangi Active/Trial enrollment (filial bo'yicha filtrlangan ro'yxatda —
+ * shu filial ichidagisi). Joriy enrollment bo'lmasa `null`.
+ */
+export interface StudentPrimaryGroup {
+  groupId: string
+  groupName: string
+  branchId: string
+  branchName: string
 }
 
 export interface StudentParentDto {
@@ -79,6 +90,8 @@ export type StudentListFilters = {
   pageSize?: number
   status?: StudentStatus
   groupId?: string
+  /** Shu filialda joriy enrollment'i bor talabalar. Filialga bog'langan xodim boshqa filialni so'rasa — 403. */
+  branchId?: string
   search?: string
 }
 

@@ -1,28 +1,15 @@
+import { Link, generatePath } from 'react-router-dom'
 import { Building, Calendar, Clock, User } from 'lucide-react'
-import { Badge, type BadgeProps } from '@/components/ui/Badge'
-import { interpolate, useTranslation, type Translations } from '@/i18n'
+import { Badge } from '@/components/ui/Badge'
+import { ROUTES } from '@/routes/paths'
+import { interpolate, useTranslation } from '@/i18n'
 import { formatCurrency } from '@/utils/formatters'
 import { shortTime } from '@/utils/dateUtils'
-import { DAY_SCHEDULE_TYPE, GROUP_STATUS, WEEK_ORDER, type GroupListItem, type GroupStatus } from '../types/groupTypes'
+import type { GroupListItem } from '../types/groupTypes'
+import { formatScheduleDays } from '../utils/groupSchedule'
+import { GROUP_STATUS_VARIANT } from '../utils/groupStatus'
 import { GroupOccupancyBar } from './GroupOccupancyBar'
 import { GroupCardActions, type GroupAction } from './GroupCardActions'
-
-const STATUS_VARIANT: Record<GroupStatus, NonNullable<BadgeProps['variant']>> = {
-  [GROUP_STATUS.Recruiting]: 'accent',
-  [GROUP_STATUS.Active]: 'success',
-  [GROUP_STATUS.Frozen]: 'warning',
-  [GROUP_STATUS.Completed]: 'default',
-}
-
-function scheduleDaysText(t: Translations, group: GroupListItem): string {
-  if (group.daysSchedule !== DAY_SCHEDULE_TYPE.Custom || !group.customDays?.length) {
-    return t.groups.daySchedule[group.daysSchedule]
-  }
-  const selected = group.customDays
-  return WEEK_ORDER.filter((day) => selected.includes(day))
-    .map((day) => t.groups.weekdaysShort[day])
-    .join(' / ')
-}
 
 interface GroupCardProps {
   group: GroupListItem
@@ -37,10 +24,14 @@ export function GroupCard({ group, onAction }: GroupCardProps) {
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-bold text-heading truncate">{group.name}</h3>
+            <h3 className="text-sm font-bold text-heading truncate">
+              <Link to={generatePath(ROUTES.GROUPS.DETAIL, { id: group.id })} className="hover:text-primary transition-colors">
+                {group.name}
+              </Link>
+            </h3>
             <p className="text-xs text-caption mt-0.5 truncate font-medium">{group.courseName}</p>
           </div>
-          <Badge variant={STATUS_VARIANT[group.status]}>{t.groups.groupStatus[group.status]}</Badge>
+          <Badge variant={GROUP_STATUS_VARIANT[group.status]}>{t.groups.groupStatus[group.status]}</Badge>
         </div>
 
         <div className="flex items-center justify-between gap-2 text-xs text-caption">
@@ -57,7 +48,7 @@ export function GroupCard({ group, onAction }: GroupCardProps) {
         <div className="grid grid-cols-2 gap-2 text-xs text-copy-strong bg-canvas p-2.5 rounded-md border border-border">
           <div className="flex items-center gap-1.5 min-w-0">
             <Calendar className="w-3.5 h-3.5 text-primary shrink-0" />
-            <span className="truncate">{scheduleDaysText(t, group)}</span>
+            <span className="truncate">{formatScheduleDays(t, group)}</span>
           </div>
           <div className="flex items-center gap-1.5 tabular-nums">
             <Clock className="w-3.5 h-3.5 text-primary shrink-0" />

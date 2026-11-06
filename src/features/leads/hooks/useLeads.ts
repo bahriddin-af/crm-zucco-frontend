@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { QUERY_KEYS } from '@/constants/queryKeys'
 import { useTranslation } from '@/i18n'
@@ -10,14 +10,24 @@ import type {
   CreateOrUpdateLeadRequest,
   KanbanColumn,
   KanbanFilters,
+  LeadsListFilters,
   MarkLeadLostRequest,
   MoveLeadStageRequest,
 } from '../types/leadTypes'
 
-export function useKanbanBoard(filters?: KanbanFilters) {
+export function useKanbanBoard(filters?: KanbanFilters, enabled = true) {
   return useQuery({
     queryKey: QUERY_KEYS.LEADS.KANBAN(filters),
     queryFn: () => leadApi.getKanbanBoard(filters),
+    enabled,
+  })
+}
+
+export function useLeadsList(filters: LeadsListFilters) {
+  return useQuery({
+    queryKey: QUERY_KEYS.LEADS.LIST({ ...filters }),
+    queryFn: () => leadApi.getLeads(filters),
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -108,6 +118,18 @@ export function useMarkLeadLost() {
     meta: { invalidates: [QUERY_KEYS.LEADS.ALL] },
     onSuccess: () => {
       toast.success(t.leads.toasts.markedLost)
+    },
+  })
+}
+
+export function useArchiveLead() {
+  const { t } = useTranslation()
+
+  return useMutation({
+    mutationFn: (leadId: string) => leadApi.archiveLead(leadId),
+    meta: { invalidates: [QUERY_KEYS.LEADS.ALL] },
+    onSuccess: () => {
+      toast.success(t.leads.toasts.archived)
     },
   })
 }

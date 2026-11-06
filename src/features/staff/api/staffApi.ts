@@ -3,6 +3,7 @@ import { API_ROUTES } from '@/api/apiRoutes'
 import type { ApiResponse, PagedResult } from '@/types/api'
 import type {
   CreateOrUpdateStaffRequest,
+  ResetStaffPasswordRequest,
   StaffDetail,
   StaffListItem,
   StaffRoleDto,
@@ -37,6 +38,12 @@ export const staffApi = {
   upsert: async (payload: CreateOrUpdateStaffRequest) => {
     const response = await apiClient.post<ApiResponse<StaffDetail>>(API_ROUTES.STAFF.CREATE_OR_UPDATE, payload)
     return response.data.data
+  },
+
+  /** Administrator boshqa xodimga yangi parol o'rnatadi; o'z paroli uchun — `AUTH.CHANGE_PASSWORD`. */
+  resetPassword: async ({ staffId, newPassword }: ResetStaffPasswordRequest) => {
+    const response = await apiClient.post<ApiResponse>(API_ROUTES.STAFF.RESET_PASSWORD(staffId), { newPassword })
+    return response.data
   },
 
   delete: async (id: string) => {

@@ -40,6 +40,13 @@ export function formatPercent(value: number, signed = false, language?: Supporte
   }).format(value / PERCENT_SCALE)
 }
 
+/** Kasr sonni joriy tilga mos ko'rsatadi (`1.5` → `1,5`; butun son kasrsiz). */
+export function formatDecimal(value: number, language?: SupportedLanguage): string {
+  return new Intl.NumberFormat(INTL_LOCALES[currentLanguage(language)], {
+    maximumFractionDigits: PERCENT_FRACTION_DIGITS,
+  }).format(value)
+}
+
 export function formatDate(date: string | Date, language?: SupportedLanguage): string {
   const d = typeof date === 'string' ? new Date(date) : date
 

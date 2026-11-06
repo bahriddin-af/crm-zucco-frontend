@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/constants/queryKeys'
 import { Plus, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { PermissionGuard } from '@/components/common/PermissionGuard'
@@ -9,6 +11,9 @@ import { useTranslation } from '@/i18n'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { LeadKanbanBoard } from '../components/LeadKanbanBoard'
 import { LeadsToolbar } from '../components/LeadsToolbar'
+import { LeadsTable } from '../components/LeadsTable'
+import { LeadsViewToggle } from '../components/LeadsViewToggle'
+import { LEADS_VIEW, type LeadsView } from '../constants/leadsView'
 import { LeadModal } from '../components/LeadModal'
 import { LeadConvertModal } from '../components/LeadConvertModal'
 import { LeadLostModal } from '../components/LeadLostModal'
@@ -26,16 +31,19 @@ type LeadDialog =
 
 export function LeadsPage() {
   const { t } = useTranslation()
+  const queryClient = useQueryClient()
   const canUpdate = useAuthStore((state) => state.hasPermission(PERMISSIONS.LEADS.UPDATE))
   const canConvert = useAuthStore((state) => state.hasPermission(PERMISSIONS.LEADS.CONVERT))
   const canCreate = useAuthStore((state) => state.hasPermission(PERMISSIONS.LEADS.CREATE))
   const [search, setSearch] = useState('')
   const [courseId, setCourseId] = useState('')
   const [dialog, setDialog] = useState<LeadDialog>(null)
+  const [view, setView] = useState<LeadsView>(LEADS_VIEW.Kanban)
+  const isKanban = view === LEADS_VIEW.Kanban
   const closeDialog = () => setDialog(null)
 
   const filters: KanbanFilters | undefined = courseId ? { courseId } : undefined
-  const { data: columns = [], isLoading, error, refetch, isFetching } = useKanbanBoard(filters)
+  const { data: columns = [], isLoading, error, refetch, isFetching } = useKanbanBoard(filters, isKanban)
   const moveStage = useMoveLeadStage(filters)
   const totalLeads = columns.reduce((sum, column) => sum + column.totalLeads, 0)
 
@@ -62,7 +70,8 @@ export function LeadsPage() {
         subtitle={t.leads.subtitle}
         actions={
           <>
-            <Button size="sm" onClick={() => void refetch()} disabled={isFetching} title={t.common.refresh} aria-label={t.common.refresh}>
+            <LeadsViewToggle value={view} onChange={setView} />
+            <Button size="sm" onClick={() => void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.LEADS.ALL })} disabled={isFetching} title={t.common.refresh} aria-label={t.common.refresh}>
               <RefreshCw className="w-3.5 h-3.5" />
             </Button>
             <PermissionGuard permission={PERMISSIONS.LEADS.CREATE}>
@@ -80,25 +89,29 @@ export function LeadsPage() {
         onSearchChange={setSearch}
         courseId={courseId}
         onCourseChange={setCourseId}
-        totalLeads={totalLeads}
+        totalLeads={isKanban ? totalLeads : undefined}
       />
 
       <ErrorBoundary>
-        <LeadKanbanBoard
-          columns={columns}
-          isLoading={isLoading}
-          error={error}
-          onRetry={() => void refetch()}
-          search={search}
-          canCreate={canCreate}
-          canUpdate={canUpdate}
-          canConvert={canConvert}
-          onCreate={(stageId) => setDialog({ kind: 'create', stageId })}
-          onMoveStage={handleMoveStage}
-          onConvert={(lead) => setDialog({ kind: 'convert', lead })}
-          onLost={(lead) => setDialog({ kind: 'lost', lead })}
-          onOpen={(lead) => setDialog({ kind: 'detail', leadId: lead.id })}
-        />
+        {isKanban ? (
+          <LeadKanbanBoard
+            columns={columns}
+            isLoading={isLoading}
+            error={error}
+            onRetry={() => void refetch()}
+            search={search}
+            canCreate={canCreate}
+            canUpdate={canUpdate}
+            canConvert={canConvert}
+            onCreate={(stageId) => setDialog({ kind: 'create', stageId })}
+            onMoveStage={handleMoveStage}
+            onConvert={(lead) => setDialog({ kind: 'convert', lead })}
+            onLost={(lead) => setDialog({ kind: 'lost', lead })}
+            onOpen={(lead) => setDialog({ kind: 'detail', leadId: lead.id })}
+          />
+        ) : (
+          <LeadsTable search={search} courseId={courseId} onOpen={(lead) => setDialog({ kind: 'detail', leadId: lead.id })} />
+        )}
       </ErrorBoundary>
 
       {dialog?.kind === 'create' && <LeadModal onClose={closeDialog} defaultStageId={dialog.stageId} />}

@@ -4,7 +4,12 @@ import { QUERY_KEYS } from '@/constants/queryKeys'
 import { OPTIONS_PAGE_SIZE } from '@/constants/pagination'
 import { interpolate, useTranslation } from '@/i18n'
 import { staffApi } from '../api/staffApi'
-import { STAFF_ROLE_TYPE, type CreateOrUpdateStaffRequest, type StaffRoleType } from '../types/staffTypes'
+import {
+  STAFF_ROLE_TYPE,
+  type CreateOrUpdateStaffRequest,
+  type ResetStaffPasswordRequest,
+  type StaffRoleType,
+} from '../types/staffTypes'
 
 /** Imzo boshqa modullar (o'qituvchi tanlagichlari) uchun barqaror saqlanadi. */
 export function useStaffList(page = 1, pageSize = 50, search = '', role?: StaffRoleType) {
@@ -62,6 +67,18 @@ export function useDeleteStaff() {
     meta: { invalidates: [QUERY_KEYS.STAFF.ALL] },
     onSuccess: () => {
       toast.success(t.staff.toasts.deleted)
+    },
+  })
+}
+
+/** Xatolar (`self_password_reset_not_allowed`, `protected_account`, ...) global toast qilinadi. */
+export function useResetStaffPassword() {
+  const { t } = useTranslation()
+
+  return useMutation({
+    mutationFn: (payload: ResetStaffPasswordRequest) => staffApi.resetPassword(payload),
+    onSuccess: () => {
+      toast.success(t.staff.toasts.passwordReset)
     },
   })
 }

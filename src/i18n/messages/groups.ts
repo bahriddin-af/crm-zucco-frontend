@@ -114,6 +114,14 @@ const uzCyrl = {
   changeStatusTitle: 'Талаба ҳолатини ўзгартириш',
   changeStatusConfirm: '{name} ҳолати «{status}» га ўзгартирилсинми?',
   studentStatusChanged: 'Талаба ҳолати янгиланди',
+  detail: {
+    backToList: 'Гуруҳлар рўйхатига',
+    time: 'Дарс вақти',
+    period: 'Ўқиш даври',
+    openEnded: 'муддатсиз',
+    periodValue: '{from} — {to}',
+    openCourse: 'Курсни очиш',
+  },
 }
 
 export type GroupsMessages = typeof uzCyrl
@@ -234,6 +242,14 @@ export const groupsMessages: Record<SupportedLanguage, GroupsMessages> = {
     changeStatusTitle: "Talaba holatini o'zgartirish",
     changeStatusConfirm: "{name} holati «{status}» ga o'zgartirilsinmi?",
     studentStatusChanged: 'Talaba holati yangilandi',
+    detail: {
+      backToList: "Guruhlar ro'yxatiga",
+      time: 'Dars vaqti',
+      period: "O'qish davri",
+      openEnded: 'muddatsiz',
+      periodValue: '{from} — {to}',
+      openCourse: 'Kursni ochish',
+    },
   },
   ru: {
     title: 'Учебные группы',
@@ -349,6 +365,14 @@ export const groupsMessages: Record<SupportedLanguage, GroupsMessages> = {
     changeStatusTitle: 'Изменение статуса студента',
     changeStatusConfirm: 'Изменить статус {name} на «{status}»?',
     studentStatusChanged: 'Статус студента обновлён',
+    detail: {
+      backToList: 'К списку групп',
+      time: 'Время занятий',
+      period: 'Период обучения',
+      openEnded: 'бессрочно',
+      periodValue: '{from} — {to}',
+      openCourse: 'Открыть курс',
+    },
   },
   en: {
     title: 'Study groups',
@@ -464,5 +488,13 @@ export const groupsMessages: Record<SupportedLanguage, GroupsMessages> = {
     changeStatusTitle: 'Change student status',
     changeStatusConfirm: 'Change the status of {name} to "{status}"?',
     studentStatusChanged: 'Student status updated',
+    detail: {
+      backToList: 'Back to groups',
+      time: 'Lesson time',
+      period: 'Study period',
+      openEnded: 'open-ended',
+      periodValue: '{from} — {to}',
+      openCourse: 'Open course',
+    },
   },
 }

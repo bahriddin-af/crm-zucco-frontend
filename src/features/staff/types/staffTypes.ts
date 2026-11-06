@@ -71,3 +71,9 @@ export interface CreateOrUpdateStaffRequest {
   roleIds?: string[] | null
   status: UserStatus
 }
+
+/** Backend `ResetStaffPasswordRequest`: `staffId` URL'da, body — `newPassword` (`PasswordPolicy`, ≥ 12). */
+export interface ResetStaffPasswordRequest {
+  staffId: string
+  newPassword: string
+}

@@ -14,21 +14,21 @@ import {
   Receipt,
   Settings,
   ShieldCheck,
+  TriangleAlert,
   UserCheck,
   Users,
   Wallet,
   type LucideIcon,
 } from 'lucide-react'
-import { PERMISSIONS, type Permission } from '@/constants/permissions'
+import type { Permission } from '@/constants/permissions'
 import { ROUTES } from '@/routes/paths'
+import { getRoutePermission } from '@/routes/routePermissions'
 import type { Translations } from '@/i18n'
 
 export interface NavItem {
   label: string
   to: string
   icon: LucideIcon
-  /** Bo'lim ma'lumotini o'qish uchun backend talab qiladigan ruxsat. Yo'q bo'lsa — hamma uchun ochiq. */
-  permission?: Permission
 }
 
 export interface NavSection {
@@ -36,7 +36,7 @@ export interface NavSection {
   items: NavItem[]
 }
 
-/** Har bir bandning ruxsati shu sahifa chaqiradigan asosiy GET endpointining `[HasPermission]` qiymati. */
+/** Har bir bandning ruxsati `routes/routePermissions.ts` dagi yagona jadvaldan olinadi. */
 export function buildNavSections(t: Translations): NavSection[] {
   return [
     {
@@ -46,43 +46,44 @@ export function buildNavSections(t: Translations): NavSection[] {
     {
       title: t.nav.receptionSection,
       items: [
-        { label: t.nav.leads, to: ROUTES.LEADS.LIST, icon: Users, permission: PERMISSIONS.LEADS.VIEW },
-        { label: t.nav.students, to: ROUTES.STUDENTS.LIST, icon: GraduationCap, permission: PERMISSIONS.STUDENTS.VIEW },
-        { label: t.nav.smsCenter, to: ROUTES.NOTIFICATIONS.SMS, icon: MessageSquare, permission: PERMISSIONS.NOTIFICATIONS.VIEW },
+        { label: t.nav.leads, to: ROUTES.LEADS.LIST, icon: Users },
+        { label: t.nav.students, to: ROUTES.STUDENTS.LIST, icon: GraduationCap },
+        { label: t.nav.studentRisk, to: ROUTES.STUDENTS.RISK, icon: TriangleAlert },
+        { label: t.nav.smsCenter, to: ROUTES.NOTIFICATIONS.SMS, icon: MessageSquare },
       ],
     },
     {
       title: t.nav.academicSection,
       items: [
-        { label: t.nav.courses, to: ROUTES.COURSES.LIST, icon: BookOpen, permission: PERMISSIONS.COURSES.VIEW },
-        { label: t.nav.groups, to: ROUTES.GROUPS.LIST, icon: FolderKanban, permission: PERMISSIONS.GROUPS.VIEW },
-        { label: t.nav.schedule, to: ROUTES.SCHEDULE, icon: CalendarDays, permission: PERMISSIONS.GROUPS.VIEW },
-        { label: t.nav.attendance, to: ROUTES.ATTENDANCE.JOURNAL, icon: CheckSquare, permission: PERMISSIONS.ATTENDANCE.VIEW },
+        { label: t.nav.courses, to: ROUTES.COURSES.LIST, icon: BookOpen },
+        { label: t.nav.groups, to: ROUTES.GROUPS.LIST, icon: FolderKanban },
+        { label: t.nav.schedule, to: ROUTES.SCHEDULE, icon: CalendarDays },
+        { label: t.nav.attendance, to: ROUTES.ATTENDANCE.JOURNAL, icon: CheckSquare },
       ],
     },
     {
       title: t.nav.financeSection,
       items: [
-        { label: t.nav.financeDesk, to: ROUTES.FINANCE.DESK, icon: Wallet, permission: PERMISSIONS.FINANCE.VIEW },
-        { label: t.nav.expenses, to: ROUTES.FINANCE.EXPENSES, icon: Receipt, permission: PERMISSIONS.FINANCE.VIEW },
-        { label: t.nav.payroll, to: ROUTES.FINANCE.PAYROLL, icon: Banknote, permission: PERMISSIONS.PAYROLL.VIEW },
-        { label: t.nav.staff, to: ROUTES.STAFF.LIST, icon: UserCheck, permission: PERMISSIONS.STAFF.VIEW },
-        { label: t.nav.reports, to: ROUTES.REPORTS, icon: BarChart3, permission: PERMISSIONS.FINANCE.VIEW },
+        { label: t.nav.financeDesk, to: ROUTES.FINANCE.DESK, icon: Wallet },
+        { label: t.nav.expenses, to: ROUTES.FINANCE.EXPENSES, icon: Receipt },
+        { label: t.nav.payroll, to: ROUTES.FINANCE.PAYROLL, icon: Banknote },
+        { label: t.nav.staff, to: ROUTES.STAFF.LIST, icon: UserCheck },
+        { label: t.nav.reports, to: ROUTES.REPORTS, icon: BarChart3 },
       ],
     },
     {
       title: t.nav.incentiveSection,
       items: [
-        { label: t.nav.rewardMarket, to: ROUTES.MARKET.ITEMS, icon: Gift, permission: PERMISSIONS.GAMIFICATION.VIEW },
-        { label: t.nav.coinHistory, to: ROUTES.MARKET.COIN_ACTIVITY, icon: Coins, permission: PERMISSIONS.GAMIFICATION.VIEW },
+        { label: t.nav.rewardMarket, to: ROUTES.MARKET.ITEMS, icon: Gift },
+        { label: t.nav.coinHistory, to: ROUTES.MARKET.COIN_ACTIVITY, icon: Coins },
       ],
     },
     {
       title: t.nav.managementSection,
       items: [
-        { label: t.nav.branches, to: ROUTES.BRANCHES, icon: Building2, permission: PERMISSIONS.BRANCHES.VIEW },
+        { label: t.nav.branches, to: ROUTES.BRANCHES, icon: Building2 },
         { label: t.nav.settings, to: ROUTES.SETTINGS, icon: Settings },
-        { label: t.nav.roles, to: ROUTES.STAFF.ROLES, icon: ShieldCheck, permission: PERMISSIONS.STAFF.ROLES_MANAGE },
+        { label: t.nav.roles, to: ROUTES.STAFF.ROLES, icon: ShieldCheck },
       ],
     },
   ]
@@ -96,9 +97,25 @@ export function filterNavSections(
   return sections
     .map((section) => ({
       ...section,
-      items: section.items.filter((item) => !item.permission || hasPermission(item.permission)),
+      items: section.items.filter((item) => {
+        const permission = getRoutePermission(item.to)
+        return !permission || hasPermission(permission)
+      }),
     }))
     .filter((section) => section.items.length > 0)
+}
+
+/**
+ * Joriy manzilga eng aniq mos keladigan menyu bandi (`/students/risk` da faqat «Xavf», `/students/123` da «Talabalar»).
+ * Bosh sahifa faqat aynan `/` da faol.
+ */
+export function findActiveNavPath(pathname: string, sections: NavSection[]): string | undefined {
+  const matches = sections
+    .flatMap((section) => section.items.map((item) => item.to))
+    .filter((to) =>
+      to === ROUTES.OVERVIEW ? pathname === to : pathname === to || pathname.startsWith(`${to}/`)
+    )
+  return matches.sort((a, b) => b.length - a.length)[0]
 }
 
 /** Backend rol nomini joriy tildagi nomga aylantiradi (noma'lum rol o'z nomi bilan ko'rsatiladi). */

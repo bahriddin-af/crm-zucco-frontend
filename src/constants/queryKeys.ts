@@ -24,6 +24,11 @@ export const QUERY_KEYS = {
     ALL: ['students'] as const,
     LIST: (filters?: Record<string, unknown>) => ['students', 'list', filters] as const,
     DETAIL: (id: string) => ['students', id] as const,
+    /** Xavf kalitlari `students` prefiksi ostida — talaba o'zgarganda ular ham yangilanadi. */
+    RISK_ALL: ['students', 'risk'] as const,
+    RISK_LIST: (filters?: Record<string, unknown>) => ['students', 'risk', 'list', filters] as const,
+    RISK_SUMMARY: ['students', 'risk', 'summary'] as const,
+    RISK_HISTORY: (id: string, days: number) => ['students', 'risk', 'history', id, days] as const,
   },
   GROUPS: {
     ALL: ['groups'] as const,

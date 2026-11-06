@@ -8,7 +8,8 @@ interface LeadsToolbarProps {
   onSearchChange: (value: string) => void
   courseId: string
   onCourseChange: (courseId: string) => void
-  totalLeads: number
+  /** Faqat voronka ko'rinishida (jadval o'z jami sonini ko'rsatadi). */
+  totalLeads?: number
 }
 
 export function LeadsToolbar({ search, onSearchChange, courseId, onCourseChange, totalLeads }: LeadsToolbarProps) {
@@ -33,9 +34,11 @@ export function LeadsToolbar({ search, onSearchChange, courseId, onCourseChange,
           ))}
         </SelectInput>
       </div>
-      <div className="text-xs text-caption">
-        {t.leads.totalLeads}: <strong className="text-heading tabular-nums">{totalLeads}</strong>
-      </div>
+      {totalLeads !== undefined && (
+        <div className="text-xs text-caption">
+          {t.leads.totalLeads}: <strong className="text-heading tabular-nums">{totalLeads}</strong>
+        </div>
+      )}
     </div>
   )
 }
